@@ -2,9 +2,10 @@
 ---
 
 <script>
-  const form = document.querySelector(".form");
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector(".form");
 
-  form?.addEventListener("submit", async (event) => {
+    form?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const formData = new FormData(form);
@@ -30,11 +31,11 @@
    if (result.success) {
   alert("文章发布成功！");
 
-  const url = new URL(result.url, window.location.origin);
-  window.location.assign(url.href);
+  window.location.assign("/admin");
 } else {
   alert(result.message);
 }
+    });
   });
 </script>
 
