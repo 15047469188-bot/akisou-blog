@@ -1,0 +1,246 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+
+const file = Astro.url.searchParams.get("file");
+
+if (!file) {
+  throw new Error("没有找到文章文件。");
+}
+
+const filePath = path.resolve(
+  process.cwd(),
+  "src/pages/admin/posts",
+  file
+);
+
+const content = fs.readFileSync(filePath, "utf-8");
+
+const match = content.match(
+  /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/
+);
+
+if (!match) {
+  throw new Error("文章格式不正确。");
+}
+
+const frontmatter = match[1];
+const body = match[2].trim();
+
+const getValue = (key: string) => {
+  const result = frontmatter.match(
+    new RegExp(`^${key}:\\s*"([\s\S]*?)"$`, "m")
+  );
+  return result ? result[1] : "";
+};
+
+const title = getValue("title");
+const date = getValue("date");
+const description = getValue("description");
+const category = getValue("category");
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EDIT / AKISOU'S BLOG</title>
+
+    <style>
+      :global(body) {
+        margin: 0;
+        background: #f7f8f8;
+        color: #172536;
+        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+          Arial, sans-serif;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 70px 25px 100px;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 100px;
+      }
+
+      .logo {
+        font-family: monospace;
+        font-size: 14px;
+        letter-spacing: 1px;
+      }
+
+      .admin {
+        font-family: monospace;
+        font-size: 12px;
+        color: #697681;
+      }
+
+      .label {
+        font-family: monospace;
+        font-size: 12px;
+        color: #697681;
+        margin-bottom: 15px;
+      }
+
+      h1 {
+        margin: 0 0 50px;
+        font-size: 42px;
+        font-weight: 500;
+      }
+
+      .form {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      input,
+      textarea,
+      select {
+        box-sizing: border-box;
+        width: 100%;
+        border: 1px solid #ccd2d6;
+        background: white;
+        padding: 14px;
+        color: #172536;
+        font: inherit;
+        outline: none;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        border-color: #172536;
+      }
+
+      textarea {
+        min-height: 280px;
+        resize: vertical;
+        line-height: 1.8;
+      }
+
+      .small {
+        min-height: auto;
+      }
+
+      button {
+        align-self: flex-start;
+        border: 0;
+        background: #172536;
+        color: white;
+        padding: 14px 24px;
+        font-family: monospace;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #e87532;
+      }
+
+      .back {
+        display: inline-block;
+        margin-top: 25px;
+        color: #697681;
+        font-family: monospace;
+        font-size: 12px;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="container">
+      <header>
+        <div class="logo">AKISOU'S BLOG</div>
+        <div class="admin">ADMIN / EDIT</div>
+      </header>
+
+      <div class="label">EDIT / 01</div>
+      <h1>编辑文章</h1>
+
+      <form class="form">
+        <label>
+          标题
+          <input name="title" value={title} />
+        </label>
+
+        <label>
+          分类
+          <select name="category">
+            <option selected={category === "日常"}>日常</option>
+            <option selected={category === "旅行"}>旅行</option>
+            <option selected={category === "字幕"}>字幕</option>
+          </select>
+        </label>
+
+        <label>
+          日期
+          <input name="date" type="date" value={date.replaceAll(".", "-")} />
+        </label>
+
+        <label>
+          简介
+          <textarea name="description" class="small">{description}</textarea>
+        </label>
+
+        <label>
+          正文
+          <textarea name="content">{body}</textarea>
+        </label>
+
+        <button type="submit">SAVE CHANGES ↗</button>
+      </form>
+
+      <a href="/admin/posts" class="back">← BACK TO POSTS</a>
+    </main>
+
+    <script define:vars={{ file }}>
+      const form = document.querySelector(".form");
+
+      form?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+
+        const data = {
+          file,
+          title: formData.get("title"),
+          category: formData.get("category"),
+          date: formData.get("date"),
+          description: formData.get("description"),
+          content: formData.get("content"),
+        };
+
+        const response = await fetch("/api/edit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert("文章修改成功！");
+          window.location.href = "/admin/posts";
+        } else {
+          alert(result.message);
+        }
+      });
+    </script>
+  </body>
+</html>

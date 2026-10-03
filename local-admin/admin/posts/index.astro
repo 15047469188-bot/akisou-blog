@@ -1,0 +1,249 @@
+---
+const posts = Object.entries(
+  import.meta.glob("../../{daily,travel,subtitles}/posts/*.md", {
+    eager: true,
+  })
+)
+  .map(([file, post]) => ({
+    ...post,
+    file,
+  }))
+  .sort((a, b) =>
+    b.frontmatter.date.localeCompare(a.frontmatter.date)
+  );
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>POSTS / AKISOU</title>
+  <style>
+  .new-post {
+    display: inline-block;
+    margin-bottom: 40px;
+    color: #172536;
+    font-family: monospace;
+    font-size: 12px;
+    text-decoration: none;
+    border-bottom: 1px solid #172536;
+    padding-bottom: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .new-post:hover {
+    color: #e87532;
+    border-color: #e87532;
+  }
+</style>
+</head>
+
+  <body>
+    <main>
+      <header>
+        <a href="/admin" class="logo">AKISOU'S BLOG</a>
+        <span>POSTS</span>
+      </header>
+
+      <section>
+        <p class="number">ADMIN / 03</p>
+
+        <h1>文章管理</h1>
+<a href="/admin/new" class="new-post">NEW POST ↗</a>
+
+        <div class="posts">
+          {posts.map((post) => (
+            <div class="post">
+              <div class="date">
+                {post.frontmatter.date}
+              </div>
+
+              <div class="main">
+                <h2>{post.frontmatter.title}</h2>
+                <p>{post.frontmatter.description}</p>
+              </div>
+
+            <div class="actions">
+  <a href={post.url} class="view">查看 ↗</a>
+
+ <a
+  href={`/admin/edit?file=${encodeURIComponent(post.file)}`}
+  class="view"
+>
+  编辑 ✎
+</a>
+
+  <button
+    type="button"
+    class="delete"
+    data-file={post.file}
+  >
+    删除 ×
+  </button>
+</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
+<script>
+  const buttons = document.querySelectorAll(".delete");
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      const file = button.dataset.file;
+
+      if (!file) return;
+
+      const ok = confirm("确定要删除这篇文章吗？");
+
+      if (!ok) return;
+
+      const response = await fetch("/api/delete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ file }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("文章已删除！");
+        window.location.reload();
+      } else {
+        alert(result.message);
+      }
+    });
+  });
+</script>
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #f7f8f6;
+    color: #172536;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 55px 30px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #172536;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .logo {
+    color: #172536;
+    text-decoration: none;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  section {
+    padding: 80px 0 120px;
+  }
+
+  .number {
+    color: #e87532;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  h1 {
+    margin: 25px 0 60px;
+    font-size: clamp(42px, 7vw, 70px);
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.05em;
+  }
+
+  .post {
+    display: grid;
+    grid-template-columns: 120px 1fr 70px;
+    gap: 25px;
+    align-items: center;
+    padding: 25px 0;
+    border-bottom: 1px solid #ccd2d6;
+  }
+
+  .date {
+    font-family: monospace;
+    font-size: 12px;
+    color: #697681;
+  }
+
+  .main h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .main p {
+    margin: 0;
+    color: #697681;
+    font-size: 13px;
+  }
+
+  .view {
+    color: #172536;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  .view:hover {
+    color: #e87532;
+  }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.delete {
+  border: 0;
+  background: transparent;
+  color: #697681;
+  padding: 0;
+  font-family: monospace;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.delete:hover {
+  color: #e87532;
+}
+  @media (max-width: 600px) {
+    main {
+      padding: 35px 20px;
+    }
+
+    .post {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  }
+</style>

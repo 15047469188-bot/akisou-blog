@@ -1,0 +1,111 @@
+---
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ADMIN / AKISOU</title>
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <a href="/" class="logo">AKISOU'S BLOG</a>
+        <span>ADMIN</span>
+      </header>
+
+      <section>
+        <p class="number">ADMIN / 01</p>
+
+        <h1>写一篇新文章</h1>
+
+        <p class="description">
+          从这里开始记录日常、旅行和字幕。
+        </p>
+
+        <a href="/admin/new" class="new-post">NEW POST ↗</a>
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #f7f8f6;
+    color: #172536;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 55px 30px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #172536;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .logo {
+    color: #172536;
+    text-decoration: none;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  section {
+    padding: 120px 0;
+  }
+
+  .number {
+    color: #e87532;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  h1 {
+    margin: 30px 0 20px;
+    font-size: clamp(48px, 8vw, 80px);
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.06em;
+  }
+
+  .description {
+    color: #697681;
+    font-size: 16px;
+  }
+
+ .new-post {
+    margin-top: 45px;
+    padding: 16px 24px;
+    border: 1px solid #172536;
+    background: transparent;
+    color: #172536;
+    font-family: monospace;
+    cursor: pointer;
+  }
+
+  .new-post:hover {
+    background: #172536;
+    color: #f7f8f6;
+  }
+</style>

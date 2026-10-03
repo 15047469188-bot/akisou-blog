@@ -4,4 +4,10 @@ export default defineConfig({
   output: 'static',
   site: 'https://15047469188-bot.github.io',
   base: '/akisou-blog',
+
+  vite: {
+    define: {
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    },
+  },
 });
