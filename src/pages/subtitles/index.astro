@@ -1,0 +1,252 @@
+---
+const posts = Object.values(
+  import.meta.glob("./posts/*.md", { eager: true })
+);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SUBTITLES / AKISOU</title>
+  </head>
+
+  <body>
+    <main class="page">
+
+      <header>
+        <a href="/" class="logo">AKISOU'S BLOG</a>
+
+        <nav>
+          <a href="/">HOME</a>
+          <a href="/about">ABOUT</a>
+        </nav>
+      </header>
+
+      <section class="intro">
+        <p>03 / SUBTITLES</p>
+
+        <h1>
+          字幕。
+        </h1>
+
+        <p class="description">
+          关于字幕、日语和喜欢的作品。
+        </p>
+      </section>
+
+      <section class="posts">
+
+  <div class="section-title">
+    <span>POSTS</span>
+    <span>{posts.length.toString().padStart(2, "0")}</span>
+  </div>
+
+  {posts.map((post) => (
+    <a href={post.url} class="post">
+      <div class="post-date">
+        {post.frontmatter.date}
+      </div>
+
+      <div class="post-main">
+        <h2>{post.frontmatter.title}</h2>
+        <p>{post.frontmatter.description}</p>
+      </div>
+
+      <div class="post-arrow">↗</div>
+    </a>
+  ))}
+
+</section>
+
+      <a href="/" class="back">← BACK HOME</a>
+
+      <footer>
+        <span>AKISOU'S BLOG</span>
+        <span>2026 — NOW</span>
+      </footer>
+
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #f7f8f6;
+    color: #172536;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+  }
+
+  .page {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 55px 30px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #172536;
+  }
+
+  .logo {
+    color: #172536;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  nav {
+    display: flex;
+    gap: 28px;
+  }
+
+  nav a {
+    color: #172536;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  nav a:hover,
+  .back:hover {
+    color: #e87532;
+  }
+
+  .intro {
+    padding: 110px 0 100px;
+  }
+
+  .intro > p:first-child {
+    margin: 0 0 30px;
+    color: #e87532;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(60px, 10vw, 110px);
+    font-weight: 500;
+    letter-spacing: -0.06em;
+  }
+
+  .description {
+    margin-top: 35px;
+    color: #697681;
+    font-size: 17px;
+  }
+
+  .section-title {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-top: 1px solid #172536;
+    border-bottom: 1px solid #ccd2d6;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .section-title span:last-child {
+    color: #e87532;
+  }
+
+ .post {
+  display: grid;
+  grid-template-columns: 150px 1fr 30px;
+  gap: 30px;
+  align-items: center;
+
+  padding: 35px 0;
+
+  color: #172536;
+  text-decoration: none;
+
+  border-bottom: 1px solid #ccd2d6;
+
+  transition: all 0.25s ease;
+}
+
+.post:hover {
+  color: #e87532;
+  padding-left: 10px;
+}
+
+.post-date {
+  font-family: monospace;
+  color: #697681;
+  font-size: 13px;
+}
+
+.post-main h2 {
+  margin: 0 0 10px;
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.post-main p {
+  margin: 0;
+  color: #697681;
+  font-size: 14px;
+}
+
+.post-arrow {
+  font-size: 22px;
+}
+
+  .back {
+    display: inline-block;
+    margin-top: 80px;
+    color: #172536;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 100px;
+    padding-top: 20px;
+    border-top: 1px solid #172536;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  @media (max-width: 700px) {
+    .page {
+      padding: 30px 20px;
+    }
+
+    header {
+      align-items: flex-start;
+    }
+
+    nav {
+      gap: 15px;
+    }
+
+    .intro {
+      padding: 80px 0;
+    }
+
+    footer {
+      display: block;
+      line-height: 2;
+    }
+  }
+</style>

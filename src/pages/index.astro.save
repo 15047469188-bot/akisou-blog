@@ -1,8 +1,6 @@
 ---
-const posts = Object.values(
-  import.meta.glob("./{daily,travel,subtitles}/posts/*.md", { eager: true })
-).sort((a, b) =>
-  b.frontmatter.date.localeCompare(a.frontmatter.date)
+const dailyPosts = Object.values(
+  import.meta.glob("./daily/posts/*.md", { eager: true })
 );
 const categories = [
   {
@@ -66,10 +64,10 @@ const categories = [
 
   <div class="section-title">
     <span>LATEST</span>
-    <span>{posts.length.toString().padStart(2, "0")}</span>
+    <span>{dailyPosts.length.toString().padStart(2, "0")}</span>
   </div>
 
-  {posts.map((post) => (
+  {dailyPosts.map((post) => (
     <a href={post.url} class="latest-post">
       <div class="latest-date">
         {post.frontmatter.date}
@@ -85,7 +83,6 @@ const categories = [
   ))}
 
 </section>
-
       <section class="categories">
 
         <div class="section-title">
@@ -305,9 +302,9 @@ const categories = [
     color: #697681;
   }
 
-  .category-main h2 {
+  font-size: 38px;.category-main h2 {
     margin: 0 0 10px;
-    font-size: 38px;
+    font-size: 34px;
     font-weight: 500;
   }
 
@@ -319,7 +316,7 @@ const categories = [
 
   .english {
     font-family: monospace;
-    font-size: 13px;
+    font-size: 12px;
     color: #697681;
   }
 

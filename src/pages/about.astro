@@ -1,0 +1,220 @@
+---
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ABOUT / AKISOU'S BLOG</title>
+  </head>
+
+  <body>
+    <main class="page">
+      <header>
+        <a class="logo" href="/">
+          <strong>AKISOU'S BLOG</strong>
+        </a>
+
+        <nav>
+          <a href="/">BLOG</a>
+          <a href="/daily">DAILY</a>
+          <a href="/travel">TRAVEL</a>
+          <a href="/subtitles">SUBTITLES</a>
+          <a href="/about">ABOUT</a>
+        </nav>
+      </header>
+
+      <section class="about">
+        <p class="label">ABOUT / 01</p>
+
+        <h1>
+          你好，<br />
+          我是<span>Akisou。</span>
+        </h1>
+
+        <div class="text">
+          <p>
+            这里是我的个人 Blog。
+          </p>
+
+          <p>
+            记录日常、旅行和字幕制作。
+          </p>
+
+          <p>
+            也会留下学习过程、喜欢的作品，<br />
+            以及一些想在以后重新翻出来看的东西。
+          </p>
+
+          <p>
+            不定期更新。
+          </p>
+
+          <p class="small">
+            日常 / 旅行 / 字幕
+          </p>
+        </div>
+      </section>
+
+      <a class="back" href="/">← BACK TO BLOG</a>
+
+      <footer>
+        <span>AKISOU'S BLOG</span>
+        <span>2026 — now</span>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #f7f8f6;
+    color: #172536;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+      "PingFang SC", sans-serif;
+  }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 70px 32px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid #172536;
+    padding-bottom: 28px;
+    margin-bottom: 90px;
+  }
+
+  .logo {
+    text-decoration: none;
+    color: #172536;
+  }
+
+  .logo strong {
+    display: block;
+    font-family: monospace;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+
+  nav {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    color: #172536;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  nav a:hover,
+  .back:hover {
+    color: #e87532;
+  }
+
+  .about {
+    max-width: 850px;
+  }
+
+  .label {
+    margin: 0 0 35px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #e87532;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(50px, 8vw, 90px);
+    line-height: 1.05;
+    font-weight: 500;
+    letter-spacing: -0.05em;
+  }
+
+  h1 span {
+    color: #e87532;
+  }
+
+  .text {
+    margin-top: 70px;
+    margin-left: 35%;
+    font-size: 18px;
+    line-height: 2;
+    color: #52606d;
+  }
+
+  .text p {
+    margin: 0 0 28px;
+  }
+
+  .text .small {
+    margin-top: 60px;
+    font-family: monospace;
+    font-size: 13px;
+    color: #172536;
+  }
+
+  .back {
+    display: inline-block;
+    margin-top: 90px;
+    color: #172536;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  footer {
+    margin-top: 100px;
+    padding-top: 25px;
+    border-top: 1px solid #172536;
+    display: flex;
+    justify-content: space-between;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  @media (max-width: 700px) {
+    .page {
+      padding: 35px 20px;
+    }
+
+    header {
+      display: block;
+      margin-bottom: 60px;
+    }
+
+    nav {
+      margin-top: 25px;
+      gap: 16px;
+    }
+
+    .about {
+      max-width: none;
+    }
+
+    .text {
+      margin-left: 0;
+      margin-top: 50px;
+      font-size: 16px;
+    }
+
+    footer {
+      display: block;
+      line-height: 2;
+    }
+  }
+</style>
