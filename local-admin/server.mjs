@@ -73,7 +73,7 @@ ${content}
   await fs.writeFile(filePath, markdown, "utf-8");
 
   try {
-    await execFileAsync("git", ["add", filePath]);
+    await execFileAsync("git", ["add", "."]);
     await execFileAsync("git", [
       "commit",
       "-m",
