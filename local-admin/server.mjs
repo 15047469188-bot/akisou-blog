@@ -1,6 +1,10 @@
 import http from "node:http";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
 
 const root = process.cwd();
 
@@ -67,6 +71,23 @@ ${content}
 `;
 
   await fs.writeFile(filePath, markdown, "utf-8");
+
+  try {
+    await execFileAsync("git", ["add", filePath]);
+    await execFileAsync("git", [
+      "commit",
+      "-m",
+      `publish: ${title}`,
+    ]);
+    await execFileAsync("git", ["push"]);
+  } catch (error) {
+    console.error("Git 自动发布失败：", error);
+
+    return {
+      success: false,
+      message: "文章已生成，但自动同步到 GitHub 失败，请检查终端。",
+    };
+  }
 
   return {
     success: true,
