@@ -1,9 +1,7 @@
 import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
-
-import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  output: 'server',
-  adapter: vercel(),
+  output: 'static',
+  site: 'https://15047469188-bot.github.io',
+  base: '/akisou-blog',
 });
