@@ -70,7 +70,7 @@ const categories = [
   </div>
 
   {posts.map((post) => (
-    <a href={`${import.meta.env.BASE_URL}${post.url}`} class="latest-post">
+    <a href={`${post.url}`} class="latest-post">
       <div class="latest-date">
         {post.frontmatter.date}
       </div>
