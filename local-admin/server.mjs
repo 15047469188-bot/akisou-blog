@@ -631,6 +631,7 @@ document.querySelectorAll(".delete").forEach((button) => {
             "daily/posts/",
             "travel/posts/",
             "subtitles/posts/",
+            "works/posts/",
           ];
 
           if (
@@ -699,6 +700,7 @@ document.querySelectorAll(".delete").forEach((button) => {
             "daily/posts/",
             "travel/posts/",
             "subtitles/posts/",
+            "works/posts/",
           ];
 
           const allowed = allowedPrefixes.some((prefix) =>
