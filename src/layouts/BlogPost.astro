@@ -4,9 +4,9 @@ const { title, date, description } = Astro.props;
 const path = Astro.url.pathname;
 
 const category =
-  path.startsWith("/travel")
+  path.startsWith("/akisou-blog/travel/")
     ? "TRAVEL"
-    : path.startsWith("/subtitles")
+    : path.startsWith("/akisou-blog/subtitles/")
       ? "SUBTITLES"
       : "DAILY LIFE";
 ---
@@ -53,10 +53,10 @@ const category =
       <a
         href={
           category === "TRAVEL"
-            ? "/travel"
+            ? "/akisou-blog/travel/"
             : category === "SUBTITLES"
-              ? "/subtitles"
-              : "/daily"
+              ? "/akisou-blog/subtitles/"
+              : "/akisou-blog/daily/"
         }
         class="back"
       >
