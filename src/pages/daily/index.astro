@@ -1,12 +1,7 @@
 ---
-const posts = [
-  {
-    date: "2026.10.03",
-    title: "关于这个 Blog",
-    description: "记录这个 Blog 是怎么开始的，以及我为什么想留下这些文字。",
-    url: "/akisou-blog/daily/posts/about-this-blog/",
-  },
-];
+const posts = Object.values(
+  import.meta.glob("./posts/*.md", { eager: true })
+);
 ---
 
 <!doctype html>
@@ -45,16 +40,16 @@ const posts = [
 
         <div class="section-title">
           <span>POSTS</span>
-          <span>01</span>
+          <span>{posts.length.toString().padStart(2, "0")}</span>
         </div>
 
         {posts.map((post) => (
           <a href={post.url} class="post">
-            <div class="date">{post.date}</div>
+            <div class="date">{post.frontmatter.date}</div>
 
             <div class="main">
-              <h2>{post.title}</h2>
-              <p>{post.description}</p>
+              <h2>{post.frontmatter.title}</h2>
+              <p>{post.frontmatter.description}</p>
             </div>
 
             <div class="arrow">↗</div>
