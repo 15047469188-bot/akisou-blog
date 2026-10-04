@@ -387,7 +387,7 @@ form.addEventListener("submit", async (event) => {
     }
 
     if (req.method === "GET" && req.url === "/admin/posts") {
-      const categories = ["daily", "travel", "subtitles"];
+      const categories = ["daily", "travel", "subtitles", "works"];
       const posts = [];
 
       for (const category of categories) {
