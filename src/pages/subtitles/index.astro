@@ -38,27 +38,27 @@ const posts = Object.values(
 
       <section class="posts">
 
-  <div class="section-title">
-    <span>POSTS</span>
-    <span>{posts.length.toString().padStart(2, "0")}</span>
-  </div>
+        <div class="section-title">
+          <span>POSTS</span>
+          <span>{posts.length.toString().padStart(2, "0")}</span>
+        </div>
 
-  {posts.map((post) => (
-    <a href={post.url} class="post">
-      <div class="post-date">
-        {post.frontmatter.date}
-      </div>
+        {posts.map((post) => (
+          <a href={post.url} class="post">
+            <div class="post-date">
+              {post.frontmatter.date}
+            </div>
 
-      <div class="post-main">
-        <h2>{post.frontmatter.title}</h2>
-        <p>{post.frontmatter.description}</p>
-      </div>
+            <div class="post-main">
+              <h2>{post.frontmatter.title}</h2>
+              <p>{post.frontmatter.description}</p>
+            </div>
 
-      <div class="post-arrow">↗</div>
-    </a>
-  ))}
+            <div class="post-arrow">↗</div>
+          </a>
+        ))}
 
-</section>
+      </section>
 
       <a href="/" class="back">← BACK HOME</a>
 
@@ -78,8 +78,8 @@ const posts = Object.values(
 
   :global(body) {
     margin: 0;
-    background: #f7f8f6;
-    color: #172536;
+    background: #f5f9fe;
+    color: #203b57;
     font-family:
       -apple-system,
       BlinkMacSystemFont,
@@ -99,11 +99,11 @@ const posts = Object.values(
     justify-content: space-between;
     align-items: center;
     padding-bottom: 22px;
-    border-bottom: 1px solid #172536;
+    border-bottom: 1px solid #203b57;
   }
 
   .logo {
-    color: #172536;
+    color: #203b57;
     text-decoration: none;
     font-family: monospace;
     font-size: 18px;
@@ -116,7 +116,7 @@ const posts = Object.values(
   }
 
   nav a {
-    color: #172536;
+    color: #203b57;
     text-decoration: none;
     font-family: monospace;
     font-size: 13px;
@@ -124,7 +124,7 @@ const posts = Object.values(
 
   nav a:hover,
   .back:hover {
-    color: #e87532;
+    color: #4a90d9;
   }
 
   .intro {
@@ -133,7 +133,7 @@ const posts = Object.values(
 
   .intro > p:first-child {
     margin: 0 0 30px;
-    color: #e87532;
+    color: #4a90d9;
     font-family: monospace;
     font-size: 13px;
   }
@@ -147,7 +147,7 @@ const posts = Object.values(
 
   .description {
     margin-top: 35px;
-    color: #697681;
+    color: #536f89;
     font-size: 17px;
   }
 
@@ -155,63 +155,59 @@ const posts = Object.values(
     display: flex;
     justify-content: space-between;
     padding: 16px 0;
-    border-top: 1px solid #172536;
-    border-bottom: 1px solid #ccd2d6;
+    border-top: 1px solid #203b57;
+    border-bottom: 1px solid #c9ddf2;
     font-family: monospace;
     font-size: 13px;
   }
 
   .section-title span:last-child {
-    color: #e87532;
+    color: #4a90d9;
   }
 
- .post {
-  display: grid;
-  grid-template-columns: 150px 1fr 30px;
-  gap: 30px;
-  align-items: center;
+  .post {
+    display: grid;
+    grid-template-columns: 150px 1fr 30px;
+    gap: 30px;
+    align-items: center;
+    padding: 35px 0;
+    color: #203b57;
+    text-decoration: none;
+    border-bottom: 1px solid #c9ddf2;
+    transition: all 0.25s ease;
+  }
 
-  padding: 35px 0;
+  .post:hover {
+    color: #4a90d9;
+    padding-left: 10px;
+  }
 
-  color: #172536;
-  text-decoration: none;
+  .post-date {
+    font-family: monospace;
+    color: #71859a;
+    font-size: 13px;
+  }
 
-  border-bottom: 1px solid #ccd2d6;
+  .post-main h2 {
+    margin: 0 0 10px;
+    font-size: 25px;
+    font-weight: 500;
+  }
 
-  transition: all 0.25s ease;
-}
+  .post-main p {
+    margin: 0;
+    color: #71859a;
+    font-size: 14px;
+  }
 
-.post:hover {
-  color: #e87532;
-  padding-left: 10px;
-}
-
-.post-date {
-  font-family: monospace;
-  color: #697681;
-  font-size: 13px;
-}
-
-.post-main h2 {
-  margin: 0 0 10px;
-  font-size: 25px;
-  font-weight: 500;
-}
-
-.post-main p {
-  margin: 0;
-  color: #697681;
-  font-size: 14px;
-}
-
-.post-arrow {
-  font-size: 22px;
-}
+  .post-arrow {
+    font-size: 22px;
+  }
 
   .back {
     display: inline-block;
     margin-top: 80px;
-    color: #172536;
+    color: #203b57;
     text-decoration: none;
     font-family: monospace;
     font-size: 13px;
@@ -222,9 +218,10 @@ const posts = Object.values(
     justify-content: space-between;
     margin-top: 100px;
     padding-top: 20px;
-    border-top: 1px solid #172536;
+    border-top: 1px solid #203b57;
     font-family: monospace;
     font-size: 12px;
+    color: #71859a;
   }
 
   @media (max-width: 700px) {

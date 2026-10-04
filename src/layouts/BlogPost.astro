@@ -34,9 +34,9 @@ const category =
       <article>
 
         <div class="meta">
-  <span>{category}</span>
-  <span>{date}</span>
-</div>
+          <span>{category}</span>
+          <span>{date}</span>
+        </div>
 
         <h1>{title}</h1>
 
@@ -50,9 +50,24 @@ const category =
 
       </article>
 
-      <a href={category === "TRAVEL" ? "/travel" : category === "SUBTITLES" ? "/subtitles" : "/daily"} class="back">
-  ← BACK TO {category === "TRAVEL" ? "TRAVEL" : category === "SUBTITLES" ? "SUBTITLES" : "DAILY"}
-</a>
+      <a
+        href={
+          category === "TRAVEL"
+            ? "/travel"
+            : category === "SUBTITLES"
+              ? "/subtitles"
+              : "/daily"
+        }
+        class="back"
+      >
+        ← BACK TO {
+          category === "TRAVEL"
+            ? "TRAVEL"
+            : category === "SUBTITLES"
+              ? "SUBTITLES"
+              : "DAILY"
+        }
+      </a>
 
       <footer>
         <span>AKISOU'S BLOG</span>
@@ -64,22 +79,14 @@ const category =
 </html>
 
 <style>
-.content :global(.caption) {
-  display: block !important;
-  margin: -25px 0 40px !important;
-  color: #697681 !important;
-  font-family: monospace !important;
-  font-size: 12px !important;
-  line-height: 1.6 !important;
-}
   :global(*) {
     box-sizing: border-box;
   }
 
   :global(body) {
     margin: 0;
-    background: #f7f8f6;
-    color: #172536;
+    background: #f5f9fe;
+    color: #203b57;
     font-family:
       -apple-system,
       BlinkMacSystemFont,
@@ -99,15 +106,20 @@ const category =
     justify-content: space-between;
     align-items: center;
     padding-bottom: 22px;
-    border-bottom: 1px solid #172536;
+    border-bottom: 1px solid #203b57;
   }
 
   .logo {
-    color: #172536;
+    color: #203b57;
     text-decoration: none;
     font-family: monospace;
     font-size: 18px;
     letter-spacing: 0.05em;
+    transition: color 0.25s ease;
+  }
+
+  .logo:hover {
+    color: #4a90d9;
   }
 
   nav {
@@ -116,15 +128,16 @@ const category =
   }
 
   nav a {
-    color: #172536;
+    color: #203b57;
     text-decoration: none;
     font-family: monospace;
     font-size: 13px;
+    transition: color 0.25s ease;
   }
 
   nav a:hover,
   .back:hover {
-    color: #e87532;
+    color: #4a90d9;
   }
 
   article {
@@ -134,13 +147,14 @@ const category =
   .meta {
     display: flex;
     justify-content: space-between;
-    color: #e87532;
+    color: #4a90d9;
     font-family: monospace;
     font-size: 13px;
   }
 
   h1 {
     margin: 35px 0 25px;
+    color: #203b57;
     font-size: clamp(48px, 8vw, 82px);
     line-height: 1;
     font-weight: 500;
@@ -149,67 +163,85 @@ const category =
 
   .description {
     margin: 0;
-    color: #697681;
+    color: #71859a;
     font-size: 16px;
     line-height: 1.8;
   }
 
   .line {
     margin: 55px 0;
-    border-top: 1px solid #ccd2d6;
+    border-top: 1px solid #c9ddf2;
   }
 
   .content {
     max-width: 700px;
+    color: #29445f;
     font-size: 17px;
     line-height: 2;
   }
 
   .content :global(h1) {
+    color: #203b57;
     font-size: 32px;
     margin: 0 0 30px;
   }
-.content :global(h2) {
-  margin: 60px 0 20px;
-  padding-left: 15px;
-  border-left: 3px solid #e87532;
-  font-size: 26px;
-  line-height: 1.4;
-  font-weight: 500;
-}
+
+  .content :global(h2) {
+    margin: 60px 0 20px;
+    padding-left: 15px;
+    border-left: 3px solid #5aa7e8;
+    color: #28557d;
+    font-size: 26px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
 
   .content :global(p) {
     margin: 0 0 28px;
   }
-.content :global(img) {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin: 40px 0;
-}
-.content :global(figure) {
-  margin: 40px 0;
-}
-.content :global(figcaption) {
-  margin-top: -25px;
-  margin-bottom: 40px;
-  color: #697681;
-  font-family: monospace;
-  font-size: 12px;
-  line-height: 1.6;
-}
+
+  .content :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 40px 0;
+  }
+
+  .content :global(figure) {
+    margin: 40px 0;
+  }
+
+  .content :global(figcaption) {
+    margin-top: -25px;
+    margin-bottom: 40px;
+    color: #71859a;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .content :global(.caption) {
+    display: block !important;
+    margin: -25px 0 40px !important;
+    color: #71859a !important;
+    font-family: monospace !important;
+    font-size: 12px !important;
+    line-height: 1.6 !important;
+  }
 
   .content :global(strong) {
+    color: #28557d;
     font-weight: 600;
   }
 
   .back {
     display: inline-block;
     margin-top: 60px;
-    color: #172536;
+    color: #203b57;
     text-decoration: none;
     font-family: monospace;
     font-size: 13px;
+    transition: color 0.25s ease;
   }
 
   footer {
@@ -217,9 +249,10 @@ const category =
     justify-content: space-between;
     margin-top: 100px;
     padding-top: 20px;
-    border-top: 1px solid #172536;
+    border-top: 1px solid #203b57;
     font-family: monospace;
     font-size: 12px;
+    color: #71859a;
   }
 
   @media (max-width: 700px) {

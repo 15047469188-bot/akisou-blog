@@ -5,7 +5,6 @@ import path from "node:path";
 export const POST: APIRoute = async ({ request }) => {
   try {
     const data = await request.json();
-
     const file = String(data.file || "").trim();
 
     if (!file) {
@@ -21,18 +20,13 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const filePath = path.resolve(
-      process.cwd(),
-      "src/pages/admin/posts",
-      file
-    );
+    const relativeFile = file.replace(/^(\.\.\/)+/, "");
 
-    const allowedPath = path.resolve(
-      process.cwd(),
-      "src/pages"
-    );
-
-    if (!filePath.startsWith(allowedPath + path.sep)) {
+    if (
+      !relativeFile.startsWith("daily/posts/") &&
+      !relativeFile.startsWith("travel/posts/") &&
+      !relativeFile.startsWith("subtitles/posts/")
+    ) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -44,6 +38,12 @@ export const POST: APIRoute = async ({ request }) => {
         }
       );
     }
+
+    const filePath = path.resolve(
+      process.cwd(),
+      "src/pages",
+      relativeFile
+    );
 
     await fs.unlink(filePath);
 

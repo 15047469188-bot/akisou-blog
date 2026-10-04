@@ -4,12 +4,13 @@ const posts = Object.values(
 ).sort((a, b) =>
   b.frontmatter.date.localeCompare(a.frontmatter.date)
 );
+
 const categories = [
   {
     name: "日常",
     english: "DAILY LIFE",
     description: "一些普通但想留下来的日子。",
-   url: `${import.meta.env.BASE_URL}/daily/`,
+    url: `${import.meta.env.BASE_URL}/daily/`,
   },
   {
     name: "旅行",
@@ -39,11 +40,13 @@ const categories = [
 
       <!-- 顶部 -->
       <header>
-        <a href="/" class="logo">AKISOU'S BLOG</a>
+        <a href={import.meta.env.BASE_URL} class="logo">
+          AKISOU'S BLOG
+        </a>
 
         <nav>
-         <a href={import.meta.env.BASE_URL}>HOME</a>
-<a href={`${import.meta.env.BASE_URL}/about`}>ABOUT</a>
+          <a href={import.meta.env.BASE_URL}>HOME</a>
+          <a href={`${import.meta.env.BASE_URL}/about`}>ABOUT</a>
         </nav>
       </header>
 
@@ -61,31 +64,32 @@ const categories = [
         </p>
       </section>
 
-      <!-- 分类 -->
+      <!-- 最新文章 -->
       <section class="latest">
 
-  <div class="section-title">
-    <span>LATEST</span>
-    <span>{posts.length.toString().padStart(2, "0")}</span>
-  </div>
+        <div class="section-title">
+          <span>LATEST</span>
+          <span>{posts.length.toString().padStart(2, "0")}</span>
+        </div>
 
-  {posts.map((post) => (
-    <a href={`${post.url}`} class="latest-post">
-      <div class="latest-date">
-        {post.frontmatter.date}
-      </div>
+        {posts.map((post) => (
+          <a href={`${post.url}`} class="latest-post">
+            <div class="latest-date">
+              {post.frontmatter.date}
+            </div>
 
-      <div class="latest-main">
-        <h2>{post.frontmatter.title}</h2>
-        <p>{post.frontmatter.description}</p>
-      </div>
+            <div class="latest-main">
+              <h2>{post.frontmatter.title}</h2>
+              <p>{post.frontmatter.description}</p>
+            </div>
 
-      <div class="latest-arrow">↗</div>
-    </a>
-  ))}
+            <div class="latest-arrow">↗</div>
+          </a>
+        ))}
 
-</section>
+      </section>
 
+      <!-- 分类 -->
       <section class="categories">
 
         <div class="section-title">
@@ -95,6 +99,7 @@ const categories = [
 
         {categories.map((category, index) => (
           <a href={category.url} class="category">
+
             <div class="number">
               0{index + 1}
             </div>
@@ -111,6 +116,7 @@ const categories = [
             <div class="arrow">
               ↗
             </div>
+
           </a>
         ))}
 
@@ -133,8 +139,8 @@ const categories = [
 
   :global(body) {
     margin: 0;
-    background: #f7f8f6;
-    color: #172536;
+    background: #f5f8fc;
+    color: #18324f;
     font-family:
       -apple-system,
       BlinkMacSystemFont,
@@ -156,15 +162,20 @@ const categories = [
     justify-content: space-between;
     align-items: center;
     padding-bottom: 22px;
-    border-bottom: 1px solid #172536;
+    border-bottom: 1px solid #18324f;
   }
 
   .logo {
-    color: #172536;
+    color: #18324f;
     text-decoration: none;
     font-family: monospace;
     font-size: 18px;
     letter-spacing: 0.05em;
+    transition: color 0.25s ease;
+  }
+
+  .logo:hover {
+    color: #3f78b5;
   }
 
   nav {
@@ -173,14 +184,15 @@ const categories = [
   }
 
   nav a {
-    color: #172536;
+    color: #18324f;
     text-decoration: none;
     font-family: monospace;
     font-size: 13px;
+    transition: color 0.25s ease;
   }
 
   nav a:hover {
-    color: #e87532;
+    color: #3f78b5;
   }
 
   /* 首页介绍 */
@@ -191,13 +203,15 @@ const categories = [
 
   .hello {
     margin: 0 0 28px;
-    color: #e87532;
+    color: #3f78b5;
     font-family: monospace;
     font-size: 13px;
+    letter-spacing: 0.04em;
   }
 
   h1 {
     margin: 0;
+    color: #18324f;
     font-size: clamp(52px, 9vw, 100px);
     line-height: 0.95;
     font-weight: 500;
@@ -205,78 +219,85 @@ const categories = [
   }
 
   h1 span {
-    color: #e87532;
+    color: #3f78b5;
   }
 
   .description {
     margin: 45px 0 0;
-    color: #52606d;
+    color: #5f7185;
     font-size: 18px;
     letter-spacing: 0.08em;
   }
 
-/* 最新文章 */
+  /* 最新文章 */
 
-.latest {
-  margin-bottom: 100px;
-}
+  .latest {
+    margin-bottom: 100px;
+  }
 
-.latest-post {
-  display: grid;
-  grid-template-columns: 150px 1fr 30px;
-  gap: 30px;
-  align-items: center;
+  .latest-post {
+    display: grid;
+    grid-template-columns: 150px 1fr 30px;
+    gap: 30px;
+    align-items: center;
 
-  padding: 35px 0;
+    padding: 35px 0;
 
-  color: #172536;
-  text-decoration: none;
+    color: #18324f;
+    text-decoration: none;
 
-  border-bottom: 1px solid #ccd2d6;
+    border-bottom: 1px solid #c9d8eb;
 
-  transition: all 0.25s ease;
-}
+    transition:
+      color 0.25s ease,
+      padding-left 0.25s ease,
+      background 0.25s ease;
+  }
 
-.latest-post:hover {
-  color: #e87532;
-  padding-left: 10px;
-}
+  .latest-post:hover {
+    color: #3f78b5;
+    padding-left: 10px;
+  }
 
-.latest-date {
-  font-family: monospace;
-  color: #697681;
-  font-size: 13px;
-}
+  .latest-date {
+    font-family: monospace;
+    color: #71849a;
+    font-size: 13px;
+  }
 
-.latest-main h2 {
-  margin: 0 0 10px;
-  font-size: 25px;
-  font-weight: 500;
-}
+  .latest-main h2 {
+    margin: 0 0 10px;
+    font-size: 25px;
+    font-weight: 500;
+  }
 
-.latest-main p {
-  margin: 0;
-  color: #697681;
-  font-size: 14px;
-}
+  .latest-main p {
+    margin: 0;
+    color: #71849a;
+    font-size: 14px;
+  }
 
-.latest-arrow {
-  font-size: 22px;
-}
+  .latest-arrow {
+    font-size: 22px;
+    color: #3f78b5;
+  }
+
   /* 分类 */
 
   .section-title {
     display: flex;
     justify-content: space-between;
     padding: 16px 0;
-    border-top: 1px solid #172536;
-    border-bottom: 1px solid #ccd2d6;
+
+    border-top: 1px solid #18324f;
+    border-bottom: 1px solid #c9d8eb;
+
     font-family: monospace;
     font-size: 13px;
   }
 
   .section-title span:last-child {
-    color: #e87532;
+    color: #3f78b5;
   }
 
   .category {
@@ -287,22 +308,24 @@ const categories = [
 
     padding: 38px 0;
 
-    color: #172536;
+    color: #18324f;
     text-decoration: none;
 
-    border-bottom: 1px solid #ccd2d6;
+    border-bottom: 1px solid #c9d8eb;
 
-    transition: all 0.25s ease;
+    transition:
+      color 0.25s ease,
+      padding-left 0.25s ease;
   }
 
   .category:hover {
-    color: #e87532;
+    color: #3f78b5;
     padding-left: 10px;
   }
 
   .number {
     font-family: monospace;
-    color: #697681;
+    color: #71849a;
   }
 
   .category-main h2 {
@@ -313,18 +336,19 @@ const categories = [
 
   .category-main p {
     margin: 0;
-    color: #697681;
+    color: #71849a;
     font-size: 14px;
   }
 
   .english {
     font-family: monospace;
     font-size: 13px;
-    color: #697681;
+    color: #71849a;
   }
 
   .arrow {
     font-size: 22px;
+    color: #3f78b5;
   }
 
   /* 底部 */
@@ -336,24 +360,27 @@ const categories = [
     margin-top: 100px;
     padding-top: 20px;
 
-    border-top: 1px solid #172536;
+    border-top: 1px solid #18324f;
 
     font-family: monospace;
     font-size: 12px;
+
+    color: #71849a;
   }
 
   /* 手机 */
 
   @media (max-width: 700px) {
 
-.latest-post {
-  grid-template-columns: 1fr 25px;
-  gap: 10px;
-}
+    .latest-post {
+      grid-template-columns: 1fr 25px;
+      gap: 10px;
+    }
 
-.latest-date {
-  grid-column: 1 / -1;
-}
+    .latest-date {
+      grid-column: 1 / -1;
+    }
+
     .page {
       padding: 30px 20px;
     }
