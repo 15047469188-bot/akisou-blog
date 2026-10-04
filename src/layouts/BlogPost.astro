@@ -8,7 +8,9 @@ const category =
     ? "TRAVEL"
     : path.startsWith("/akisou-blog/subtitles/")
       ? "SUBTITLES"
-      : "DAILY LIFE";
+      : path.startsWith("/akisou-blog/works/")
+        ? "WORKS"
+        : "DAILY LIFE";
 ---
 
 <!doctype html>
