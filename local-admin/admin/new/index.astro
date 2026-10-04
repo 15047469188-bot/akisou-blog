@@ -5,6 +5,67 @@
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(".form");
 
+    const imageFile = document.querySelector("#imageFile");
+    const imageStatus = document.querySelector("#imageStatus");
+
+    imageFile?.addEventListener("change", async () => {
+      const file = imageFile.files?.[0];
+
+      if (!file) return;
+
+      imageStatus.textContent = "正在上传……";
+
+      const reader = new FileReader();
+
+      reader.onload = async () => {
+        try {
+          const response = await fetch("/api/upload-image", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              fileName: file.name,
+              fileData: reader.result,
+            }),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+const content = document.querySelector('textarea[name="content"]');
+
+if (content) {
+  const markdown = `\n![${result.fileName}](${result.url})\n`;
+
+  const start = content.selectionStart;
+  const end = content.selectionEnd;
+
+  content.value =
+    content.value.slice(0, start) +
+    markdown +
+    content.value.slice(end);
+
+  content.focus();
+
+  const newPosition = start + markdown.length;
+  content.selectionStart = newPosition;
+  content.selectionEnd = newPosition;
+}
+
+imageStatus.textContent = "图片上传成功！已插入正文。";
+          } else {
+            imageStatus.textContent = result.message;
+          }
+        } catch (error) {
+          console.error(error);
+          imageStatus.textContent = "图片上传失败。";
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+
     form?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -97,6 +158,14 @@
               placeholder="从这里开始写文章……"
             ></textarea>
           </label>
+
+          <div class="image-upload">
+            <label class="image-button">
+              📷 选择图片
+              <input type="file" id="imageFile" accept="image/*" />
+            </label>
+            <span id="imageStatus"></span>
+          </div>
 
           <button type="submit">PUBLISH ↗</button>
 

@@ -14,6 +14,50 @@ async function renderAstro(filePath) {
   return source.replace(/^---[\s\S]*?---/, "");
 }
 
+
+async function uploadImage(data) {
+  const fileName = String(data.fileName || "").trim();
+  const fileData = String(data.fileData || "").trim();
+
+  if (!fileName || !fileData) {
+    return {
+      success: false,
+      message: "没有收到图片。",
+    };
+  }
+
+  const ext = path.extname(fileName).toLowerCase();
+  const allowedExt = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+
+  if (!allowedExt.includes(ext)) {
+    return {
+      success: false,
+      message: "只支持 JPG、PNG、GIF、WEBP 图片。",
+    };
+  }
+
+  const safeName = `${Date.now()}-${path
+    .basename(fileName, ext)
+    .replace(/[^\w\u4e00-\u9fff-]+/g, "-")}${ext}`;
+
+  const imageDir = path.join(root, "public", "images");
+
+  await fs.mkdir(imageDir, { recursive: true });
+
+  const base64 = fileData.replace(/^data:image\/\w+;base64,/, "");
+  const buffer = Buffer.from(base64, "base64");
+
+  const imagePath = path.join(imageDir, safeName);
+
+  await fs.writeFile(imagePath, buffer);
+
+  return {
+    success: true,
+    fileName: safeName,
+    url: `/akisou-blog/images/${safeName}`,
+  };
+}
+
 async function publish(data) {
   const title = String(data.title || "").trim();
   const category = String(data.category || "").trim();
@@ -715,6 +759,42 @@ ${String(data.content || "")}
 
       return;
     }
+    if (req.method === "POST" && req.url === "/api/upload-image") {
+      let body = "";
+
+      req.on("data", (chunk) => {
+        body += chunk;
+      });
+
+      req.on("end", async () => {
+        try {
+          const data = JSON.parse(body);
+          const result = await uploadImage(data);
+
+          res.writeHead(result.success ? 200 : 400, {
+            "Content-Type": "application/json; charset=utf-8",
+          });
+
+          res.end(JSON.stringify(result));
+        } catch (error) {
+          console.error(error);
+
+          res.writeHead(500, {
+            "Content-Type": "application/json; charset=utf-8",
+          });
+
+          res.end(
+            JSON.stringify({
+              success: false,
+              message: "图片上传失败，请检查终端。",
+            })
+          );
+        }
+      });
+
+      return;
+    }
+
     if (req.method === "POST" && req.url === "/api/publish") {
       let body = "";
 
