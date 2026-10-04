@@ -16,17 +16,40 @@
         <span>ADMIN</span>
       </header>
 
-      <section>
+      <section class="hero">
         <p class="number">ADMIN / 01</p>
 
-        <h1>写一篇新文章</h1>
+        <h1>BLOG<br />MANAGEMENT</h1>
 
         <p class="description">
-          从这里开始记录日常、旅行和字幕。
+          管理你的日常、旅行和字幕文章。
         </p>
-
-        <a href="/admin/new" class="new-post">NEW POST ↗</a>
       </section>
+
+      <section class="menu">
+        <a href="/admin/new" class="menu-item">
+          <div>
+            <span class="menu-number">01</span>
+            <h2>NEW POST</h2>
+            <p>写一篇新的文章</p>
+          </div>
+          <span class="arrow">↗</span>
+        </a>
+
+        <a href="/admin/posts" class="menu-item">
+          <div>
+            <span class="menu-number">02</span>
+            <h2>MANAGE POSTS</h2>
+            <p>编辑、删除已有文章</p>
+          </div>
+          <span class="arrow">↗</span>
+        </a>
+      </section>
+
+      <footer>
+        <span>AKISOU'S BLOG</span>
+        <a href="/akisou-blog/" target="_blank">VIEW BLOG ↗</a>
+      </footer>
     </main>
   </body>
 </html>
@@ -38,8 +61,8 @@
 
   :global(body) {
     margin: 0;
-    background: #f7f8f6;
-    color: #172536;
+    background: #f5f9fe;
+    color: #203b57;
     font-family:
       -apple-system,
       BlinkMacSystemFont,
@@ -51,7 +74,7 @@
   main {
     max-width: 900px;
     margin: 0 auto;
-    padding: 55px 30px;
+    padding: 55px 30px 40px;
   }
 
   header {
@@ -59,53 +82,109 @@
     justify-content: space-between;
     align-items: center;
     padding-bottom: 22px;
-    border-bottom: 1px solid #172536;
+    border-bottom: 1px solid #203b57;
     font-family: monospace;
     font-size: 13px;
   }
 
   .logo {
-    color: #172536;
+    color: #203b57;
     text-decoration: none;
     font-size: 18px;
     letter-spacing: 0.05em;
   }
 
-  section {
-    padding: 120px 0;
+  .hero {
+    padding: 90px 0 70px;
   }
 
-  .number {
-    color: #e87532;
+  .number,
+  .menu-number {
+    color: #4a90d9;
     font-family: monospace;
     font-size: 13px;
+    letter-spacing: 0.08em;
   }
 
   h1 {
-    margin: 30px 0 20px;
-    font-size: clamp(48px, 8vw, 80px);
-    line-height: 1;
+    margin: 28px 0 22px;
+    font-size: clamp(52px, 9vw, 88px);
+    line-height: 0.95;
     font-weight: 500;
     letter-spacing: -0.06em;
   }
 
   .description {
-    color: #697681;
+    color: #536f89;
     font-size: 16px;
   }
 
- .new-post {
-    margin-top: 45px;
-    padding: 16px 24px;
-    border: 1px solid #172536;
-    background: transparent;
-    color: #172536;
-    font-family: monospace;
-    cursor: pointer;
+  .menu {
+    border-top: 1px solid #c9ddf2;
   }
 
-  .new-post:hover {
-    background: #172536;
-    color: #f7f8f6;
+  .menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px 8px;
+    border-bottom: 1px solid #c9ddf2;
+    color: #203b57;
+    text-decoration: none;
+    transition: 0.2s ease;
+  }
+
+  .menu-item:hover {
+    padding-left: 18px;
+    padding-right: 18px;
+    background: #eaf3fc;
+  }
+
+  h2 {
+    margin: 8px 0 6px;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+
+  .menu-item p {
+    margin: 0;
+    color: #71859a;
+    font-size: 14px;
+  }
+
+  .arrow {
+    font-size: 28px;
+    color: #4a90d9;
+  }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 70px;
+    padding-top: 20px;
+    border-top: 1px solid #c9ddf2;
+    color: #71859a;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  footer a {
+    color: #4a90d9;
+    text-decoration: none;
+  }
+
+  @media (max-width: 600px) {
+    main {
+      padding: 30px 20px;
+    }
+
+    .hero {
+      padding: 70px 0 50px;
+    }
+
+    h1 {
+      font-size: 54px;
+    }
   }
 </style>
