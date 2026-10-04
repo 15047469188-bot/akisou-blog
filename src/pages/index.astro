@@ -1,6 +1,8 @@
 ---
 const posts = Object.values(
-  import.meta.glob("./{daily,travel,subtitles}/posts/*.md", { eager: true })
+  import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
+    eager: true,
+  })
 ).sort((a, b) =>
   b.frontmatter.date.localeCompare(a.frontmatter.date)
 );
@@ -23,6 +25,12 @@ const categories = [
     english: "SUBTITLES",
     description: "关于字幕、日语和喜欢的作品。",
     url: `${import.meta.env.BASE_URL}/subtitles/`,
+  },
+  {
+    name: "作品分享",
+    english: "WORKS",
+    description: "喜欢的书、电影、舞台剧，以及想留下来的作品。",
+    url: `${import.meta.env.BASE_URL}/works/`,
   },
 ];
 ---
@@ -94,7 +102,7 @@ const categories = [
 
         <div class="section-title">
           <span>EXPLORE</span>
-          <span>01 — 03</span>
+          <span>01 — 04</span>
         </div>
 
         {categories.map((category, index) => (

@@ -1,0 +1,246 @@
+---
+const posts = Object.values(
+  import.meta.glob("./posts/*.md", { eager: true })
+);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WORKS / AKISOU'S BLOG</title>
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <a href="/akisou-blog/" class="logo">AKISOU'S BLOG</a>
+
+        <nav>
+          <a href="/akisou-blog/">HOME</a>
+          <a href="/akisou-blog/about/">ABOUT</a>
+        </nav>
+      </header>
+
+      <section class="hero">
+        <p class="number">WORKS / 04</p>
+
+        <h1>作品分享</h1>
+
+        <p class="description">
+          喜欢的书、电影、舞台剧，以及想留下来的作品。
+        </p>
+      </section>
+
+      <section class="posts">
+        <div class="section-title">
+          <span>WORKS</span>
+          <span>{posts.length.toString().padStart(2, "0")}</span>
+        </div>
+
+        {posts.length === 0 ? (
+          <p class="empty">还没有作品分享。</p>
+        ) : (
+          posts
+            .sort((a, b) =>
+              b.frontmatter.date.localeCompare(a.frontmatter.date)
+            )
+            .map((post) => (
+              <a href={post.url} class="post">
+                <div class="date">
+                  {post.frontmatter.date}
+                </div>
+
+                <div class="main">
+                  <h2>{post.frontmatter.title}</h2>
+                  <p>{post.frontmatter.description}</p>
+                </div>
+
+                <div class="arrow">↗</div>
+              </a>
+            ))
+        )}
+      </section>
+
+      <footer>
+        <a href="/akisou-blog/">← BACK TO BLOG</a>
+        <span>WORKS</span>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #f5f8fc;
+    color: #18324f;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+  }
+
+  main {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 55px 30px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #18324f;
+  }
+
+  .logo {
+    color: #18324f;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  nav {
+    display: flex;
+    gap: 28px;
+  }
+
+  nav a {
+    color: #18324f;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .hero {
+    padding: 100px 0 90px;
+  }
+
+  .number {
+    margin: 0 0 25px;
+    color: #3f78b5;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(52px, 9vw, 90px);
+    font-weight: 500;
+    letter-spacing: -0.06em;
+  }
+
+  .description {
+    margin-top: 35px;
+    color: #5f7185;
+    font-size: 16px;
+  }
+
+  .section-title {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-top: 1px solid #18324f;
+    border-bottom: 1px solid #c9d8eb;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .section-title span:last-child {
+    color: #3f78b5;
+  }
+
+  .post {
+    display: grid;
+    grid-template-columns: 150px 1fr 30px;
+    gap: 30px;
+    align-items: center;
+    padding: 35px 0;
+    color: #18324f;
+    text-decoration: none;
+    border-bottom: 1px solid #c9d8eb;
+    transition: 0.25s ease;
+  }
+
+  .post:hover {
+    color: #3f78b5;
+    padding-left: 10px;
+  }
+
+  .date {
+    color: #71849a;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .main h2 {
+    margin: 0 0 10px;
+    font-size: 25px;
+    font-weight: 500;
+  }
+
+  .main p {
+    margin: 0;
+    color: #71849a;
+    font-size: 14px;
+  }
+
+  .arrow {
+    color: #3f78b5;
+    font-size: 22px;
+  }
+
+  .empty {
+    padding: 45px 0;
+    color: #71849a;
+  }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 100px;
+    padding-top: 20px;
+    border-top: 1px solid #18324f;
+    color: #71849a;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  footer a {
+    color: #3f78b5;
+    text-decoration: none;
+  }
+
+  @media (max-width: 700px) {
+    main {
+      padding: 30px 20px;
+    }
+
+    .hero {
+      padding: 75px 0 65px;
+    }
+
+    .post {
+      grid-template-columns: 1fr 25px;
+      gap: 10px;
+    }
+
+    .date {
+      grid-column: 1 / -1;
+    }
+
+    .main h2 {
+      font-size: 21px;
+    }
+  }
+</style>

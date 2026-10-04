@@ -72,12 +72,12 @@ async function publish(data) {
     };
   }
 
-  const categoryMap = {
-    "日常": "daily",
-    "旅行": "travel",
-    "字幕": "subtitles",
-  };
-
+const categoryMap = {
+  "日常": "daily",
+  "旅行": "travel",
+  "字幕": "subtitles",
+  "作品分享": "works",
+};
   const folder = categoryMap[category];
 
   if (!folder) {
@@ -300,10 +300,14 @@ button:hover { background: #e87532; }
 
 <label>
 分类
+<option ${category === "日常" ? "selected" : ""}>日常</option>
+<option ${category === "旅行" ? "selected" : ""}>旅行</option>
+<option ${category === "字幕" ? "selected" : ""}>字幕</option>
 <select name="category">
 <option ${category === "日常" ? "selected" : ""}>日常</option>
 <option ${category === "旅行" ? "selected" : ""}>旅行</option>
 <option ${category === "字幕" ? "selected" : ""}>字幕</option>
+<option ${category === "作品分享" ? "selected" : ""}>作品分享</option>
 </select>
 </label>
 
