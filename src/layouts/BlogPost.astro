@@ -58,7 +58,9 @@ const category =
             ? "/akisou-blog/travel/"
             : category === "SUBTITLES"
               ? "/akisou-blog/subtitles/"
-              : "/akisou-blog/daily/"
+              : category === "WORKS"
+                ? "/akisou-blog/works/"
+                : "/akisou-blog/daily/"
         }
         class="back"
       >
@@ -67,7 +69,9 @@ const category =
             ? "TRAVEL"
             : category === "SUBTITLES"
               ? "SUBTITLES"
-              : "DAILY"
+              : category === "WORKS"
+                ? "WORKS"
+                : "DAILY"
         }
       </a>
 
