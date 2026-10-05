@@ -180,9 +180,10 @@ const category = getValue("category");
         <label>
           分类
           <select name="category">
-            <option selected={category === "日常"}>日常</option>
-            <option selected={category === "旅行"}>旅行</option>
-            <option selected={category === "字幕"}>字幕</option>
+            <option value="日常" selected={category === "日常"}>碎碎念</option>
+            <option value="旅行" selected={category === "旅行"}>到处乱跑</option>
+            <option value="字幕" selected={category === "字幕"}>听写小作坊</option>
+            <option value="作品分享" selected={category === "作品分享"}>书影音游</option>
           </select>
         </label>
 

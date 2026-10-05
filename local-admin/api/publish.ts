@@ -29,6 +29,11 @@ export const POST: APIRoute = async ({ request }) => {
       "日常": "daily",
       "旅行": "travel",
       "字幕": "subtitles",
+      "作品分享": "works",
+      "碎碎念": "daily",
+      "到处乱跑": "travel",
+      "听写小作坊": "subtitles",
+      "书影音游": "works",
     };
 
     const folder = categoryMap[category];
