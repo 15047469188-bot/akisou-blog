@@ -1,0 +1,302 @@
+---
+const posts = Object.values(
+  import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
+    eager: true,
+  })
+).sort((a, b) =>
+  b.frontmatter.date.localeCompare(a.frontmatter.date)
+);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARCHIVE — AKISOU'S BLOG</title>
+  </head>
+
+  <body>
+    <main class="page">
+
+      <header>
+        <a href={import.meta.env.BASE_URL} class="logo">
+          AKISOU'S BLOG
+        </a>
+
+        <nav>
+          <a href={import.meta.env.BASE_URL}>HOME</a>
+          <a href={`${import.meta.env.BASE_URL}/about`}>ABOUT</a>
+          <a href={`${import.meta.env.BASE_URL}/friends`}>FRIENDS</a>
+        </nav>
+      </header>
+
+      <section class="intro">
+        <p class="eyebrow">ARCHIVE / ALL POSTS</p>
+
+        <h1>
+          所有文章，<br />
+          <span>都留在这里。</span>
+        </h1>
+
+        <p class="description">
+          共 {posts.length.toString().padStart(2, "0")} 篇记录
+        </p>
+      </section>
+
+      <section class="archive">
+
+        <div class="section-title">
+          <span>ALL POSTS</span>
+          <span>{posts.length.toString().padStart(2, "0")}</span>
+        </div>
+
+        <div class="archive-grid">
+          {posts.map((post, index) => (
+            <a href={post.url} class="archive-card">
+
+              <div class="archive-top">
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <span>{post.frontmatter.date}</span>
+              </div>
+
+              <div class="archive-main">
+                <h2>{post.frontmatter.title}</h2>
+                <p>{post.frontmatter.description}</p>
+              </div>
+
+              <div class="archive-bottom">
+                <span>{post.frontmatter.category || "BLOG"}</span>
+                <span>↗</span>
+              </div>
+
+            </a>
+          ))}
+        </div>
+
+      </section>
+
+      <footer>
+        <span>AKISOU'S BLOG</span>
+        <span>2026 — NOW</span>
+      </footer>
+
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #F8FCFB;
+    color: #35495E;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+  }
+
+  .page {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 55px 30px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #35495E;
+  }
+
+  .logo {
+    color: #35495E;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  .logo:hover,
+  nav a:hover {
+    color: #7CB1D2;
+  }
+
+  nav {
+    display: flex;
+    gap: 28px;
+  }
+
+  nav a {
+    color: #35495E;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 13px;
+    transition: color 0.25s ease;
+  }
+
+  .intro {
+    padding: 100px 0 100px;
+  }
+
+  .eyebrow {
+    margin: 0 0 28px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+
+  h1 {
+    margin: 0;
+    color: #35495E;
+    font-size: clamp(48px, 8vw, 88px);
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.06em;
+  }
+
+  h1 span {
+    color: #7CB1D2;
+  }
+
+  .description {
+    margin: 35px 0 0;
+    color: #667B7F;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+  }
+
+  .section-title {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-top: 1px solid #35495E;
+    border-bottom: 1px solid #FFA62B;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .section-title span:last-child {
+    color: #7CB1D2;
+  }
+
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    padding-top: 18px;
+  }
+
+  .archive-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    padding: 22px;
+    color: #35495E;
+    text-decoration: none;
+    border: 1px solid #CFE3EF;
+    border-radius: 14px;
+    background: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(124, 177, 210, 0.06);
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .archive-card:hover {
+    transform: translateY(-5px);
+    border-color: #7CB1D2;
+    box-shadow: 0 10px 24px rgba(124, 177, 210, 0.12);
+  }
+
+  .archive-top {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #E5F0F4;
+    font-family: monospace;
+    font-size: 11px;
+    color: #849A98;
+  }
+
+  .archive-main {
+    flex: 1;
+    padding: 28px 0;
+  }
+
+  .archive-main h2 {
+    margin: 0 0 12px;
+    font-size: 22px;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  .archive-main p {
+    margin: 0;
+    color: #849A98;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .archive-bottom {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid #E5F0F4;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 100px;
+    padding-top: 20px;
+    border-top: 1px solid #35495E;
+    font-family: monospace;
+    font-size: 12px;
+    color: #849A98;
+  }
+
+  @media (max-width: 700px) {
+    .page {
+      padding: 30px 20px;
+    }
+
+    header {
+      align-items: flex-start;
+    }
+
+    nav {
+      gap: 15px;
+    }
+
+    .intro {
+      padding: 75px 0 75px;
+    }
+
+    .archive-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .archive-card {
+      min-height: 220px;
+    }
+
+    footer {
+      display: block;
+      line-height: 2;
+    }
+  }
+</style>

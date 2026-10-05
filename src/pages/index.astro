@@ -1,11 +1,32 @@
 ---
-const posts = Object.values(
-  import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
-    eager: true,
+const postFiles = import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
+
+const postModules = import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
+  eager: true,
+});
+
+const posts = Object.entries(postModules)
+  .map(([path, post]) => {
+    const raw = postFiles[path] || "";
+
+    const body = raw
+      .replace(/^---[\\s\\S]*?---/, "")
+      .replace(/```[\\s\\S]*?```/g, "")
+      .replace(/[#>*_`~\$begin:math:display$\$end:math:display$()]/g, "")
+      .replace(/\\s+/g, "");
+
+    return {
+      ...post,
+      wordCount: body.length,
+    };
   })
-).sort((a, b) =>
-  b.frontmatter.date.localeCompare(a.frontmatter.date)
-);
+  .sort((a, b) =>
+    b.frontmatter.date.localeCompare(a.frontmatter.date)
+  );
 
 const categories = [
   {
@@ -84,20 +105,33 @@ const categories = [
           <span>{posts.length.toString().padStart(2, "0")}</span>
         </div>
 
-        {posts.map((post) => (
-          <a href={`${post.url}`} class="latest-post">
-            <div class="latest-date">
-              {post.frontmatter.date}
-            </div>
+        <div class="latest-grid">
+          {posts.slice(0, 6).map((post) => (
+            <a href={`${post.url}`} class="latest-post">
+              <div class="latest-card-top">
+                <span>
+                  {post.frontmatter.date} · {post.wordCount.toLocaleString()} 字
+                </span>
+                <span>↗</span>
+              </div>
 
-            <div class="latest-main">
-              <h2>{post.frontmatter.title}</h2>
-              <p>{post.frontmatter.description}</p>
-            </div>
+              <div class="latest-main">
+                <h2>{post.frontmatter.title}</h2>
+                <p>{post.frontmatter.description}</p>
+              </div>
 
-            <div class="latest-arrow">↗</div>
+              <div class="latest-card-bottom">
+                <span>{post.frontmatter.category || "BLOG"}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {posts.length > 6 && (
+          <a href={`${import.meta.env.BASE_URL}/archive/`} class="view-all">
+            VIEW ALL <span>↗</span>
           </a>
-        ))}
+        )}
 
       </section>
 
@@ -105,32 +139,31 @@ const categories = [
       <section class="categories">
 
         <div class="section-title">
-          <span>EXPLORE</span>
+          <span>ARCHIVE</span>
           <span>01 — 04</span>
         </div>
 
-        {categories.map((category, index) => (
-          <a href={category.url} class="category">
+        <div class="category-grid">
+          {categories.map((category, index) => (
+            <a href={category.url} class="category">
 
-            <div class="number">
-              0{index + 1}
-            </div>
+              <div class="category-top">
+                <span>0{index + 1}</span>
+                <span>↗</span>
+              </div>
 
-            <div class="category-main">
-              <h2>{category.name}</h2>
-              <p>{category.description}</p>
-            </div>
+              <div class="category-main">
+                <h2>{category.name}</h2>
+                <p>{category.description}</p>
+              </div>
 
-            <div class="english">
-              {category.english}
-            </div>
+              <div class="english">
+                {category.english}
+              </div>
 
-            <div class="arrow">
-              ↗
-            </div>
-
-          </a>
-        ))}
+            </a>
+          ))}
+        </div>
 
       </section>
 
@@ -248,51 +281,111 @@ const categories = [
     margin-bottom: 100px;
   }
 
-  .latest-post {
+  .latest-grid {
     display: grid;
-    grid-template-columns: 150px 1fr 30px;
-    gap: 30px;
-    align-items: center;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
 
-    padding: 35px 0;
-
+  .latest-post {
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    padding: 22px;
     color: #35495E;
     text-decoration: none;
-
-    border-bottom: 1px solid #FFA62B;
-
+    border: 1px solid #CFE3EF;
+    border-radius: 14px;
+    background: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(124, 177, 210, 0.06);
     transition:
-      color 0.25s ease,
-      padding-left 0.25s ease,
-      background 0.25s ease;
+      transform 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
   }
 
   .latest-post:hover {
-    color: #7CB1D2;
-    padding-left: 10px;
+    color: #35495E;
+    transform: translateY(-5px);
+    border-color: #7CB1D2;
+    box-shadow: 0 10px 24px rgba(124, 177, 210, 0.12);
   }
 
-  .latest-date {
+  .latest-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #E5F0F4;
     font-family: monospace;
+    font-size: 12px;
     color: #849A98;
-    font-size: 13px;
+  }
+
+  .latest-card-top span:last-child {
+    color: #7CB1D2;
+    font-size: 18px;
+  }
+
+  .latest-main {
+    flex: 1;
+    padding: 30px 0;
   }
 
   .latest-main h2 {
-    margin: 0 0 10px;
-    font-size: 25px;
+    margin: 0 0 14px;
+    font-size: 22px;
+    line-height: 1.5;
     font-weight: 500;
   }
 
   .latest-main p {
     margin: 0;
     color: #849A98;
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.8;
   }
 
-  .latest-arrow {
-    font-size: 22px;
+  .latest-card-bottom {
+    padding-top: 14px;
+    border-top: 1px solid #E5F0F4;
     color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .view-all {
+    display: block;
+    width: fit-content;
+    margin: 24px 0 0 auto;
+    padding: 10px 2px;
+    color: #7CB1D2;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #CFE3EF;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .view-all span {
+    display: inline-block;
+    margin-left: 6px;
+    transition: transform 0.2s ease;
+  }
+
+  .view-all:hover {
+    color: #35495E;
+    border-color: #7CB1D2;
+    transform: translateX(3px);
+  }
+
+  .view-all:hover span {
+    transform: translate(2px, -2px);
   }
 
   /* 分类 */
@@ -313,54 +406,77 @@ const categories = [
     color: #7CB1D2;
   }
 
-  .category {
+  .category-grid {
     display: grid;
-    grid-template-columns: 70px 1fr 180px 30px;
-    align-items: center;
-    gap: 25px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
 
-    padding: 38px 0;
-
+  .category {
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    padding: 24px;
     color: #35495E;
     text-decoration: none;
-
-    border-bottom: 1px solid #FFA62B;
-
+    border: 1px solid #CFE3EF;
+    border-radius: 14px;
+    background: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(124, 177, 210, 0.06);
     transition:
-      color 0.25s ease,
-      padding-left 0.25s ease;
+      transform 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
   }
 
   .category:hover {
-    color: #7CB1D2;
-    padding-left: 10px;
+    color: #35495E;
+    transform: translateY(-5px);
+    border-color: #7CB1D2;
+    box-shadow: 0 10px 24px rgba(124, 177, 210, 0.12);
   }
 
-  .number {
+  .category-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #E5F0F4;
     font-family: monospace;
+    font-size: 12px;
     color: #849A98;
   }
 
+  .category-top span:last-child {
+    color: #7CB1D2;
+    font-size: 18px;
+  }
+
+  .category-main {
+    flex: 1;
+    padding: 30px 0;
+  }
+
   .category-main h2 {
-    margin: 0 0 10px;
-    font-size: 38px;
+    margin: 0 0 12px;
+    font-size: 32px;
+    line-height: 1.4;
     font-weight: 500;
   }
 
   .category-main p {
     margin: 0;
     color: #849A98;
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.8;
   }
 
   .english {
+    padding-top: 14px;
+    border-top: 1px solid #E5F0F4;
     font-family: monospace;
-    font-size: 13px;
-    color: #849A98;
-  }
-
-  .arrow {
-    font-size: 22px;
+    font-size: 11px;
+    letter-spacing: 0.05em;
     color: #7CB1D2;
   }
 
@@ -385,13 +501,13 @@ const categories = [
 
   @media (max-width: 700px) {
 
-    .latest-post {
-      grid-template-columns: 1fr 25px;
-      gap: 10px;
+    .latest-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
     }
 
-    .latest-date {
-      grid-column: 1 / -1;
+    .latest-post {
+      min-height: 220px;
     }
 
     .page {
@@ -410,14 +526,13 @@ const categories = [
       padding: 80px 0 90px;
     }
 
-    .category {
-      grid-template-columns: 40px 1fr 25px;
-      gap: 15px;
-      padding: 30px 0;
+    .category-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
     }
 
-    .english {
-      display: none;
+    .category {
+      min-height: 220px;
     }
 
     .category-main h2 {
