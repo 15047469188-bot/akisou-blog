@@ -114,18 +114,34 @@ import friends from "../data/friends.json";
     font-weight: 500;
     letter-spacing: -0.05em;
   }
-.friends-list {
-  border-top: 1px solid #D6E8EF;
+ .friends-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
 
 .friend {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 28px 10px;
-  border-bottom: 1px solid #D6E8EF;
+  min-height: 90px;
+  padding: 18px;
+  border: 1px solid #CDEBE8;
+  border-radius: 10px;
   color: #35495E;
   text-decoration: none;
+  background: rgba(247, 252, 251, 0.72);
+  box-shadow: 0 4px 18px rgba(121, 201, 195, 0.08);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.friend:hover {
+  transform: translateY(-3px);
+  border-color: #79C9C3;
+  background: rgba(241, 250, 248, 0.82);
 }
 
 .friend h2 {
