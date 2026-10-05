@@ -118,23 +118,7 @@
             <span class="contact-name">X</span>
           </a>
 
-          <button
-            class="contact-item wechat-item"
-            type="button"
-            onclick="copyWechat()"
-            aria-label="复制微信号"
-          >
-            <span class="contact-icon wechat-icon" aria-hidden="true">
-        <svg viewBox="0 0 48 48">
-          <circle cx="24" cy="24" r="22" fill="#8BC89A" stroke="none"/>
-          <path d="M12 23c0-5 4.7-9 10.5-9S33 18 33 22.5c0 4.8-4.7 8.5-10.5 8.5-1.2 0-2.3-.2-3.3-.5L14 33l1-3.5c-1.8-1.6-3-3.8-3-6.5Z" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linejoin="round"/>
-          <path d="M19 22h.1M27 22h.1" fill="none" stroke="#FFF" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M35 14l1-3M39 18l3-1" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-      </span>
-            <span class="contact-name">WeChat</span>
-            <span id="wechat-text" aria-hidden="true"></span>
-          </button>
+      
 
           <a
             class="contact-item"
@@ -162,11 +146,7 @@
       </footer>
     </main>
   
-<script>
-  function copyWechat() {
-    navigator.clipboard.writeText("Lifeisld2springch");
-  }
-</script>
+
 
   </body>
 </html>
@@ -404,6 +384,29 @@
   .wechat-item {
     cursor: pointer;
     font: inherit;
+  }
+
+  .copy-tip {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translate(-50%, 10px);
+    padding: 8px 16px;
+    border: 1px solid #ABD6B5;
+    border-radius: 999px;
+    background: #F8FCFB;
+    color: #72B886;
+    font-family: monospace;
+    font-size: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 1000;
+  }
+
+  .copy-tip.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 
   .back {
