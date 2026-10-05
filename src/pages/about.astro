@@ -63,7 +63,95 @@
 
       <section class="contact">
         <p class="label">CONTACT / 01</p>
-        <a href="/akisou-blog/rss.xml">RSS ↗</a>
+
+        <div class="contact-links">
+          <a
+            class="contact-item"
+            href="https://xhslink.cn/o/4YKjjKWoeoF"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="小红书"
+          >
+            <span class="contact-icon xhs-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="22" fill="#F6A6B5" stroke="none"/>
+          <rect x="13" y="14" width="22" height="21" rx="7" fill="none" stroke="#FFF" stroke-width="1.8"/>
+          <path d="M18 22c2 1.5 4 1.5 6 0M18 27c2 1.5 4 1.5 6 0M28 22h3M28 27h3" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M15 9l-1-3M32 9l2-3" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </span>
+            <span class="contact-name">小红书</span>
+          </a>
+
+          <a
+            class="contact-item"
+            href="https://b23.tv/2GVGELf"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="哔哩哔哩"
+          >
+            <span class="contact-icon bili-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="22" fill="#8BD3EE" stroke="none"/>
+          <rect x="11" y="15" width="26" height="20" rx="7" fill="none" stroke="#FFF" stroke-width="1.8"/>
+          <path d="M17 12l-3-4M31 12l3-4M18 23v4M30 23v4" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M19 30c2 1 4 1 5 0" fill="none" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+            <span class="contact-name">Bilibili</span>
+          </a>
+
+          <a
+            class="contact-item"
+            href="https://x.com/mushanbiu?s=11"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="X"
+          >
+            <span class="contact-icon x-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="22" fill="#71829E" stroke="none"/>
+          <path d="M14 13l20 22M34 13L14 35" fill="none" stroke="#FFF" stroke-width="2.1" stroke-linecap="round"/>
+          <path d="M36 10l1-3M40 14l3-1" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </span>
+            <span class="contact-name">X</span>
+          </a>
+
+          <button
+            class="contact-item wechat-item"
+            type="button"
+            onclick="copyWechat()"
+            aria-label="复制微信号"
+          >
+            <span class="contact-icon wechat-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="22" fill="#8BC89A" stroke="none"/>
+          <path d="M12 23c0-5 4.7-9 10.5-9S33 18 33 22.5c0 4.8-4.7 8.5-10.5 8.5-1.2 0-2.3-.2-3.3-.5L14 33l1-3.5c-1.8-1.6-3-3.8-3-6.5Z" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M19 22h.1M27 22h.1" fill="none" stroke="#FFF" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M35 14l1-3M39 18l3-1" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </span>
+            <span class="contact-name">WeChat</span>
+            <span id="wechat-text" aria-hidden="true"></span>
+          </button>
+
+          <a
+            class="contact-item"
+            href="/akisou-blog/rss.xml"
+            aria-label="RSS"
+          >
+            <span class="contact-icon rss-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="22" fill="#F2B45B" stroke="none"/>
+          <circle cx="15" cy="33" r="2" fill="#FFF" stroke="none"/>
+          <path d="M15 25c4.5 0 8 3.5 8 8M15 17c8.8 0 16 7.2 16 16" fill="none" stroke="#FFF" stroke-width="1.9" stroke-linecap="round"/>
+          <path d="M35 11l1-3M40 15l3-1" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </span>
+            <span class="contact-name">RSS</span>
+          </a>
+        </div>
       </section>
 
       <a class="back" href="/akisou-blog/">← BACK TO BLOG</a>
@@ -73,6 +161,13 @@
         <span>2026 — now</span>
       </footer>
     </main>
+  
+<script>
+  function copyWechat() {
+    navigator.clipboard.writeText("Lifeisld2springch");
+  }
+</script>
+
   </body>
 </html>
 
@@ -190,6 +285,125 @@
 
   .contact a:hover {
     color: #7CB1D2;
+  }
+
+  .contact-links {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .contact-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 128px;
+    height: 46px;
+    padding: 0 18px;
+    border: 1.5px solid #D6E8EF;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.45);
+    color: #35495E;
+    text-decoration: none;
+    box-sizing: border-box;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .contact-item:hover {
+    transform: translateY(-3px);
+    background: #FFFFFF;
+  }
+
+  .contact-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+  }
+
+  .contact-icon svg {
+    width: 25px;
+    height: 25px;
+    display: block;
+  }
+
+  .contact-name {
+    font-family: monospace;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: inherit;
+  }
+
+  .contact-item:has(.xhs-icon) .contact-name {
+    color: #E9899F;
+  }
+
+  .contact-item:has(.bili-icon) .contact-name {
+    color: #69BBD8;
+  }
+
+  .contact-item:has(.x-icon) .contact-name {
+    color: #657894;
+  }
+
+  .contact-item:has(.wechat-icon) .contact-name {
+    color: #72B886;
+  }
+
+  .contact-item:has(.rss-icon) .contact-name {
+    color: #E7A34D;
+  }
+
+  .xhs-icon {
+    color: #E9899F;
+  }
+
+  .bili-icon {
+    color: #69BBD8;
+  }
+
+  .x-icon {
+    color: #657894;
+  }
+
+  .wechat-icon {
+    color: #72B886;
+  }
+
+  .rss-icon {
+    color: #E7A34D;
+  }
+
+  .contact-item:has(.xhs-icon) {
+    border-color: #E9B4C0;
+  }
+
+  .contact-item:has(.bili-icon) {
+    border-color: #A8D9E9;
+  }
+
+  .contact-item:has(.x-icon) {
+    border-color: #AAB6C8;
+  }
+
+  .contact-item:has(.wechat-icon) {
+    border-color: #ABD6B5;
+  }
+
+  .contact-item:has(.rss-icon) {
+    border-color: #EBC98F;
+  }
+
+  .wechat-item {
+    cursor: pointer;
+    font: inherit;
   }
 
   .back {
