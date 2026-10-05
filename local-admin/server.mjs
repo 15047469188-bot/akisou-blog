@@ -849,6 +849,133 @@ ${String(data.content || "")}
       return;
     }
 
+    if (req.method === "GET" && req.url === "/api/friends") {
+      const filePath = path.join(root, "src/data/friends.json");
+
+      try {
+        const content = await fs.readFile(filePath, "utf8");
+        const friends = JSON.parse(content);
+
+        res.writeHead(200, {
+          "Content-Type": "application/json; charset=utf-8",
+        });
+
+        res.end(JSON.stringify(friends));
+      } catch (error) {
+        console.error("读取友链失败：", error);
+
+        res.writeHead(500, {
+          "Content-Type": "application/json; charset=utf-8",
+        });
+
+        res.end(JSON.stringify([]));
+      }
+
+      return;
+    }
+
+    if (req.method === "POST" && req.url === "/api/friends/delete") {
+      let body = "";
+
+      req.on("data", (chunk) => {
+        body += chunk;
+      });
+
+      req.on("end", async () => {
+        try {
+          const data = JSON.parse(body);
+          const index = Number(data.index);
+
+          const filePath = path.join(root, "src/data/friends.json");
+          const content = await fs.readFile(filePath, "utf8");
+          const friends = JSON.parse(content);
+
+          if (!Number.isInteger(index) || index < 0 || index >= friends.length) {
+            res.writeHead(400, {
+              "Content-Type": "application/json; charset=utf-8",
+            });
+
+            res.end(
+              JSON.stringify({
+                success: false,
+                message: "无效的友链。",
+              })
+            );
+
+            return;
+          }
+
+          const deleted = friends[index];
+          friends.splice(index, 1);
+
+          await fs.writeFile(
+            filePath,
+            JSON.stringify(friends, null, 2),
+            "utf8"
+          );
+
+          try {
+            await execFileAsync("git", ["add", "src/data/friends.json"], {
+              cwd: root,
+            });
+
+            await execFileAsync(
+              "git",
+              ["commit", "-m", `delete friend: ${deleted.name}`],
+              { cwd: root }
+            );
+
+            await execFileAsync("git", ["push", "origin", "main"], {
+              cwd: root,
+            });
+          } catch (gitError) {
+            console.error("Git 删除发布失败：", gitError);
+
+            res.writeHead(500, {
+              "Content-Type": "application/json; charset=utf-8",
+            });
+
+            res.end(
+              JSON.stringify({
+                success: false,
+                message: "友链已修改，但自动发布到 GitHub 失败。",
+              })
+            );
+
+            return;
+          }
+
+          res.writeHead(200, {
+            "Content-Type": "application/json; charset=utf-8",
+          });
+
+          res.end(
+            JSON.stringify({
+              success: true,
+              message: "友链已删除！",
+            })
+          );
+        } catch (error) {
+          console.error("删除友链失败：", error);
+
+          if (!res.headersSent) {
+            res.writeHead(500, {
+              "Content-Type": "application/json; charset=utf-8",
+            });
+          }
+
+          res.end(
+            JSON.stringify({
+              success: false,
+              message: "删除失败，请检查终端里的错误信息。",
+            })
+          );
+        }
+      });
+
+      return;
+    }
+
     if (req.method === "POST" && req.url === "/api/friends") {
       let body = "";
 

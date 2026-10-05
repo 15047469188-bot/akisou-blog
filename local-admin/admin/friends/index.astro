@@ -11,52 +11,86 @@
 
   <body>
     <main>
-      <header>
-        <a href="/admin" class="logo">AKISOU'S BLOG</a>
-        <span>FRIENDS</span>
-      </header>
+  <p class="eyebrow">FRIENDS / 03</p>
 
-      <section class="hero">
-        <p class="number">ADMIN / 03</p>
+  <h1>友情链接</h1>
 
-        <h1>FRIEND<br />LINKS</h1>
+  <section class="form">
+    <input type="text" placeholder="NAME" />
+    <input type="text" placeholder="URL" />
+    <input type="text" placeholder="DESCRIPTION" />
+    <button>ADD FRIEND ↗</button>
+  </section>
 
-        <p class="description">
-          添加和管理友情链接。
-        </p>
-      </section>
+  <section class="friends">
+    <h2>当前友链</h2>
 
-      <section class="form">
-        <label>
-          <span>NAME</span>
-          <input type="text" placeholder="朋友的名字" />
-        </label>
-
-        <label>
-          <span>URL</span>
-          <input type="url" placeholder="https://example.com" />
-        </label>
-
-        <label>
-          <span>DESCRIPTION</span>
-          <input type="text" placeholder="一句话介绍" />
-        </label>
-
-        <button type="button">ADD FRIEND ↗</button>
-      </section>
-
-      <footer>
-        <a href="/admin">← BACK TO ADMIN</a>
-      </footer>
-    </main>
+    <div id="friends-list">
+      <p>正在加载……</p>
+    </div>
+  </section>
+</main>
   </body>
 </html>
 <script>
   const button = document.querySelector("button");
+  const inputs = document.querySelectorAll("input");
+  const list = document.querySelector("#friends-list");
+
+  async function loadFriends() {
+    try {
+      const response = await fetch("/api/friends");
+      const friends = await response.json();
+
+      if (!friends.length) {
+        list.innerHTML = "<p>暂时还没有友链。</p>";
+        return;
+      }
+
+      list.innerHTML = friends.map((friend, index) => `
+        <div class="friend-item">
+          <div>
+            <strong>${friend.name}</strong>
+            <p>${friend.url}</p>
+            <span>${friend.description || ""}</span>
+          </div>
+          <button class="delete" data-index="${index}">DELETE</button>
+        </div>
+      `).join("");
+
+      document.querySelectorAll(".delete").forEach((deleteButton) => {
+        deleteButton.addEventListener("click", async () => {
+          const index = deleteButton.dataset.index;
+
+          if (!confirm("确定要删除这个友链吗？")) {
+            return;
+          }
+
+          const response = await fetch("/api/friends/delete", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ index }),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            alert("友链已删除！");
+            loadFriends();
+          } else {
+            alert(result.message || "删除失败。");
+          }
+        });
+      });
+    } catch (error) {
+      console.error(error);
+      list.innerHTML = "<p>读取友链失败。</p>";
+    }
+  }
 
   button.addEventListener("click", async () => {
-    const inputs = document.querySelectorAll("input");
-
     const name = inputs[0].value.trim();
     const url = inputs[1].value.trim();
     const description = inputs[2].value.trim();
@@ -83,7 +117,10 @@
 
       if (result.success) {
         alert("友链添加成功！");
-        window.location.reload();
+        inputs.forEach((input) => {
+          input.value = "";
+        });
+        loadFriends();
       } else {
         alert(result.message || "添加失败。");
       }
@@ -92,6 +129,8 @@
       alert("添加失败，请检查 Admin 服务是否正常运行。");
     }
   });
+
+  loadFriends();
 </script>
 
 <style>
@@ -229,4 +268,55 @@
       padding: 70px 0 50px;
     }
   }
+
+  .friends {
+    margin-top: 60px;
+  }
+
+  .friends h2 {
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .friend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    padding: 20px 0;
+    border-top: 1px solid #D6E8EF;
+  }
+
+  .friend-item strong {
+    color: #35495E;
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .friend-item p {
+    margin: 6px 0 3px;
+    color: #71808C;
+    font-size: 13px;
+  }
+
+  .friend-item span {
+    color: #9AA8B2;
+    font-size: 13px;
+  }
+
+  .friend-item .delete {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border: 1px solid #FFA62B;
+    background: transparent;
+    color: #FFA62B;
+    cursor: pointer;
+  }
+
+  .friend-item .delete:hover {
+    background: #FFA62B;
+    color: white;
+  }
+
 </style>
