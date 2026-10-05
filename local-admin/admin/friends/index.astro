@@ -1,0 +1,232 @@
+---
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FRIENDS / ADMIN</title>
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <a href="/admin" class="logo">AKISOU'S BLOG</a>
+        <span>FRIENDS</span>
+      </header>
+
+      <section class="hero">
+        <p class="number">ADMIN / 03</p>
+
+        <h1>FRIEND<br />LINKS</h1>
+
+        <p class="description">
+          添加和管理友情链接。
+        </p>
+      </section>
+
+      <section class="form">
+        <label>
+          <span>NAME</span>
+          <input type="text" placeholder="朋友的名字" />
+        </label>
+
+        <label>
+          <span>URL</span>
+          <input type="url" placeholder="https://example.com" />
+        </label>
+
+        <label>
+          <span>DESCRIPTION</span>
+          <input type="text" placeholder="一句话介绍" />
+        </label>
+
+        <button type="button">ADD FRIEND ↗</button>
+      </section>
+
+      <footer>
+        <a href="/admin">← BACK TO ADMIN</a>
+      </footer>
+    </main>
+  </body>
+</html>
+<script>
+  const button = document.querySelector("button");
+
+  button.addEventListener("click", async () => {
+    const inputs = document.querySelectorAll("input");
+
+    const name = inputs[0].value.trim();
+    const url = inputs[1].value.trim();
+    const description = inputs[2].value.trim();
+
+    if (!name || !url) {
+      alert("请填写名字和 URL。");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/friends", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          url,
+          description,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("友链添加成功！");
+        window.location.reload();
+      } else {
+        alert(result.message || "添加失败。");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("添加失败，请检查 Admin 服务是否正常运行。");
+    }
+  });
+</script>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #F8FCFB;
+    color: #35495E;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 55px 30px 40px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #35495E;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .logo {
+    color: #35495E;
+    text-decoration: none;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  .hero {
+    padding: 90px 0 60px;
+  }
+
+  .number {
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 28px 0 22px;
+    font-size: clamp(52px, 9vw, 88px);
+    line-height: 0.95;
+    font-weight: 500;
+    letter-spacing: -0.06em;
+  }
+
+  .description {
+    color: #667B7F;
+    font-size: 16px;
+  }
+
+  .form {
+    border-top: 1px solid #FFA62B;
+  }
+
+  label {
+    display: block;
+    padding: 28px 8px;
+    border-bottom: 1px solid #FFA62B;
+  }
+
+  label span {
+    display: block;
+    margin-bottom: 12px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #35495E;
+    font: inherit;
+    font-size: 16px;
+  }
+
+  input::placeholder {
+    color: #A8B8B6;
+  }
+
+  button {
+    margin-top: 35px;
+    padding: 15px 22px;
+    border: 0;
+    background: #FFA62B;
+    color: #35495E;
+    font-family: monospace;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #7CB1D2;
+  }
+
+  footer {
+    margin-top: 70px;
+    padding-top: 20px;
+    border-top: 1px solid #FFA62B;
+  }
+
+  footer a {
+    color: #7CB1D2;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  @media (max-width: 600px) {
+    main {
+      padding: 30px 20px;
+    }
+
+    .hero {
+      padding: 70px 0 50px;
+    }
+  }
+</style>

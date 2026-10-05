@@ -153,11 +153,23 @@ const server = http.createServer(async (req, res) => {
 
       res.end(html);
       return;
-    }
+    }    
 
     if (req.method === "GET" && req.url === "/admin/new") {
       const html = await renderAstro(
         path.join(root, "local-admin/admin/new/index.astro")
+      );
+
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+      });
+
+      res.end(html);
+      return;
+    }
+    if (req.method === "GET" && req.url === "/admin/friends") {
+      const html = await renderAstro(
+        path.join(root, "local-admin/admin/friends/index.astro")
       );
 
       res.writeHead(200, {
@@ -837,6 +849,117 @@ ${String(data.content || "")}
       return;
     }
 
+    if (req.method === "POST" && req.url === "/api/friends") {
+      let body = "";
+
+      req.on("data", (chunk) => {
+        body += chunk;
+      });
+
+      req.on("end", async () => {
+        try {
+          const data = JSON.parse(body);
+
+          if (!data.name || !data.url) {
+            res.writeHead(400, {
+              "Content-Type": "application/json; charset=utf-8",
+            });
+
+            res.end(
+              JSON.stringify({
+                success: false,
+                message: "请填写名字和 URL。",
+              })
+            );
+
+            return;
+          }
+
+          const filePath = path.join(root, "src/data/friends.json");
+
+          let friends = [];
+
+          try {
+            const content = await fs.readFile(filePath, "utf8");
+            friends = JSON.parse(content);
+          } catch {
+            friends = [];
+          }
+
+          friends.push({
+            name: String(data.name).trim(),
+            url: String(data.url).trim(),
+            description: String(data.description || "").trim(),
+          });
+
+          await fs.writeFile(
+            filePath,
+            JSON.stringify(friends, null, 2),
+            "utf8"
+          );
+
+          try {
+            await execFileAsync("git", ["add", "src/data/friends.json"], {
+              cwd: root,
+            });
+
+            await execFileAsync(
+              "git",
+              ["commit", "-m", `add friend: ${String(data.name).trim()}`],
+              { cwd: root }
+            );
+
+            await execFileAsync("git", ["push", "origin", "main"], {
+              cwd: root,
+            });
+          } catch (gitError) {
+            console.error("Git 发布失败：", gitError);
+
+            res.writeHead(500, {
+              "Content-Type": "application/json; charset=utf-8",
+            });
+
+            res.end(
+              JSON.stringify({
+                success: false,
+                message: "友链已保存，但自动发布到 GitHub 失败。",
+              })
+            );
+
+            return;
+          }
+
+          res.writeHead(200, {
+            "Content-Type": "application/json; charset=utf-8",
+          });
+
+          res.end(
+            JSON.stringify({
+              success: true,
+              message: "友链添加成功！",
+            })
+          );
+        } catch (error) {
+          console.error("友链添加失败：", error);
+
+          if (!res.headersSent) {
+            res.writeHead(500, {
+              "Content-Type": "application/json; charset=utf-8",
+            });
+          }
+
+          res.end(
+            JSON.stringify({
+              success: false,
+              message: "添加失败，请检查终端里的错误信息。",
+            })
+          );
+        }
+      });
+
+      return;
+    }
+
     res.writeHead(404, {
       "Content-Type": "text/plain; charset=utf-8",
     });
@@ -845,9 +968,11 @@ ${String(data.content || "")}
   } catch (error) {
     console.error(error);
 
-    res.writeHead(500, {
-      "Content-Type": "text/plain; charset=utf-8",
-    });
+    if (!res.headersSent) {
+      res.writeHead(500, {
+        "Content-Type": "text/plain; charset=utf-8",
+      });
+    }
 
     res.end("Server Error");
   }
