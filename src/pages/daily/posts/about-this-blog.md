@@ -109,7 +109,7 @@ markdown: {
   },
 },
 ```
-同时针对生成后的：```<pre class="astro-code">```进行CSS定制。
+同时针对生成后的```<pre class="astro-code">```进行CSS定制。
 
 例如：
 ```
@@ -222,6 +222,7 @@ Local Admin只负责本地内容管理，而GitHub Pages负责最终的网站展
 技术栈：Astro · Node.js · Markdown · JSON · Shiki · Git · GitHub Pages
 
 ———————————————
+
 这是我写下的第一篇blog。
 
 最开始只是想做一个属于自己的空间，实际做下来才发现，一个看似简单的网站背后，也包含了很多细节。
@@ -229,5 +230,3 @@ Local Admin只负责本地内容管理，而GitHub Pages负责最终的网站展
 也走了很多弯路，但在不断修改和调试的过程中，也逐渐理解了Astro、Git、SSG等技术在实际项目中的作用。
 
 感谢互联网愿意分享经验的各位大神和Chat GPT以及Github。
-
-

@@ -27,10 +27,10 @@ const posts = Object.values(
       <section class="hero">
         <p class="number">WORKS / 04</p>
 
-        <h1>作品分享</h1>
+        <h1>书影音游</h1>
 
         <p class="description">
-          喜欢的书、电影、舞台剧，以及想留下来的作品。
+          喜欢什么就往这里丢。
         </p>
       </section>
 
@@ -41,7 +41,7 @@ const posts = Object.values(
         </div>
 
         {posts.length === 0 ? (
-          <p class="empty">还没有作品分享。</p>
+          <p class="empty">还没有东西可以丢进来。</p>
         ) : (
           posts
             .sort((a, b) =>
@@ -136,7 +136,7 @@ const posts = Object.values(
 
   h1 {
     margin: 0;
-    font-size: clamp(52px, 9vw, 90px);
+    font-size: clamp(40px, 6vw, 72px);
     font-weight: 500;
     letter-spacing: -0.06em;
   }
