@@ -155,7 +155,7 @@ const posts = Object.values(
     justify-content: space-between;
     padding: 16px 0;
     border-top: 1px solid #35495E;
-    border-bottom: 1px solid #FFA62B;
+    border-bottom: 1px solid #CFE3EF;
     font-family: monospace;
     font-size: 13px;
   }
@@ -169,16 +169,27 @@ const posts = Object.values(
     grid-template-columns: 150px 1fr 30px;
     gap: 30px;
     align-items: center;
-    padding: 35px 0;
-    border-bottom: 1px solid #FFA62B;
+    padding: 24px 22px;
+    margin-bottom: 12px;
+    color: #35495E;
     text-decoration: none;
-    color: inherit;
-    transition: all 0.25s ease;
+    border: 1px solid #CDEBE8;
+    border-radius: 10px;
+    background: rgba(247, 252, 251, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 18px rgba(121, 201, 195, 0.08);
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      background 0.2s ease;
   }
 
   .post:hover {
     color: #7CB1D2;
-    padding-left: 10px;
+    transform: translate(-8px, -2px);
+    border-color: #79C9C3;
+    background: rgba(241, 250, 248, 0.82);
   }
 
   .date {

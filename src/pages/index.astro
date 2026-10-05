@@ -117,7 +117,14 @@ const categories = [
               </div>
 
               <div class="latest-card-bottom">
-                <span>{post.frontmatter.category || "BLOG"}</span>
+                <span>{
+  ({
+    "日常": "碎碎念",
+    "旅行": "到处乱跑",
+    "字幕": "听写小作坊",
+    "作品分享": "书影音游",
+  }[post.frontmatter.category] || post.frontmatter.category || "BLOG")
+}</span>
               </div>
             </a>
           ))}
@@ -254,7 +261,7 @@ const categories = [
   h1 {
     margin: 0;
     color: #35495E;
-        font-size: clamp(52px, 9vw, 100px);
+        font-size: clamp(42px, 7vw, 78px);
     line-height: 0.95;
     font-weight: 500;
     letter-spacing: -0.06em;
@@ -330,6 +337,7 @@ const categories = [
 
   .latest-main h2 {
     margin: 0 0 14px;
+    color: #35495E;
     font-size: 22px;
     line-height: 1.5;
     font-weight: 500;
@@ -392,7 +400,7 @@ const categories = [
     padding: 16px 0;
 
     border-top: 1px solid #35495E;
-    border-bottom: 1px solid #FFA62B;
+    border-bottom: 1px solid #CFE3EF;
 
     font-family: monospace;
     font-size: 13px;
@@ -455,6 +463,7 @@ const categories = [
 
   .category-main h2 {
     margin: 0 0 12px;
+    color: #35495E;
     font-size: 32px;
     line-height: 1.4;
     font-weight: 500;
