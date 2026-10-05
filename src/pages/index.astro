@@ -60,6 +60,7 @@ const categories = [
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/akisou-blog/images/favicon.png" />
     <title>AKISOU'S BLOG</title>
   </head>
 
@@ -81,6 +82,12 @@ const categories = [
 
       <!-- 首页介绍 -->
       <section class="intro">
+        <img
+          class="avatar"
+          src={`${import.meta.env.BASE_URL}/images/akisou-tanghulu.png`}
+          alt="糖葫芦头像"
+        />
+
         <p class="hello">HELLO, I'M AKISOU.</p>
 
         <h1>
@@ -247,6 +254,15 @@ const categories = [
 
   .intro {
     padding: 110px 0 130px;
+  }
+
+  .avatar {
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 22px;
+    border-radius: 50%;
+    object-fit: cover;
   }
 
   .hello {
