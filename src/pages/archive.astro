@@ -1,11 +1,27 @@
 ---
-const posts = Object.values(
-  import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
-    eager: true,
+const postFiles = import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
+
+const postModules = import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
+  eager: true,
+});
+
+const posts = Object.entries(postModules)
+  .map(([path, post]) => {
+    const raw = postFiles[path] || "";
+    const body = raw.replace(/^---[\s\S]*?---/, "").replace(/\s/g, "");
+
+    return {
+      ...post,
+      wordCount: Array.from(body).length,
+    };
   })
-).sort((a, b) =>
-  b.frontmatter.date.localeCompare(a.frontmatter.date)
-);
+  .sort((a, b) =>
+    b.frontmatter.date.localeCompare(a.frontmatter.date)
+  );
 ---
 
 <!doctype html>
@@ -57,7 +73,7 @@ const posts = Object.values(
 
               <div class="archive-top">
                 <span>{String(index + 1).padStart(2, "0")}</span>
-                <span>{post.frontmatter.date}</span>
+                <span>{post.frontmatter.date} · {post.wordCount.toLocaleString()} 字</span>
               </div>
 
               <div class="archive-main">

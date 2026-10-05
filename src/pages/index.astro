@@ -13,15 +13,11 @@ const posts = Object.entries(postModules)
   .map(([path, post]) => {
     const raw = postFiles[path] || "";
 
-    const body = raw
-      .replace(/^---[\\s\\S]*?---/, "")
-      .replace(/```[\\s\\S]*?```/g, "")
-      .replace(/[#>*_`~\$begin:math:display$\$end:math:display$()]/g, "")
-      .replace(/\\s+/g, "");
+    const body = raw.replace(/^---[\s\S]*?---/, "").replace(/\s/g, "");
 
     return {
       ...post,
-      wordCount: body.length,
+      wordCount: Array.from(body).length,
     };
   })
   .sort((a, b) =>
