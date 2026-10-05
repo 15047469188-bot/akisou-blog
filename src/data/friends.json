@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "name": "测试",
+    "url": "http://localhost:4322/admin/friends",
+    "description": "看一下样式"
+  }
+]
