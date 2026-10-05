@@ -292,4 +292,33 @@ const category =
       line-height: 2;
     }
   }
+
+
+  /* code blocks */
+  :global(pre.astro-code) {
+    margin: 28px 0;
+    padding: 18px 20px;
+    overflow-x: auto;
+    background: #F7FBFD !important;
+    border: 1px solid #CFE3EF;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(124, 177, 210, 0.08);
+    font-size: 13px;
+    line-height: 1.9;
+  }
+
+  :global(pre.astro-code code) {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  }
+
+  :global(:not(pre) > code) {
+    padding: 3px 7px;
+    background: #F7FBFD;
+    border: 1px solid #CFE3EF;
+    border-radius: 6px;
+    color: #7CB1D2;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.9em;
+  }
+
 </style>

@@ -9,7 +9,7 @@ category: "日常"
 ## 选择技术：Astro
 我的电脑环境大概是：
 
-```Mac
+```
 Node.js v24.21.0
 npm 11.19.0
 Astro 7.3.5
