@@ -1,0 +1,12 @@
+[
+  {
+    "name": "测试",
+    "url": "https://example.com",
+    "description": "测试"
+  },
+  {
+    "name": "github",
+    "url": "https://github.com",
+    "description": "github"
+  }
+]
