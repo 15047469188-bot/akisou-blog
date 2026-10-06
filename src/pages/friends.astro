@@ -1,5 +1,6 @@
 ---
 import Sidebar from "../components/Sidebar.astro";
+import PageLoader from "../components/PageLoader.astro";
 import friends from "../data/friends.json";
 ---
 <!doctype html>
@@ -11,6 +12,7 @@ import friends from "../data/friends.json";
 </head>
 
 <body>
+  <PageLoader />
 
   <main class="page">
     <Sidebar />

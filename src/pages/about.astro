@@ -1,4 +1,5 @@
 ---
+import PageLoader from "../components/PageLoader.astro";
 import Sidebar from "../components/Sidebar.astro";
 ---
 
@@ -12,6 +13,7 @@ import Sidebar from "../components/Sidebar.astro";
   </head>
 
   <body>
+    <PageLoader />
     <main class="page">
       <Sidebar />
 
@@ -153,11 +155,25 @@ import Sidebar from "../components/Sidebar.astro";
   }
 
   :global(body) {
+    position: relative;
     margin: 0;
     background: #F8FCFB;
     color: #35495E;
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
       "PingFang SC", sans-serif;
+  }
+
+  :global(body)::after {
+    content: "";
+    position: fixed;
+    right: 35px;
+    bottom: 35px;
+    width: 180px;
+    height: 180px;
+    background: url("/akisou-blog/images/akisou-tanghulu.png") center / contain no-repeat;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
   }
 
   .page {

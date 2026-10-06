@@ -1,5 +1,6 @@
 ---
 import Sidebar from "../../components/Sidebar.astro";
+import PageLoader from "../../components/PageLoader.astro";
 
 const posts = Object.values(
   import.meta.glob("./posts/*.md", { eager: true })
@@ -16,6 +17,7 @@ const posts = Object.values(
   </head>
 
   <body>
+    <PageLoader />
     <main class="page">
 
       <Sidebar />

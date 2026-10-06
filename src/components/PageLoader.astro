@@ -1,0 +1,52 @@
+<div class="page-loader" aria-hidden="true">
+  <img
+    src={`${import.meta.env.BASE_URL}/images/akisou-tanghulu.png`}
+    alt=""
+  />
+</div>
+
+<style>
+  .page-loader {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background: #F8FCFB;
+    opacity: 1;
+    visibility: visible;
+    animation: loaderFadeOut 0.6s ease 0.8s forwards;
+    pointer-events: none;
+  }
+
+  .page-loader img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    animation: loaderFloat 1s ease-in-out infinite;
+  }
+
+  @keyframes loaderFloat {
+    0%, 100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes loaderFadeOut {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+</style>

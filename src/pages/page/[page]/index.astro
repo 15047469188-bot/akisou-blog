@@ -1,4 +1,5 @@
 ---
+import PageLoader from "../../../components/PageLoader.astro";
 const postFiles = import.meta.glob("../../{daily,travel,subtitles,works}/posts/*.md", {
   eager: true,
   query: "?raw",
@@ -90,6 +91,7 @@ const categories = [
   </head>
 
   <body>
+    <PageLoader />
     <main class="page">
 
       <aside class="sidebar">

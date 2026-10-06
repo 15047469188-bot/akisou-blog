@@ -1,5 +1,6 @@
 ---
 import Sidebar from "../components/Sidebar.astro";
+import PageLoader from "../components/PageLoader.astro";
 
 const { title, date, description } = Astro.props;
 
@@ -75,6 +76,7 @@ const category =
   </head>
 
   <body>
+    <PageLoader />
     <main class="page">
       <Sidebar />
 
@@ -212,6 +214,7 @@ const category =
   }
 
   :global(body) {
+    position: relative;
     margin: 0;
     background: #F8FCFB;
     animation: pageFadeIn 0.7s ease both;
@@ -224,6 +227,19 @@ const category =
       sans-serif;
   }
 
+
+  :global(body)::after {
+    content: "";
+    position: fixed;
+    right: 35px;
+    bottom: 35px;
+    width: 180px;
+    height: 180px;
+    background: url("/akisou-blog/images/akisou-tanghulu.png") center / contain no-repeat;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+  }
 
   @keyframes pageFadeIn {
     from {

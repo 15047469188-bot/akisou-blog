@@ -1,4 +1,5 @@
 ---
+import PageLoader from "../components/PageLoader.astro";
 const postFiles = import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
   eager: true,
   query: "?raw",
@@ -73,6 +74,7 @@ const categories = [
   </head>
 
   <body>
+    <PageLoader />
     <main class="page">
 
       <aside class="sidebar">
@@ -262,6 +264,8 @@ const categories = [
   }
 
   .page {
+    position: relative;
+    isolation: isolate;
     width: min(1400px, calc(100% - 60px));
     min-height: 100vh;
     margin: 0 auto;
