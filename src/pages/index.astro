@@ -97,19 +97,7 @@ const categories = [
           </p>
         </section>
 
-        <nav class="side-nav">
-          <a href={import.meta.env.BASE_URL}>HOME｜首页</a>
-          <a href={`${import.meta.env.BASE_URL}/about`}>ABOUT｜关于</a>
-          <a href={`${import.meta.env.BASE_URL}/archive`}>ARCHIVE｜归档</a>
-          <a href={`${import.meta.env.BASE_URL}/daily`}>DAILY｜碎碎念</a>
-          <a href={`${import.meta.env.BASE_URL}/travel`}>TRAVEL｜到处乱跑</a>
-          <a href={`${import.meta.env.BASE_URL}/subtitles`}>SUBTITLES｜听写小作坊</a>
-          <a href={`${import.meta.env.BASE_URL}/works`}>WORKS｜书影音游</a>
-          <a href={`${import.meta.env.BASE_URL}/friends`}>FRIENDS｜友链</a>
-        </nav>
-
         <div class="sidebar-contact">
-          <p>CONTACT</p>
 
           <div class="contact-links">
             <a href="https://xhslink.cn/o/4YKjjKWoeoF" target="_blank" rel="noopener noreferrer" aria-label="小红书">
@@ -129,11 +117,29 @@ const categories = [
             </a>
           </div>
         </div>
+
+        <nav class="side-nav">
+          <a href={import.meta.env.BASE_URL}>HOME｜首页</a>
+          <a href={`${import.meta.env.BASE_URL}/about`}>ABOUT｜关于</a>
+          <a href={`${import.meta.env.BASE_URL}/archive`}>ARCHIVE｜归档</a>
+          <a href={`${import.meta.env.BASE_URL}/friends`}>FRIENDS｜友链</a>
+        </nav>
+
       </aside>
 
       <section class="main-column">
 
         <section class="latest">
+          <div class="search-box">
+            <input
+              type="search"
+              id="post-search"
+              placeholder="Search..."
+              aria-label="搜索文章"
+            />
+            <span>⌕</span>
+          </div>
+
           <div class="section-title">
             <span>LATEST</span>
             <span>{posts.length.toString().padStart(2, "0")}</span>
@@ -211,6 +217,10 @@ const categories = [
               </a>
             ))}
           </div>
+
+          <p id="search-empty" class="search-empty" hidden>
+            No posts found.
+          </p>
         </section>
 
         <section class="right-section">
@@ -266,7 +276,7 @@ const categories = [
   .sidebar {
     position: sticky;
     top: 45px;
-    height: calc(100vh - 90px);
+    height: auto;
     display: flex;
     flex-direction: column;
   }
@@ -303,7 +313,7 @@ const categories = [
     color: #849A98;
     text-decoration: none;
     font-family: monospace;
-    font-size: 12px;
+    font-size: 13px;
     transition: color 0.2s ease, transform 0.2s ease;
   }
 
@@ -340,13 +350,13 @@ const categories = [
   .side-intro .description {
     margin: 18px 0 0;
     color: #667B7F;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.7;
     letter-spacing: 0.04em;
   }
 
   .sidebar-contact {
-    margin-top: 42px;
+    margin-top: 8px;
   }
 
   .sidebar-contact p {
@@ -428,6 +438,35 @@ const categories = [
     margin-bottom: 100px;
   }
 
+  .search-box {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #CFE3EF;
+  }
+
+  .search-box input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #35495E;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  .search-box input::placeholder {
+    color: #A8B9B8;
+  }
+
+  .search-box span {
+    color: #7CB1D2;
+    font-size: 18px;
+  }
+
   .section-title,
   .right-title {
     display: flex;
@@ -436,11 +475,20 @@ const categories = [
     border-top: 1px solid #35495E;
     border-bottom: 1px solid #CFE3EF;
     font-family: monospace;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .section-title span:last-child {
     color: #7CB1D2;
+  }
+
+  .search-empty {
+    margin: 45px 0;
+    text-align: center;
+    color: #A8B9B8;
+    font-family: monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
   }
 
   .latest-grid {
@@ -503,7 +551,7 @@ const categories = [
   .latest-main p {
     margin: 0;
     color: #849A98;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.8;
   }
 
@@ -537,7 +585,7 @@ const categories = [
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.7);
     font-family: monospace;
-    font-size: 12px;
+    font-size: 13px;
     transition: all 0.2s ease;
   }
 
@@ -588,7 +636,7 @@ const categories = [
     color: #849A98;
     text-decoration: none;
     font-family: monospace;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .year-list a:hover {
@@ -663,7 +711,7 @@ const categories = [
   footer {
     display: flex;
     justify-content: space-between;
-    margin-top: 80px;
+    margin-top: 120px;
     padding-top: 20px;
     border-top: 1px solid #35495E;
     font-family: monospace;
@@ -759,4 +807,26 @@ const categories = [
 
   updateBlogLiveTime();
   setInterval(updateBlogLiveTime, 60000);
+
+  const searchInput = document.querySelector("#post-search");
+  const postCards = document.querySelectorAll(".latest-post");
+  const searchEmpty = document.querySelector("#search-empty");
+
+  searchInput?.addEventListener("input", () => {
+    const keyword = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    postCards.forEach((card) => {
+      const text = card.textContent?.toLowerCase() || "";
+      const visible = !keyword || text.includes(keyword);
+
+      card.style.display = visible ? "" : "none";
+
+      if (visible) visibleCount++;
+    });
+
+    if (searchEmpty) {
+      searchEmpty.hidden = !keyword || visibleCount > 0;
+    }
+  });
 </script>
