@@ -1,11 +1,12 @@
 ---
 layout: ../../../layouts/BlogPost.astro
-title: "关于这个Blog"
-date: "2026.10.01"
+title: "这个Blog怎么来的"
+date: "2026.10.03"
 description: "从零开始搭建属于自己的blog"
 category: "碎碎念"
 ---
 
+第一篇blog不知道写什么好，就写一下搭建这个博客的过程（？）吧
 ## 项目概述
 本项目是一个基于Astro构建的个人博客网站，采用Static Site Generation架构。
 
@@ -45,7 +46,7 @@ export default defineConfig({
 
 而```base: '/REPOSITORY'```用于适配GitHub Pages的项目路径。
 ## Markdown内容管理
-博客文章没有直接写死在Astro页面组件中，而是采用Markdown Content的方式进行管理。
+博客文章没有直接写HTML，而用Markdown Content的方式进行管理。
 
 例如：
 ```
@@ -93,38 +94,9 @@ const { frontmatter } = Astro.props;
 * 标题结构 <br>
 * 日期信息 <br>
 * 正文样式 <br>
-* 代码块样式 <br>
-* 返回导航 <br>
 * 页面间距 <br>
 
 这也是组件化开发中的典型Separation of Concerns。
-## 代码高亮与Shiki
-博客中的代码块使用Astro内置的Markdown渲染能力，并通过Shiki实现Syntax Highlighting。
-
-项目配置：
-```
-markdown: {
-  shikiConfig: {
-    theme: 'github-light',
-  },
-},
-```
-同时针对生成后的```<pre class="astro-code">```进行CSS定制。
-
-例如：
-```
-:global(pre.astro-code) {
-  margin: 28px 0;
-  padding: 18px 20px;
-  overflow-x: auto;
-  background: #F7FBFD !important;
-  border: 1px solid #CFE3EF;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(124, 177, 210, 0.08);
-  font-size: 13px;
-  line-height: 1.9;
-}
-```
 ## 友链的数据驱动
 友情链接页面没有把网站信息直接写死在HTML中，而是使用JSON文件保存结构化数据：
 ```
@@ -212,10 +184,36 @@ Public Website
 Local Admin只负责本地内容管理，而GitHub Pages负责最终的网站展示。
 
 这也实现了开发环境与生产环境之间的基本隔离。
-## 总结
-本项目基于 Astro 构建，采用SSG（Static Site Generation）架构，以Markdown管理博客内容，并通过Layout Component实现页面结构复用。
+## 还有一些自己的小设计
+比如加载页面时会出现的一个很短的糖葫芦loading
 
-项目结合Node.js Local CMS、JSON数据管理、Shiki代码高亮、响应式设计与Design System，完成了从内容管理到网站部署的完整流程，并使用Git + GitHub Pages进行版本控制与静态部署。
+本质上就是一个固定在页面最上面的元素：
+```
+.page-loader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+```
+然后再给图片加一个很轻的浮动动画：
+```
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+```
+虽然不是什么很厉害的技术，但是很喜欢这个糖葫芦就决定做了！
+## 总结
+本项目基于 Astro 构建，采用SSG架构，以Markdown管理博客内容，并通过Layout Component实现页面结构复用。
+
+项目结合Node.js Local CMS、JSON数据管理与Design System，完成了从内容管理到网站部署的完整流程，并使用Git + GitHub Pages进行版本控制与静态部署。
 
 整体采用轻量化架构，在保持简洁的同时兼顾了可维护性与后续扩展能力。
 
@@ -223,10 +221,18 @@ Local Admin只负责本地内容管理，而GitHub Pages负责最终的网站展
 
 ———————————————
 
-这是我写下的第一篇blog。
+这个博客并不是一次性做完的。
 
-最开始只是想做一个属于自己的空间，实际做下来才发现，一个看似简单的网站背后，也包含了很多细节。
+很多东西都是做着做着才想到“这里是不是可以加点什么？”
 
-也走了很多弯路，但在不断修改和调试的过程中，也逐渐理解了Astro、Git、SSG等技术在实际项目中的作用。
+于是这里改一点那里改一点，就变成现在这样子了。
 
-感谢互联网愿意分享经验的各位大神和Chat GPT以及Github。
+由于并不是专业做前端的，所以动不动就会报错（
+
+此时就需要gpt老师来帮我解决...
+
+在和gpt老师畅聊个夜晚之后终于搭建好了这个博客。
+
+算是走了很多弯路，但在不断修改和调试的过程中，也逐渐理解了Astro、Git、SSG等技术在实际项目中的作用。
+
+感谢互联网愿意分享经验的各位大神和Github以及Chat GPT老师。
