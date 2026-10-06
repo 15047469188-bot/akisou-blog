@@ -387,14 +387,14 @@ button:hover { background: #e87532; }
 
 <label>
 分类
-<option ${category === "日常" ? "selected" : ""}>日常</option>
-<option ${category === "旅行" ? "selected" : ""}>旅行</option>
-<option ${category === "字幕" ? "selected" : ""}>字幕</option>
+<option value="碎碎念" ${category === "碎碎念" ? "selected" : ""}>碎碎念</option>
+<option value="到处乱跑" ${category === "到处乱跑" ? "selected" : ""}>到处乱跑</option>
+<option value="听写小作坊" ${category === "听写小作坊" ? "selected" : ""}>听写小作坊</option>
 <select name="category">
-<option ${category === "日常" ? "selected" : ""}>日常</option>
-<option ${category === "旅行" ? "selected" : ""}>旅行</option>
-<option ${category === "字幕" ? "selected" : ""}>字幕</option>
-<option ${category === "作品分享" ? "selected" : ""}>作品分享</option>
+<option value="碎碎念" ${category === "碎碎念" ? "selected" : ""}>碎碎念</option>
+<option value="到处乱跑" ${category === "到处乱跑" ? "selected" : ""}>到处乱跑</option>
+<option value="听写小作坊" ${category === "听写小作坊" ? "selected" : ""}>听写小作坊</option>
+<option value="书影音游" ${category === "书影音游" ? "selected" : ""}>书影音游</option>
 </select>
 </label>
 

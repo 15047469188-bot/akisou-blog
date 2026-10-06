@@ -24,6 +24,18 @@ const posts = Object.entries(postModules)
   .sort((a, b) =>
     b.frontmatter.date.localeCompare(a.frontmatter.date)
   );
+
+const groupedPosts = posts.reduce((groups, post) => {
+  const date = post.frontmatter.date;
+  const year = date.slice(0, 4);
+  const month = date.slice(5, 7);
+
+  if (!groups[year]) groups[year] = {};
+  if (!groups[year][month]) groups[year][month] = [];
+
+  groups[year][month].push(post);
+  return groups;
+}, {});
 ---
 
 <!doctype html>
@@ -42,26 +54,31 @@ const posts = Object.entries(postModules)
 
       <section class="archive">
 
-        <div class="archive-grid">
-          {posts.map((post, index) => (
-            <a href={post.url} class="archive-card">
-
-              <div class="archive-top">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <span>{post.frontmatter.date} · {post.wordCount.toLocaleString()} 字</span>
+        <div class="archive-list">
+          {Object.entries(groupedPosts).map(([year, months]) => (
+            <section class="archive-year">
+              <div class="archive-year-title">
+                <span>{year}</span>
+                <span>{Object.values(months).flat().length.toString().padStart(2, "0")} POSTS</span>
               </div>
 
-              <div class="archive-main">
-                <h2>{post.frontmatter.title}</h2>
-                <p>{post.frontmatter.description}</p>
-              </div>
+              {Object.entries(months).map(([month, monthPosts]) => (
+                <div class="archive-month">
+                  <div class="archive-month-title">
+                    {month}
+                  </div>
 
-              <div class="archive-bottom">
-                <span>{post.frontmatter.category || "BLOG"}</span>
-                <span>↗</span>
-              </div>
-
-            </a>
+                  {monthPosts.map((post) => (
+                    <a href={post.url} class="archive-item">
+                      <span class="archive-item-date">{post.frontmatter.date}</span>
+                      <span class="archive-item-title">{post.frontmatter.title}</span>
+                      <span class="archive-item-category">{post.frontmatter.category || "BLOG"}</span>
+                      <span class="archive-item-arrow">↗</span>
+                    </a>
+                  ))}
+                </div>
+              ))}
+            </section>
           ))}
         </div>
 
@@ -183,11 +200,83 @@ const posts = Object.entries(postModules)
     color: #7CB1D2;
   }
 
-  .archive-grid {
+  .archive-list {
+    padding-top: 8px;
+  }
+
+  .archive-year {
+    margin-bottom: 55px;
+  }
+
+  .archive-year-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 15px 0;
+    border-top: 1px solid #35495E;
+    border-bottom: 1px solid #CFE3EF;
+    font-family: monospace;
+    font-size: 14px;
+  }
+
+  .archive-year-title span:last-child {
+    color: #7CB1D2;
+    font-size: 11px;
+  }
+
+  .archive-month {
+    margin-top: 30px;
+  }
+
+  .archive-month-title {
+    margin-bottom: 10px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+
+  .archive-item {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 105px minmax(0, 1fr) 100px 24px;
+    align-items: center;
     gap: 18px;
-    padding-top: 0;
+    padding: 17px 8px;
+    color: #35495E;
+    text-decoration: none;
+    border-bottom: 1px solid #E5F0F4;
+    transition:
+      padding-left 0.2s ease,
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .archive-item:hover {
+    padding-left: 14px;
+    background: rgba(247, 252, 251, 0.72);
+  }
+
+  .archive-item-date,
+  .archive-item-category {
+    color: #849A98;
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  .archive-item-title {
+    min-width: 0;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .archive-item-category {
+    text-align: right;
+  }
+
+  .archive-item-arrow {
+    color: #7CB1D2;
+    font-size: 16px;
+    text-align: right;
   }
 
   .archive-card {
