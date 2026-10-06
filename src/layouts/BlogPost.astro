@@ -1,6 +1,7 @@
 ---
 import Sidebar from "../components/Sidebar.astro";
 import PageLoader from "../components/PageLoader.astro";
+import FloatingTanghulu from "../components/FloatingTanghulu.astro";
 
 const { title, date, description } = Astro.props;
 
@@ -77,6 +78,7 @@ const category =
 
   <body>
     <PageLoader />
+    <FloatingTanghulu />
     <main class="page">
       <Sidebar />
 
