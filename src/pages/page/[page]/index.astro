@@ -1,11 +1,11 @@
 ---
-const postFiles = import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
+const postFiles = import.meta.glob("../../{daily,travel,subtitles,works}/posts/*.md", {
   eager: true,
   query: "?raw",
   import: "default",
 });
 
-const postModules = import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
+const postModules = import.meta.glob("../../{daily,travel,subtitles,works}/posts/*.md", {
   eager: true,
 });
 
@@ -24,8 +24,25 @@ const posts = Object.entries(postModules)
     b.frontmatter.date.localeCompare(a.frontmatter.date)
   );
 
+export function getStaticPaths() {
+  const postModules = import.meta.glob(
+    "../../{daily,travel,subtitles,works}/posts/*.md",
+    {
+      eager: true,
+    }
+  );
+
+  const totalPages = Math.ceil(Object.keys(postModules).length / 6);
+
+  return Array.from({ length: totalPages }, (_, index) => ({
+    params: {
+      page: String(index + 1),
+    },
+  }));
+}
+
 const postsPerPage = 6;
-const currentPage = Number(Astro.url.searchParams.get("page") || "1");
+const currentPage = Number(Astro.params.page || "1");
 const totalPages = Math.ceil(posts.length / postsPerPage);
 const startIndex = (currentPage - 1) * postsPerPage;
 const paginatedPosts = posts.slice(startIndex, startIndex + postsPerPage);
