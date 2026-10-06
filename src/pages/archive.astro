@@ -289,9 +289,16 @@ const groupedPosts = posts.reduce((groups, post) => {
   }
 
   .archive-item-arrow {
+    display: inline-block;
     color: #7CB1D2;
     font-size: 16px;
     text-align: right;
+    transition: transform 0.2s ease;
+  }
+
+  .archive-item:hover .archive-item-arrow {
+    transform: translate(4px, -4px) scale(1.15);
+    color: #5E9FC5;
   }
 
   .archive-card {
