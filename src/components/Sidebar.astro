@@ -1,0 +1,226 @@
+<aside class="sidebar">
+  <a href={import.meta.env.BASE_URL} class="side-logo">
+    <img
+      src={`${import.meta.env.BASE_URL}/images/akisou-tanghulu.png`}
+      alt="糖葫芦头像"
+    />
+    <span>AKISOU'S BLOG</span>
+  </a>
+
+  <section class="side-intro">
+    <p class="hello">HELLO, I'M AKISOU.</p>
+
+    <h1>
+      好きなもの、<br />
+      <span>好きな時間。</span>
+    </h1>
+
+    <p class="description">
+      日々 / 旅 / ことば / 好きなもの
+    </p>
+  </section>
+
+  <nav class="side-nav">
+    <a href={import.meta.env.BASE_URL}>HOME｜<span>首页</span></a>
+    <a href={`${import.meta.env.BASE_URL}/about/`}>ABOUT｜<span>关于</span></a>
+    <a href={`${import.meta.env.BASE_URL}/archive/`}>ARCHIVE｜<span>归档</span></a>
+    <a href={`${import.meta.env.BASE_URL}/daily/`}>DAILY｜<span>碎碎念</span></a>
+    <a href={`${import.meta.env.BASE_URL}/travel/`}>TRAVEL｜<span>到处乱跑</span></a>
+    <a href={`${import.meta.env.BASE_URL}/subtitles/`}>SUBTITLES｜<span>听写小作坊</span></a>
+    <a href={`${import.meta.env.BASE_URL}/works/`}>WORKS｜<span>书影音游</span></a>
+    <a href={`${import.meta.env.BASE_URL}/friends/`}>FRIENDS｜<span>友链</span></a>
+  </nav>
+
+  <div class="sidebar-contact">
+    <p>CONTACT</p>
+
+    <div class="contact-links">
+      <a href="https://xhslink.cn/o/4YKjjKWoeoF" target="_blank" rel="noopener noreferrer" aria-label="小红书">
+        <img src={`${import.meta.env.BASE_URL}/images/akisou-contact1.png`} alt="" />
+      </a>
+
+      <a href="https://b23.tv/2GVGELf" target="_blank" rel="noopener noreferrer" aria-label="哔哩哔哩">
+        <img src={`${import.meta.env.BASE_URL}/images/akisou-contact2.png`} alt="" />
+      </a>
+
+      <a href="https://x.com/mushanbiu?s=11" target="_blank" rel="noopener noreferrer" aria-label="X">
+        <img src={`${import.meta.env.BASE_URL}/images/akisou-contact3.png`} alt="" />
+      </a>
+
+      <a href={`${import.meta.env.BASE_URL}/rss.xml`} aria-label="RSS">
+        <img src={`${import.meta.env.BASE_URL}/images/akisou-contact4.png`} alt="" />
+      </a>
+    </div>
+  </div>
+</aside>
+
+<style>
+  .sidebar {
+    position: sticky;
+    top: 45px;
+    height: calc(100vh - 90px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .side-logo {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: #35495E;
+    text-decoration: none;
+  }
+
+  .side-logo img {
+    display: block;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .side-logo span {
+    font-family: monospace;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+
+  .side-intro {
+    margin-top: 32px;
+  }
+
+  .side-intro .hello {
+    margin: 0 0 18px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+  }
+
+  .side-intro h1 {
+    margin: 0;
+    color: #35495E;
+    font-size: 25px;
+    line-height: 1.15;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+  }
+
+  .side-intro h1 span {
+    color: #7CB1D2;
+  }
+
+  .side-intro .description {
+    margin: 18px 0 0;
+    color: #667B7F;
+    font-size: 12px;
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+  }
+
+  .side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 42px;
+  }
+
+  .side-nav a {
+    color: #849A98;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .side-nav a span {
+    margin-left: 5px;
+    color: #A8B8B8;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+
+  .side-nav a:hover {
+    color: #7CB1D2;
+    transform: translateX(3px);
+  }
+
+  .sidebar-contact {
+    margin-top: 42px;
+  }
+
+  .sidebar-contact p {
+    margin: 0 0 16px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  .contact-links {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .contact-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+  }
+
+  .contact-links img {
+    display: block;
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+  }
+
+  .contact-links a:hover img {
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 700px) {
+    .sidebar {
+      position: static;
+      height: auto;
+    }
+
+    .side-logo {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .side-logo img {
+      width: 48px;
+      height: 48px;
+    }
+
+    .side-nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin-top: 28px;
+    }
+
+    .sidebar-contact {
+      margin-top: 28px;
+    }
+
+    .side-intro {
+      margin-top: 28px;
+    }
+
+    .side-intro h1 {
+      font-size: 24px;
+    }
+  }
+</style>

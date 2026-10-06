@@ -24,6 +24,14 @@ const posts = Object.entries(postModules)
     b.frontmatter.date.localeCompare(a.frontmatter.date)
   );
 
+const postsPerPage = 6;
+const currentPage = Number(Astro.url.searchParams.get("page") || "1");
+const totalPages = Math.ceil(posts.length / postsPerPage);
+const startIndex = (currentPage - 1) * postsPerPage;
+const paginatedPosts = posts.slice(startIndex, startIndex + postsPerPage);
+
+const years = [...new Set(posts.map((post) => post.frontmatter.date.slice(0, 4)))];
+
 const categories = [
   {
     name: "碎碎念",
@@ -67,121 +75,160 @@ const categories = [
   <body>
     <main class="page">
 
-      <!-- 顶部 -->
-      <header>
-        <a href={import.meta.env.BASE_URL} class="logo">
-          AKISOU'S BLOG
+      <aside class="sidebar">
+        <a href={import.meta.env.BASE_URL} class="side-logo">
+          <img
+            src={`${import.meta.env.BASE_URL}/images/akisou-tanghulu.png`}
+            alt="糖葫芦头像"
+          />
+          <span>AKISOU'S BLOG</span>
         </a>
 
-        <nav>
-          <a href={import.meta.env.BASE_URL}>HOME</a>
-          <a href={`${import.meta.env.BASE_URL}/about`}>ABOUT</a>
-          <a href={`${import.meta.env.BASE_URL}/friends`}>FRIENDS</a>
+        <section class="side-intro">
+          <p class="hello">HELLO, I'M AKISOU.</p>
+
+          <h1>
+            好きなもの、<br />
+            <span>好きな時間。</span>
+          </h1>
+
+          <p class="description">
+            日々 / 旅 / ことば / 好きなもの
+          </p>
+        </section>
+
+        <nav class="side-nav">
+          <a href={import.meta.env.BASE_URL}>HOME｜首页</a>
+          <a href={`${import.meta.env.BASE_URL}/about`}>ABOUT｜关于</a>
+          <a href={`${import.meta.env.BASE_URL}/archive`}>ARCHIVE｜归档</a>
+          <a href={`${import.meta.env.BASE_URL}/daily`}>DAILY｜碎碎念</a>
+          <a href={`${import.meta.env.BASE_URL}/travel`}>TRAVEL｜到处乱跑</a>
+          <a href={`${import.meta.env.BASE_URL}/subtitles`}>SUBTITLES｜听写小作坊</a>
+          <a href={`${import.meta.env.BASE_URL}/works`}>WORKS｜书影音游</a>
+          <a href={`${import.meta.env.BASE_URL}/friends`}>FRIENDS｜友链</a>
         </nav>
-      </header>
 
-      <!-- 首页介绍 -->
-      <section class="intro">
-        <img
-          class="avatar"
-          src={`${import.meta.env.BASE_URL}/images/akisou-tanghulu.png`}
-          alt="糖葫芦头像"
-        />
+        <div class="sidebar-contact">
+          <p>CONTACT</p>
 
-        <p class="hello">HELLO, I'M AKISOU.</p>
-
-        <h1>
-          好きなもの、<br />
-          <span>好きな時間。</span>
-        </h1>
-
-        <p class="description">
-          日々 / 旅 / ことば / 好きなもの
-        </p>
-      </section>
-
-      <!-- 最新文章 -->
-      <section class="latest">
-
-        <div class="section-title">
-          <span>LATEST</span>
-          <span>{posts.length.toString().padStart(2, "0")}</span>
-        </div>
-
-        <div class="latest-grid">
-          {posts.slice(0, 6).map((post) => (
-            <a href={`${post.url}`} class="latest-post">
-              <div class="latest-card-top">
-                <span>
-                  {post.frontmatter.date} · {post.wordCount.toLocaleString()} 字
-                </span>
-                <span>↗</span>
-              </div>
-
-              <div class="latest-main">
-                <h2>{post.frontmatter.title}</h2>
-                <p>{post.frontmatter.description}</p>
-              </div>
-
-              <div class="latest-card-bottom">
-                <span>{
-  ({
-    "日常": "碎碎念",
-    "旅行": "到处乱跑",
-    "字幕": "听写小作坊",
-    "作品分享": "书影音游",
-  }[post.frontmatter.category] || post.frontmatter.category || "BLOG")
-}</span>
-              </div>
+          <div class="contact-links">
+            <a href="https://xhslink.cn/o/4YKjjKWoeoF" target="_blank" rel="noopener noreferrer" aria-label="小红书">
+              <img src={`${import.meta.env.BASE_URL}/images/akisou-contact1.png`} alt="" />
             </a>
-          ))}
-        </div>
 
-        {posts.length > 6 && (
-          <a href={`${import.meta.env.BASE_URL}/archive/`} class="view-all">
-            VIEW ALL <span>↗</span>
-          </a>
-        )}
-
-      </section>
-
-      <!-- 分类 -->
-      <section class="categories">
-
-        <div class="section-title">
-          <span>ARCHIVE</span>
-          <span>01 — 04</span>
-        </div>
-
-        <div class="category-grid">
-          {categories.map((category, index) => (
-            <a href={category.url} class="category">
-
-              <div class="category-top">
-                <span>0{index + 1}</span>
-                <span>↗</span>
-              </div>
-
-              <div class="category-main">
-                <h2>{category.name}</h2>
-                <p>{category.description}</p>
-              </div>
-
-              <div class="english">
-                {category.english}
-              </div>
-
+            <a href="https://b23.tv/2GVGELf" target="_blank" rel="noopener noreferrer" aria-label="哔哩哔哩">
+              <img src={`${import.meta.env.BASE_URL}/images/akisou-contact2.png`} alt="" />
             </a>
-          ))}
+
+            <a href="https://x.com/mushanbiu?s=11" target="_blank" rel="noopener noreferrer" aria-label="X">
+              <img src={`${import.meta.env.BASE_URL}/images/akisou-contact3.png`} alt="" />
+            </a>
+
+            <a href="/akisou-blog/rss.xml" aria-label="RSS">
+              <img src={`${import.meta.env.BASE_URL}/images/akisou-contact4.png`} alt="" />
+            </a>
+          </div>
         </div>
+      </aside>
+
+      <section class="main-column">
+
+        <section class="latest">
+          <div class="section-title">
+            <span>LATEST</span>
+            <span>{posts.length.toString().padStart(2, "0")}</span>
+          </div>
+
+          <div class="latest-grid">
+            {paginatedPosts.map((post) => (
+              <a href={`${post.url}`} class="latest-post">
+                <div class="latest-card-top">
+                  <span>
+                    {post.frontmatter.date} · {post.wordCount.toLocaleString()} 字
+                  </span>
+                  <span>↗</span>
+                </div>
+
+                <div class="latest-main">
+                  <h2>{post.frontmatter.title}</h2>
+                  <p>{post.frontmatter.description}</p>
+                </div>
+
+                <div class="latest-card-bottom">
+                  <span>{
+                    ({
+                      "日常": "碎碎念",
+                      "旅行": "到处乱跑",
+                      "字幕": "听写小作坊",
+                      "作品分享": "书影音游",
+                    }[post.frontmatter.category] || post.frontmatter.category || "BLOG")
+                  }</span>
+                </div>
+              </a>
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <nav class="pagination" aria-label="文章分页">
+              {currentPage > 1 && (
+                <a href={`?page=${currentPage - 1}`} class="page-arrow">‹</a>
+              )}
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <a
+                  href={`?page=${page}`}
+                  class:list={["page-number", { active: page === currentPage }]}
+                >
+                  {page}
+                </a>
+              ))}
+
+              {currentPage < totalPages && (
+                <a href={`?page=${currentPage + 1}`} class="page-arrow">›</a>
+              )}
+            </nav>
+          )}
+        </section>
+
+        <footer>
+          <span>AKISOU'S BLOG</span>
+          <span>2026 — NOW</span>
+        </footer>
 
       </section>
 
-      <!-- 底部 -->
-      <footer>
-        <span>AKISOU'S BLOG</span>
-        <span>2026 — NOW</span>
-      </footer>
+      <aside class="right-column">
+
+        <section class="right-section">
+          <div class="right-title">
+            <span>ARCHIVE</span>
+          </div>
+
+          <div class="year-list">
+            {years.map((year) => (
+              <a href={`${import.meta.env.BASE_URL}/archive/`}>
+                {year}
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section class="right-section">
+          <div class="right-title">
+            <span>CATEGORY</span>
+          </div>
+
+          <div class="right-categories">
+            {categories.map((category, index) => (
+              <a href={category.url} class="right-category">
+                <span class="category-number">0{index + 1}</span>
+                <span class="category-name">{category.name}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+
+      </aside>
 
     </main>
   </body>
@@ -205,64 +252,143 @@ const categories = [
   }
 
   .page {
-    max-width: 1050px;
+    width: min(1400px, calc(100% - 60px));
+    min-height: 100vh;
     margin: 0 auto;
-    padding: 55px 30px;
+    padding: 45px 0;
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr) 180px;
+    gap: 55px;
   }
 
-  /* 顶部 */
+  /* 左侧 */
 
-  header {
+  .sidebar {
+    position: sticky;
+    top: 45px;
+    height: calc(100vh - 90px);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 22px;
-    border-bottom: 1px solid #35495E;
+    flex-direction: column;
   }
 
-  .logo {
+  .side-logo {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     color: #35495E;
     text-decoration: none;
-    font-family: monospace;
-    font-size: 18px;
-    letter-spacing: 0.05em;
-    transition: color 0.25s ease;
   }
 
-  .logo:hover {
-    color: #7CB1D2;
-  }
-
-  nav {
-    display: flex;
-    gap: 28px;
-  }
-
-  nav a {
-    color: #35495E;
-    text-decoration: none;
-    font-family: monospace;
-    font-size: 13px;
-    transition: color 0.25s ease;
-  }
-
-  nav a:hover {
-    color: #7CB1D2;
-  }
-
-  /* 首页介绍 */
-
-  .intro {
-    padding: 110px 0 130px;
-  }
-
-  .avatar {
-    display: block;
-    width: 64px;
-    height: 64px;
-    margin-bottom: 22px;
+  .side-logo img {
+    width: 58px;
+    height: 58px;
     border-radius: 50%;
     object-fit: cover;
+  }
+
+  .side-logo span {
+    font-family: monospace;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+
+  .side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 55px;
+  }
+
+  .side-nav a {
+    color: #849A98;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .side-nav a:hover {
+    color: #7CB1D2;
+    transform: translateX(3px);
+  }
+
+  .side-intro {
+    margin-top: 32px;
+  }
+
+  .side-intro .hello {
+    margin: 0 0 18px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+  }
+
+  .side-intro h1 {
+    margin: 0;
+    color: #35495E;
+    font-size: 25px;
+    line-height: 1.15;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+  }
+
+  .side-intro h1 span {
+    color: #7CB1D2;
+  }
+
+  .side-intro .description {
+    margin: 18px 0 0;
+    color: #667B7F;
+    font-size: 12px;
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+  }
+
+  .sidebar-contact {
+    margin-top: 42px;
+  }
+
+  .sidebar-contact p {
+    margin: 0 0 16px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  .contact-links {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .contact-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+  }
+
+  .contact-links img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+  }
+
+  .contact-links a:hover img {
+    transform: translateY(-3px);
+  }
+
+  /* 中间 */
+
+  .main-column {
+    min-width: 0;
+  }
+
+  .intro {
+    padding: 80px 0 100px;
   }
 
   .hello {
@@ -273,11 +399,10 @@ const categories = [
     letter-spacing: 0.04em;
   }
 
-
   h1 {
     margin: 0;
     color: #35495E;
-        font-size: clamp(42px, 7vw, 78px);
+    font-size: clamp(42px, 6vw, 76px);
     line-height: 0.95;
     font-weight: 500;
     letter-spacing: -0.06em;
@@ -288,9 +413,9 @@ const categories = [
   }
 
   .description {
-    margin: 45px 0 0;
+    margin: 42px 0 0;
     color: #667B7F;
-    font-size: 18px;
+    font-size: 17px;
     letter-spacing: 0.08em;
   }
 
@@ -300,23 +425,39 @@ const categories = [
     margin-bottom: 100px;
   }
 
+  .section-title,
+  .right-title {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-top: 1px solid #35495E;
+    border-bottom: 1px solid #CFE3EF;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  .section-title span:last-child {
+    color: #7CB1D2;
+  }
+
   .latest-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 16px;
   }
 
   .latest-post {
     display: flex;
     flex-direction: column;
-    min-height: 250px;
-    padding: 22px;
+    min-height: 230px;
+    padding: 20px;
     color: #35495E;
     text-decoration: none;
     border: 1px solid #CFE3EF;
-    border-radius: 14px;
-    background: #FFFFFF;
-    box-shadow: 0 4px 14px rgba(124, 177, 210, 0.06);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 14px rgba(124, 177, 210, 0.05);
     transition:
       transform 0.25s ease,
       border-color 0.25s ease,
@@ -324,7 +465,6 @@ const categories = [
   }
 
   .latest-post:hover {
-    color: #35495E;
     transform: translateY(-5px);
     border-color: #7CB1D2;
     box-shadow: 0 10px 24px rgba(124, 177, 210, 0.12);
@@ -333,28 +473,26 @@ const categories = [
   .latest-card-top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding-bottom: 16px;
+    padding-bottom: 14px;
     border-bottom: 1px solid #E5F0F4;
     font-family: monospace;
-    font-size: 12px;
+    font-size: 11px;
     color: #849A98;
   }
 
   .latest-card-top span:last-child {
     color: #7CB1D2;
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .latest-main {
     flex: 1;
-    padding: 30px 0;
+    padding: 25px 0;
   }
 
   .latest-main h2 {
-    margin: 0 0 14px;
-    color: #35495E;
-    font-size: 22px;
+    margin: 0 0 12px;
+    font-size: 20px;
     line-height: 1.5;
     font-weight: 500;
   }
@@ -362,143 +500,159 @@ const categories = [
   .latest-main p {
     margin: 0;
     color: #849A98;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.8;
   }
 
   .latest-card-bottom {
-    padding-top: 14px;
+    padding-top: 12px;
     border-top: 1px solid #E5F0F4;
     color: #7CB1D2;
     font-family: monospace;
-    font-size: 11px;
-    letter-spacing: 0.05em;
+    font-size: 10px;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .page-number,
+  .page-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    color: #849A98;
+    text-decoration: none;
+    border: 1px solid #CFE3EF;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    font-family: monospace;
+    font-size: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .page-number:hover,
+  .page-arrow:hover,
+  .page-number.active {
+    color: #FFFFFF;
+    background: #7CB1D2;
+    border-color: #7CB1D2;
+  }
+
+  .page-arrow {
+    font-size: 18px;
   }
 
   .view-all {
     display: block;
     width: fit-content;
-    margin: 24px 0 0 auto;
-    padding: 10px 2px;
+    margin: 22px 0 0 auto;
     color: #7CB1D2;
     text-decoration: none;
-    font-family: monospace;
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    border-bottom: 1px solid #CFE3EF;
-    transition:
-      color 0.2s ease,
-      border-color 0.2s ease,
-      transform 0.2s ease;
-  }
-
-  .view-all span {
-    display: inline-block;
-    margin-left: 6px;
-    transition: transform 0.2s ease;
-  }
-
-  .view-all:hover {
-    color: #35495E;
-    border-color: #7CB1D2;
-    transform: translateX(3px);
-  }
-
-  .view-all:hover span {
-    transform: translate(2px, -2px);
-  }
-
-  /* 分类 */
-
-  .section-title {
-    display: flex;
-    justify-content: space-between;
-    padding: 16px 0;
-
-    border-top: 1px solid #35495E;
-    border-bottom: 1px solid #CFE3EF;
-
-    font-family: monospace;
-    font-size: 13px;
-  }
-
-  .section-title span:last-child {
-    color: #7CB1D2;
-  }
-
-  .category-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-  }
-
-  .category {
-    display: flex;
-    flex-direction: column;
-    min-height: 250px;
-    padding: 24px;
-    color: #35495E;
-    text-decoration: none;
-    border: 1px solid #CFE3EF;
-    border-radius: 14px;
-    background: #FFFFFF;
-    box-shadow: 0 4px 14px rgba(124, 177, 210, 0.06);
-    transition:
-      transform 0.25s ease,
-      border-color 0.25s ease,
-      box-shadow 0.25s ease;
-  }
-
-  .category:hover {
-    color: #35495E;
-    transform: translateY(-5px);
-    border-color: #7CB1D2;
-    box-shadow: 0 10px 24px rgba(124, 177, 210, 0.12);
-  }
-
-  .category-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #E5F0F4;
-    font-family: monospace;
-    font-size: 12px;
-    color: #849A98;
-  }
-
-  .category-top span:last-child {
-    color: #7CB1D2;
-    font-size: 18px;
-  }
-
-  .category-main {
-    flex: 1;
-    padding: 30px 0;
-  }
-
-  .category-main h2 {
-    margin: 0 0 12px;
-    color: #35495E;
-    font-size: 32px;
-    line-height: 1.4;
-    font-weight: 500;
-  }
-
-  .category-main p {
-    margin: 0;
-    color: #849A98;
-    font-size: 13px;
-    line-height: 1.8;
-  }
-
-  .category-count {
-    padding-top: 14px;
-    border-top: 1px solid #E5F0F4;
     font-family: monospace;
     font-size: 11px;
-    letter-spacing: 0.05em;
+  }
+
+  /* 右侧 */
+
+  .right-column {
+    padding-top: 95px;
+  }
+
+  .right-section {
+    margin-bottom: 55px;
+  }
+
+  .right-title {
+    color: #849A98;
+  }
+
+  .year-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    padding-top: 18px;
+  }
+
+  .year-list a {
+    color: #849A98;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  .year-list a:hover {
     color: #7CB1D2;
+  }
+
+  .right-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 15px;
+  }
+
+  .right-category {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 16px;
+    color: #35495E;
+    text-decoration: none;
+    background: #FFFFFF;
+    border: 1px solid #CDE3EF;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(124, 177, 210, 0.08);
+    font-size: 15px;
+    transition: all 0.2s ease;
+  }
+
+  .right-category:hover {
+    color: #7CB1D2;
+    background: rgba(241, 250, 248, 0.82);
+    border-color: #79C9C3;
+    transform: translateY(-2px);
+  }
+
+  .category-number {
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 10px;
+  }
+
+  .category-name {
+    font-size: 15px;
+  }
+
+  .right-category::after {
+    content: "";
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    bottom: 7px;
+    width: 4px;
+    border-radius: 4px;
+    background: #7CB1D2;
+  }
+
+  .right-category:nth-child(2)::after {
+    background: #86C5FF;
+  }
+
+  .right-category:nth-child(3)::after {
+    background: #FFA62B;
+  }
+
+  .right-category:nth-child(4)::after {
+    background: #F8E6A0;
   }
 
   /* 底部 */
@@ -506,63 +660,74 @@ const categories = [
   footer {
     display: flex;
     justify-content: space-between;
-
-    margin-top: 100px;
+    margin-top: 80px;
     padding-top: 20px;
-
     border-top: 1px solid #35495E;
-
     font-family: monospace;
-    font-size: 12px;
-
+    font-size: 11px;
     color: #849A98;
   }
 
   /* 手机 */
 
-  @media (max-width: 700px) {
-
-    .latest-grid {
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .latest-post {
-      min-height: 220px;
-    }
-
+  @media (max-width: 950px) {
     .page {
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 35px;
+    }
+
+    .right-column {
+      display: none;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .page {
+      display: block;
+      width: auto;
       padding: 30px 20px;
     }
 
-    header {
-      align-items: flex-start;
+    .sidebar {
+      position: static;
+      height: auto;
     }
 
-    nav {
-      gap: 15px;
+    .side-logo {
+      flex-direction: row;
+      align-items: center;
     }
 
-    .intro {
-      padding: 80px 0 90px;
+    .side-logo img {
+      width: 48px;
+      height: 48px;
     }
 
-    .category-grid {
+    .side-nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin-top: 28px;
+    }
+
+    .sidebar-contact {
+      margin-top: 28px;
+    }
+
+    .main-column {
+      margin-top: 55px;
+    }
+
+    .side-intro {
+      margin-top: 28px;
+    }
+
+    .side-intro h1 {
+      font-size: 24px;
+    }
+
+    .latest-grid {
       grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .category {
-      min-height: 220px;
-    }
-
-    .category-main h2 {
-      font-size: 28px;
-    }
-
-    .category-main p {
-      font-size: 13px;
-      line-height: 1.7;
     }
 
     footer {

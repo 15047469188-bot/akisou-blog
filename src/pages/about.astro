@@ -1,4 +1,5 @@
 ---
+import Sidebar from "../components/Sidebar.astro";
 ---
 
 <!doctype html>
@@ -12,29 +13,11 @@
 
   <body>
     <main class="page">
-      <header>
-        <a class="logo" href="/akisou-blog/">
-          <strong>AKISOU'S BLOG</strong>
-        </a>
+      <Sidebar />
 
-        <nav>
-          <a href="/akisou-blog/">BLOG</a>
-          <a href="/akisou-blog/daily/">DAILY</a>
-          <a href="/akisou-blog/travel/">TRAVEL</a>
-          <a href="/akisou-blog/subtitles/">SUBTITLES</a>
-          <a href="/akisou-blog/about/">ABOUT</a>
-          <a href="/akisou-blog/friends/">FRIENDS</a>
-        </nav>
-      </header>
-
+      <div class="about-main">
       <section class="about">
         <p class="label">ABOUT / 01</p>
-
-        <img
-          class="about-avatar"
-          src={`${import.meta.env.BASE_URL}/images/akisou-tanghulu.png`}
-          alt="糖葫芦头像"
-        />
 
         <h1 class="about-name">
           你好，我是 Akisou，也可以叫我糖葫芦。
@@ -152,7 +135,7 @@
         </div>
       </section>
 
-      <a class="back" href="/akisou-blog/">← BACK TO BLOG</a>
+      </div>
 
       <footer>
         <span>AKISOU'S BLOG</span>
@@ -179,96 +162,159 @@
   }
 
   .page {
-    max-width: 1100px;
+    width: min(1400px, calc(100% - 60px));
+    min-height: 100vh;
     margin: 0 auto;
-    padding: 70px 32px;
+    padding: 45px 0;
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 55px;
   }
 
-  header {
+  .sidebar {
+    position: sticky;
+    top: 45px;
+    height: calc(100vh - 90px);
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-bottom: 1px solid #35495E;
-    padding-bottom: 28px;
-    margin-bottom: 90px;
+    flex-direction: column;
   }
 
-  .logo {
+  .side-logo {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: #35495E;
     text-decoration: none;
-    color: #35495E;
   }
 
-  .logo strong {
-    display: block;
+  .side-logo img {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .side-logo span {
     font-family: monospace;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    font-size: 14px;
+    letter-spacing: 0.04em;
   }
 
-  nav {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
+  .side-intro {
+    margin-top: 32px;
   }
 
-  nav a {
+  .side-intro .hello {
+    margin: 0 0 18px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  .side-intro h1 {
+    margin: 0;
     color: #35495E;
+    font-size: 25px;
+    line-height: 1.15;
+    font-weight: 500;
+  }
+
+  .side-intro h1 span {
+    color: #7CB1D2;
+  }
+
+  .side-intro .description {
+    margin: 18px 0 0;
+    color: #667B7F;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 42px;
+  }
+
+  .side-nav a {
+    color: #849A98;
     text-decoration: none;
     font-family: monospace;
     font-size: 12px;
   }
 
-  nav a:hover,
-  .back:hover {
+  .side-nav a:hover {
     color: #7CB1D2;
+  }
+
+  .sidebar-contact {
+    margin-top: 42px;
+  }
+
+  .sidebar-contact p {
+    margin: 0 0 16px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  .sidebar-contact .contact-links {
+    display: flex;
+    gap: 5px;
+  }
+
+  .sidebar-contact .contact-links a {
+    width: 38px;
+    height: 38px;
+  }
+
+  .sidebar-contact .contact-links img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+  }
+
+  .about-main {
+    min-width: 0;
   }
 
   .about {
-    max-width: 850px;
+    max-width: 680px;
+    padding-top: 5px;
   }
 
   .label {
-    margin: 0 0 35px;
+    margin: 0 0 32px;
     font-family: monospace;
     font-size: 12px;
+    letter-spacing: 0.04em;
     color: #7CB1D2;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: clamp(50px, 8vw, 90px);
-    line-height: 1.05;
-    font-weight: 500;
-    letter-spacing: -0.05em;
   }
 
   .about-avatar {
     display: block;
     width: 64px;
     height: 64px;
-    margin: 28px 0 20px;
+    margin: 0 0 22px;
     border-radius: 50%;
     object-fit: cover;
   }
 
   .about-name {
-    font-size: 26px;
+    margin: 0;
+    font-size: 28px;
     line-height: 1.5;
     font-weight: 500;
-    letter-spacing: -0.02em;
-    color: #7CB1D2;
-  }
-
-
-  h1 span {
+    letter-spacing: -0.03em;
     color: #7CB1D2;
   }
 
   .text {
-    margin-top: 70px;
-    margin-left: 35%;
-    font-size: 18px;
+    margin-top: 45px;
+    margin-left: 0;
+    max-width: 680px;
+    font-size: 15px;
     line-height: 2;
     color: #667B7F;
   }
@@ -285,7 +331,7 @@
   }
 
   .contact {
-    margin-top: 80px;
+    display: none;
   }
 
   .contact a {
@@ -443,7 +489,7 @@
 
   .back {
     display: inline-block;
-    margin-top: 90px;
+    margin-top: 65px;
     color: #35495E;
     text-decoration: none;
     font-family: monospace;
@@ -451,7 +497,7 @@
   }
 
   footer {
-    margin-top: 100px;
+    margin-top: 75px;
     padding-top: 25px;
     border-top: 1px solid #35495E;
     display: flex;

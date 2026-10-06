@@ -3,7 +3,7 @@ layout: ../../../layouts/BlogPost.astro
 title: "关于这个Blog"
 date: "2026.10.01"
 description: "从零开始搭建属于自己的blog"
-category: "日常"
+category: "碎碎念"
 ---
 
 ## 项目概述
