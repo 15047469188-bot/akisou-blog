@@ -33,9 +33,9 @@
         <a href="/akisou-blog/" class="back">← BACK TO BLOG</a>
       </section>
 
-      <footer>
-        <span>AKISOU'S BLOG</span>
-        <span>2026 — now</span>
+      <footer class="site-footer">
+        <p>This blog is live for <span id="blog-live-time">0 days, 0 hours, 0 mins</span> and counting.</p>
+        <p>Copyright © 2026 AKISOU · 糖葫芦</p>
       </footer>
     </main>
   </body>
@@ -148,3 +148,24 @@
     }
   }
 </style>
+
+<script>
+  const blogStart = new Date("2026-10-03T00:00:00+08:00");
+  const liveTime = document.querySelector("#blog-live-time");
+
+  function updateBlogLiveTime() {
+    if (!liveTime) return;
+
+    const diff = Date.now() - blogStart.getTime();
+    const totalMinutes = Math.floor(diff / 60000);
+
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+
+    liveTime.textContent = `${days} days, ${hours} hours, ${minutes} mins`;
+  }
+
+  updateBlogLiveTime();
+  setInterval(updateBlogLiveTime, 60000);
+</script>

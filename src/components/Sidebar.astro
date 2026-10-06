@@ -51,6 +51,8 @@
         <img src={`${import.meta.env.BASE_URL}/images/akisou-contact4.png`} alt="" />
       </a>
     </div>
+
+
   </div>
 </aside>
 
@@ -224,3 +226,24 @@
     }
   }
 </style>
+
+<script>
+  const blogStart = new Date("2026-10-03T00:00:00+08:00");
+  const liveTime = document.querySelector("#blog-live-time");
+
+  function updateBlogLiveTime() {
+    if (!liveTime) return;
+
+    const diff = Date.now() - blogStart.getTime();
+    const totalMinutes = Math.floor(diff / 60000);
+
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+
+    liveTime.textContent = `${days} days, ${hours} hours, ${minutes} mins`;
+  }
+
+  updateBlogLiveTime();
+  setInterval(updateBlogLiveTime, 60000);
+</script>

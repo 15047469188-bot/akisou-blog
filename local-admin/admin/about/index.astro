@@ -1,0 +1,205 @@
+---
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ABOUT / AKISOU</title>
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <a href="/admin" class="logo">AKISOU'S BLOG</a>
+        <span>ABOUT</span>
+      </header>
+
+      <section class="hero">
+        <p class="number">ABOUT / EDIT</p>
+        <h1>ABOUT<br />EDITOR</h1>
+        <p class="description">编辑你的 About 页面文案。</p>
+      </section>
+
+      <form>
+        <label>
+          <span>ABOUT TEXT</span>
+          <textarea id="content" placeholder="在这里写 About 页面内容"></textarea>
+        </label>
+
+        <div class="actions">
+          <a href="/admin">← BACK</a>
+          <button type="submit">SAVE ABOUT ↗</button>
+        </div>
+
+        <p id="message"></p>
+      </form>
+    </main>
+
+    <script>
+      const form = document.querySelector("form");
+      const textarea = document.querySelector("#content");
+      const message = document.querySelector("#message");
+
+      async function loadAbout() {
+        const response = await fetch("/api/about");
+        const data = await response.json();
+
+        if (data.success) {
+          textarea.value = data.content;
+        }
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        message.textContent = "保存中……";
+
+        const response = await fetch("/api/about", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: textarea.value,
+          }),
+        });
+
+        const data = await response.json();
+        message.textContent = data.message;
+      });
+
+      loadAbout();
+    </script>
+  </body>
+</html>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #F8FCFB;
+    color: #35495E;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 55px 30px 80px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #35495E;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .logo {
+    color: #35495E;
+    text-decoration: none;
+    font-size: 18px;
+  }
+
+  .hero {
+    padding: 80px 0 60px;
+  }
+
+  .number {
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  h1 {
+    margin: 25px 0 20px;
+    font-size: clamp(50px, 9vw, 82px);
+    line-height: 0.95;
+    font-weight: 500;
+    letter-spacing: -0.06em;
+  }
+
+  .description {
+    color: #849A98;
+  }
+
+  form {
+    border-top: 1px solid #CFE3EF;
+    padding-top: 30px;
+  }
+
+  label span {
+    display: block;
+    margin-bottom: 12px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  textarea {
+    display: block;
+    width: 100%;
+    min-height: 420px;
+    padding: 20px;
+    resize: vertical;
+    border: 1px solid #CFE3EF;
+    border-radius: 10px;
+    outline: none;
+    background: #FFFFFF;
+    color: #35495E;
+    font: 15px/1.9 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  }
+
+  textarea:focus {
+    border-color: #7CB1D2;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 22px;
+  }
+
+  .actions a {
+    color: #849A98;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  button {
+    padding: 12px 18px;
+    border: 1px solid #7CB1D2;
+    border-radius: 8px;
+    background: #7CB1D2;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  #message {
+    margin-top: 18px;
+    color: #7CB1D2;
+    font-size: 13px;
+  }
+
+  @media (max-width: 600px) {
+    main {
+      padding: 30px 20px 60px;
+    }
+  }
+</style>

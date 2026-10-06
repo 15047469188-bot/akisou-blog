@@ -184,6 +184,77 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    if (req.method === "GET" && req.url === "/admin/about") {
+      const html = await renderAstro(
+        path.join(root, "local-admin/admin/about/index.astro")
+      );
+
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+      });
+
+      res.end(html);
+      return;
+    }
+
+    if (req.method === "GET" && req.url === "/api/about") {
+      const filePath = path.join(root, "src", "pages", "about.astro");
+      const source = await fs.readFile(filePath, "utf-8");
+
+      const match = source.match(/<div class="text">([\s\S]*?)<\/div>/);
+
+      res.writeHead(200, {
+        "Content-Type": "application/json; charset=utf-8",
+      });
+
+      res.end(JSON.stringify({
+        success: true,
+        content: match ? match[1].trim() : "",
+      }));
+      return;
+    }
+
+    if (req.method === "POST" && req.url === "/api/about") {
+      let body = "";
+
+      for await (const chunk of req) {
+        body += chunk;
+      }
+
+      const data = JSON.parse(body || "{}");
+      const content = String(data.content || "");
+
+      const filePath = path.join(root, "src", "pages", "about.astro");
+      const source = await fs.readFile(filePath, "utf-8");
+
+      const updated = source.replace(
+        /(<div class="text">)[\s\S]*?(<\/div>)/,
+        `$1
+          ${content}
+        $2`
+      );
+
+      await fs.writeFile(filePath, updated, "utf-8");
+
+      try {
+        await execFileAsync("git", ["add", "src/pages/about.astro"]);
+        await execFileAsync("git", ["commit", "-m", "update: about"]);
+        await execFileAsync("git", ["push", "origin", "main"]);
+      } catch (error) {
+        console.error("About Git 自动发布失败：", error);
+      }
+
+      res.writeHead(200, {
+        "Content-Type": "application/json; charset=utf-8",
+      });
+
+      res.end(JSON.stringify({
+        success: true,
+        message: "About 文案保存成功！",
+      }));
+      return;
+    }
+
     if (req.method === "GET" && req.url.startsWith("/admin/edit")) {
       const url = new URL(req.url, "http://localhost:4322");
       const file = url.searchParams.get("file");

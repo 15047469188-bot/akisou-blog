@@ -5,6 +5,31 @@ const { title, date, description } = Astro.props;
 
 const path = Astro.url.pathname;
 
+const allPosts = Object.values(
+  import.meta.glob("../pages/*/posts/*.md", {
+    eager: true,
+  })
+);
+
+const sortedPosts = allPosts
+  .map((post) => post)
+  .filter((post) => post?.frontmatter?.date)
+  .sort(
+    (a, b) =>
+      new Date(b.frontmatter.date).getTime() -
+      new Date(a.frontmatter.date).getTime()
+  );
+
+const currentIndex = sortedPosts.findIndex(
+  (post) => post.url === Astro.url.pathname
+);
+
+const prevPost =
+  currentIndex >= 0 ? sortedPosts[currentIndex + 1] : null;
+
+const nextPost =
+  currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
+
 const category =
   path.startsWith("/akisou-blog/travel/")
     ? "到处乱跑"
@@ -67,6 +92,26 @@ const category =
 
       </article>
 
+      <nav class="post-navigation" aria-label="文章导航">
+        {prevPost ? (
+          <a href={prevPost.url} class="post-nav prev">
+            <span>← PREV</span>
+            <strong>{prevPost.frontmatter.title}</strong>
+          </a>
+        ) : (
+          <span></span>
+        )}
+
+        {nextPost ? (
+          <a href={nextPost.url} class="post-nav next">
+            <span>NEXT →</span>
+            <strong>{nextPost.frontmatter.title}</strong>
+          </a>
+        ) : (
+          <span></span>
+        )}
+      </nav>
+
       <a
         href={
           category === "TRAVEL"
@@ -90,10 +135,10 @@ const category =
         }
       </a>
 
-        <footer>
-          <span>AKISOU'S BLOG</span>
-          <span>2026 — NOW</span>
-        </footer>
+        <footer class="site-footer">
+        <p>This blog is live for <span id="blog-live-time">0 days, 0 hours, 0 mins</span> and counting.</p>
+        <p>Copyright © 2026 AKISOU · 糖葫芦</p>
+      </footer>
       </div>
 
     </main>
@@ -258,6 +303,52 @@ const category =
   .content :global(strong) {
     color: #35495E;
     font-weight: 600;
+  }
+
+  .post-navigation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 10px 0 35px;
+  }
+
+  .post-nav {
+    min-width: 0;
+    padding: 18px 20px;
+    border: 1px solid #CFE3EF;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    color: #35495E;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .post-nav:hover {
+    border-color: #79C9C3;
+    background: rgba(241, 250, 248, 0.82);
+    transform: translateY(-2px);
+  }
+
+  .post-nav span {
+    display: block;
+    margin-bottom: 8px;
+    color: #7CB1D2;
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  .post-nav strong {
+    display: block;
+    overflow: hidden;
+    color: #35495E;
+    font-size: 14px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .post-nav.next {
+    text-align: right;
   }
 
   .back {
