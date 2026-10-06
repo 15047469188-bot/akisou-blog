@@ -1,6 +1,7 @@
 ---
 import PageLoader from "../components/PageLoader.astro";
 import Sidebar from "../components/Sidebar.astro";
+import FloatingTanghulu from "../components/FloatingTanghulu.astro";
 ---
 
 <!doctype html>
@@ -14,6 +15,7 @@ import Sidebar from "../components/Sidebar.astro";
 
   <body>
     <PageLoader />
+    <FloatingTanghulu />
     <main class="page">
       <Sidebar />
 
@@ -188,6 +190,7 @@ import Sidebar from "../components/Sidebar.astro";
     position: sticky;
     top: 45px;
     height: calc(100vh - 90px);
+    align-self: start;
     display: flex;
     flex-direction: column;
   }

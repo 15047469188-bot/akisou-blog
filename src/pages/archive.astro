@@ -1,6 +1,7 @@
 ---
 import PageLoader from "../components/PageLoader.astro";
 import Sidebar from "../components/Sidebar.astro";
+import FloatingTanghulu from "../components/FloatingTanghulu.astro";
 
 const postFiles = import.meta.glob("./{daily,travel,subtitles,works}/posts/*.md", {
   eager: true,
@@ -50,6 +51,7 @@ const groupedPosts = posts.reduce((groups, post) => {
 
   <body>
     <PageLoader />
+    <FloatingTanghulu />
     <main class="page">
 
       <Sidebar />

@@ -1,5 +1,6 @@
 ---
 import PageLoader from "../../../components/PageLoader.astro";
+import FloatingTanghulu from "../../../components/FloatingTanghulu.astro";
 const postFiles = import.meta.glob("../../{daily,travel,subtitles,works}/posts/*.md", {
   eager: true,
   query: "?raw",
@@ -92,6 +93,7 @@ const categories = [
 
   <body>
     <PageLoader />
+    <FloatingTanghulu />
     <main class="page">
 
       <aside class="sidebar">
@@ -280,6 +282,7 @@ const categories = [
     position: sticky;
     top: 45px;
     height: calc(100vh - 90px);
+    align-self: start;
     display: flex;
     flex-direction: column;
   }
