@@ -72,7 +72,22 @@ const groupedPosts = posts.reduce((groups, post) => {
                     <a href={post.url} class="archive-item">
                       <span class="archive-item-date">{post.frontmatter.date}</span>
                       <span class="archive-item-title">{post.frontmatter.title}</span>
-                      <span class="archive-item-category">{post.frontmatter.category || "BLOG"}</span>
+                      <span class="archive-item-category">
+                        {(
+                          {
+                            "日常": "碎碎念",
+                            "旅行": "到处乱跑",
+                            "字幕": "听写小作坊",
+                            "作品分享": "书影音游",
+                            "碎碎念": "碎碎念",
+                            "到处乱跑": "到处乱跑",
+                            "听写小作坊": "听写小作坊",
+                            "书影音游": "书影音游",
+                          }[post.frontmatter.category] ||
+                          post.frontmatter.category ||
+                          "BLOG"
+                        )}
+                      </span>
                       <span class="archive-item-arrow">↗</span>
                     </a>
                   ))}
