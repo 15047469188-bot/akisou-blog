@@ -30,6 +30,32 @@ const prevPost =
 const nextPost =
   currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
 
+const currentPost = allPosts.find(
+  (post) => post.url === Astro.url.pathname
+);
+
+const rawPosts = import.meta.glob("../pages/*/posts/*.md", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
+
+const rawContent =
+  currentPost?.file && rawPosts[currentPost.file]
+    ? rawPosts[currentPost.file]
+    : "";
+
+const wordCount = rawContent
+  .replace(/^---[\s\S]*?---/, "")
+  .replace(/```[\s\S]*?```/g, "")
+  .replace(/[#*_`>\-]/g, "")
+  .replace(/\s+/g, "")
+  .length;
+
+const readingTime = Math.max(1, Math.ceil(wordCount / 500));
+
+
+
 const category =
   path.startsWith("/akisou-blog/travel/")
     ? "到处乱跑"
@@ -58,6 +84,7 @@ const category =
         <div class="meta">
           <span>{category}</span>
           <span>{date}</span>
+          <span>{readingTime} min read</span>
         </div>
 
         <h1>{title}</h1>
@@ -114,23 +141,23 @@ const category =
 
       <a
         href={
-          category === "TRAVEL"
+          category === "到处乱跑"
             ? "/akisou-blog/travel/"
-            : category === "SUBTITLES"
+            : category === "听写小作坊"
               ? "/akisou-blog/subtitles/"
-              : category === "WORKS"
+              : category === "书影音游"
                 ? "/akisou-blog/works/"
                 : "/akisou-blog/daily/"
         }
         class="back"
       >
         ← BACK TO {
-          category === "TRAVEL"
-            ? "到处乱跑"
-            : category === "SUBTITLES"
-              ? "听写小作坊"
-              : category === "WORKS"
-                ? "书影音游"
+          category === "到处乱跑"
+            ? "TRAVEL"
+            : category === "听写小作坊"
+              ? "SUBTITLES"
+              : category === "书影音游"
+                ? "WORKS"
                 : "DAILY"
         }
       </a>
