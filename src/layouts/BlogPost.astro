@@ -42,19 +42,24 @@ const rawPosts = import.meta.glob("../pages/*/posts/*.md", {
   import: "default",
 });
 
-const rawContent =
-  currentPost?.file && rawPosts[currentPost.file]
-    ? rawPosts[currentPost.file]
-    : "";
+const slug = Astro.url.pathname
+  .split("/")
+  .filter(Boolean)
+  .pop();
 
-const wordCount = rawContent
+const rawKey = Object.keys(rawPosts).find(
+  (key) => key.endsWith(`/${slug}.md`)
+);
+
+const rawContent = rawKey ? rawPosts[rawKey] : "";
+
+const body = rawContent
   .replace(/^---[\s\S]*?---/, "")
-  .replace(/```[\s\S]*?```/g, "")
-  .replace(/[#*_`>\-]/g, "")
-  .replace(/\s+/g, "")
-  .length;
+  .replace(/\s/g, "");
 
-const readingTime = Math.max(1, Math.ceil(wordCount / 500));
+const wordCount = Array.from(body).length;
+
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
 
 
