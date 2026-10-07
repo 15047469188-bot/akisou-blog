@@ -42,14 +42,17 @@ const rawPosts = import.meta.glob("../pages/*/posts/*.md", {
   import: "default",
 });
 
-const slug = Astro.url.pathname
-  .split("/")
-  .filter(Boolean)
-  .pop();
+const rawKey = Object.keys(rawPosts).find((key) => {
+  const fileName = key.split("/").pop()?.replace(/\.md$/, "");
+  const urlSlug = decodeURIComponent(
+    Astro.url.pathname
+      .split("/")
+      .filter(Boolean)
+      .pop() || ""
+  );
 
-const rawKey = Object.keys(rawPosts).find(
-  (key) => key.endsWith(`/${slug}.md`)
-);
+  return fileName === urlSlug;
+});
 
 const rawContent = rawKey ? rawPosts[rawKey] : "";
 
