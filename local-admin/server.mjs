@@ -351,6 +351,37 @@ input, textarea, select {
   outline: none;
 }
 textarea { min-height: 280px; resize: vertical; line-height: 1.8; }
+
+.image-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.image-button {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding: 10px 14px;
+  border: 1px solid #CFE3EF;
+  background: #F8FCFB;
+  color: #35495E;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.image-button input {
+  display: none;
+}
+
+#imageStatus {
+  color: #697681;
+  font-size: 12px;
+}
+
 .small { min-height: auto; }
 button {
   align-self: flex-start;
@@ -413,6 +444,14 @@ button:hover { background: #e87532; }
 <textarea name="content">${esc(body)}</textarea>
 </label>
 
+<div class="image-upload">
+  <button type="button" class="image-button" onclick="document.querySelector('#imageStatus').textContent='按钮正常！'; document.querySelector('#imageFile').click()">
+    📷 选择图片
+  </button>
+  <input type="file" id="imageFile" accept="image/*" style="display:none" onchange="uploadImage(this)">
+  <span id="imageStatus"></span>
+</div>
+
 <button type="submit">SAVE CHANGES ↗</button>
 </form>
 
@@ -421,6 +460,66 @@ button:hover { background: #e87532; }
 
 <script>
 const form = document.querySelector(".form");
+
+const imageStatus = document.querySelector("#imageStatus");
+
+window.uploadImage = async function uploadImage(imageFile) {
+  const selectedFile = imageFile.files?.[0];
+
+  if (!selectedFile) return;
+
+  imageStatus.textContent = "正在上传……";
+
+  const reader = new FileReader();
+
+  reader.onload = async () => {
+    try {
+      const response = await fetch("/api/upload-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fileName: selectedFile.name,
+          fileData: reader.result
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const content = document.querySelector('textarea[name="content"]');
+
+        if (content) {
+          const markdown = "\n![" + result.fileName + "](" + result.url + ")\n";
+
+          const start = content.selectionStart;
+          const end = content.selectionEnd;
+
+          content.value =
+            content.value.slice(0, start) +
+            markdown +
+            content.value.slice(end);
+
+          content.focus();
+
+          const newPosition = start + markdown.length;
+          content.selectionStart = newPosition;
+          content.selectionEnd = newPosition;
+        }
+
+        imageStatus.textContent = "图片上传成功！已插入正文。";
+      } else {
+        imageStatus.textContent = result.message;
+      }
+    } catch (error) {
+      console.error(error);
+      imageStatus.textContent = "图片上传失败。";
+    }
+  };
+
+  reader.readAsDataURL(selectedFile);
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
