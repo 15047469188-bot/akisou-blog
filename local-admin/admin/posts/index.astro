@@ -1,249 +1,444 @@
----
-const posts = Object.entries(
-import.meta.glob("../../{daily,travel,subtitles,works}/posts/*.md", {
-    eager: true,
-  })
-)
-  .map(([file, post]) => ({
-    ...post,
-    file,
-  }))
-  .sort((a, b) =>
-    b.frontmatter.date.localeCompare(a.frontmatter.date)
-  );
----
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>POSTS / AKISOU</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>文章管理 · IZUMI ADMIN</title>
+
   <style>
-  .new-post {
-    display: inline-block;
-    margin-bottom: 40px;
-    color: #35495E;
-    font-family: monospace;
-    font-size: 12px;
-    text-decoration: none;
-    border-bottom: 1px solid #35495E;
-    padding-bottom: 4px;
-    transition: all 0.2s ease;
-  }
+    * {
+      box-sizing: border-box;
+    }
 
-  .new-post:hover {
-    color: #F8E6A0;
-    border-color: #F8E6A0;
-  }
-</style>
-</head>
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
 
-  <body>
-    <main>
-      <header>
-        <a href="/admin" class="logo">AKISOU'S BLOG</a>
-        <span>POSTS</span>
-      </header>
+    body {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "PingFang SC",
+        "Hiragino Sans",
+        "Noto Sans JP",
+        sans-serif;
+      background:
+        radial-gradient(circle at 8% 0%, rgba(124, 177, 210, 0.15), transparent 30%),
+        radial-gradient(circle at 92% 8%, rgba(134, 197, 255, 0.11), transparent 28%),
+        #f8fcfb;
+      color: #35495e;
+    }
 
-      <section>
-        <p class="number">ADMIN / 03</p>
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-        <h1>文章管理</h1>
-<a href="/admin/new" class="new-post">NEW POST ↗</a>
+    button {
+      font: inherit;
+    }
 
-        <div class="posts">
-          {posts.map((post) => (
-            <div class="post">
-              <div class="date">
-                {post.frontmatter.date}
-              </div>
+    .page {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 70px;
+    }
 
-              <div class="main">
-                <h2>{post.frontmatter.title}</h2>
-                <p>{post.frontmatter.description}</p>
-              </div>
+    .top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
 
-            <div class="actions">
-  <a href={post.url} class="view">查看 ↗</a>
+    .eyebrow {
+      margin: 0 0 7px;
+      color: #7cb1d2;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+    }
 
- <a
-  href={`/admin/edit?file=${encodeURIComponent(post.file)}`}
-  class="view"
->
-  编辑 ✎
-</a>
+    h1 {
+      margin: 0;
+      color: #35495e;
+      font-size: 34px;
+      letter-spacing: -0.04em;
+    }
 
-  <button
-    type="button"
-    class="delete"
-    data-file={post.file}
-  >
-    删除 ×
-  </button>
-</div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </main>
-  </body>
-</html>
-<script>
-  const buttons = document.querySelectorAll(".delete");
+    .back {
+      color: #7899aa;
+      font-size: 13px;
+      transition: 0.2s;
+    }
 
-  buttons.forEach((button) => {
-    button.addEventListener("click", async () => {
-      const file = button.dataset.file;
+    .back:hover {
+      color: #5c91b1;
+      transform: translateX(-2px);
+    }
 
-      if (!file) return;
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
 
-      const ok = confirm("确定要删除这篇文章吗？");
+    .count {
+      color: #849a98;
+      font-size: 12px;
+    }
 
-      if (!ok) return;
+    .new-button {
+      padding: 10px 15px;
+      border: 1px solid #cfe3ef;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.65);
+      color: #638aa1;
+      font-size: 12px;
+      transition: 0.2s;
+    }
 
-      const response = await fetch("/api/delete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ file }),
-      });
+    .new-button:hover {
+      border-color: #7cb1d2;
+      background: #fff;
+      transform: translateY(-1px);
+    }
 
-      const result = await response.json();
-
-      if (result.success) {
-        alert("文章已删除！");
-        window.location.reload();
-      } else {
-        alert(result.message);
-      }
-    });
-  });
-</script>
-<style>
-  :global(*) {
-    box-sizing: border-box;
-  }
-
-  :global(body) {
-    margin: 0;
-    background: #F8FCFB;
-    color: #35495E;
-    font-family:
-      -apple-system,
-      BlinkMacSystemFont,
-      "Helvetica Neue",
-      "PingFang SC",
-      sans-serif;
-  }
-
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 55px 30px;
-  }
-
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 22px;
-    border-bottom: 1px solid #35495E;
-    font-family: monospace;
-    font-size: 13px;
-  }
-
-  .logo {
-    color: #35495E;
-    text-decoration: none;
-    font-size: 18px;
-    letter-spacing: 0.05em;
-  }
-
-  section {
-    padding: 80px 0 120px;
-  }
-
-  .number {
-    color: #F8E6A0;
-    font-family: monospace;
-    font-size: 13px;
-  }
-
-  h1 {
-    margin: 25px 0 60px;
-    font-size: clamp(42px, 7vw, 70px);
-    line-height: 1;
-    font-weight: 500;
-    letter-spacing: -0.05em;
-  }
-
-  .post {
-    display: grid;
-    grid-template-columns: 120px 1fr 70px;
-    gap: 25px;
-    align-items: center;
-    padding: 25px 0;
-    border-bottom: 1px solid #FFA62B;
-  }
-
-  .date {
-    font-family: monospace;
-    font-size: 12px;
-    color: #667B7F;
-  }
-
-  .main h2 {
-    margin: 0 0 8px;
-    font-size: 20px;
-    font-weight: 500;
-  }
-
-  .main p {
-    margin: 0;
-    color: #667B7F;
-    font-size: 13px;
-  }
-
-  .view {
-    color: #35495E;
-    text-decoration: none;
-    font-family: monospace;
-    font-size: 12px;
-  }
-
-  .view:hover {
-    color: #F8E6A0;
-  }
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.delete {
-  border: 0;
-  background: transparent;
-  color: #86C5FF;
-  padding: 0;
-  font-family: monospace;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.delete:hover {
-  color: #FFA62B;
-}
-  @media (max-width: 600px) {
-    main {
-      padding: 35px 20px;
+    .list {
+      display: grid;
+      gap: 12px;
     }
 
     .post {
-      grid-template-columns: 1fr;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: 95px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 22px;
+      padding: 21px 23px;
+      border: 1px solid rgba(207, 227, 239, 0.95);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.68);
+      box-shadow: 0 8px 25px rgba(124, 177, 210, 0.05);
+      backdrop-filter: blur(10px);
+      transition: 0.2s;
     }
-  }
-</style>
+
+    .post:hover {
+      border-color: rgba(124, 177, 210, 0.55);
+      box-shadow: 0 12px 30px rgba(124, 177, 210, 0.09);
+    }
+
+    .date {
+      color: #9aadb3;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+
+    .title {
+      margin: 0 0 5px;
+      color: #40576a;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .category {
+      color: #86abc0;
+      font-size: 11px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 54px;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid #d7e6ed;
+      border-radius: 9px;
+      background: #f8fcfd;
+      color: #698b9e;
+      font-size: 11px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .action:hover {
+      border-color: #7cb1d2;
+      background: #fff;
+      color: #5d8ba7;
+    }
+
+    .action.delete {
+      color: #a7827c;
+    }
+
+    .action.delete:hover {
+      border-color: #ddb9b2;
+      background: #fff8f6;
+    }
+
+    .empty {
+      padding: 65px 20px;
+      border: 1px dashed #cfe3ef;
+      border-radius: 20px;
+      text-align: center;
+      color: #94a7ad;
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    .status {
+      display: none;
+      margin-bottom: 15px;
+      padding: 11px 14px;
+      border-radius: 11px;
+      background: #edf7fb;
+      color: #64869a;
+      font-size: 12px;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.error {
+      background: #fff3f1;
+      color: #b46d63;
+    }
+
+    @media (max-width: 700px) {
+      .page {
+        width: min(100% - 22px, 560px);
+        padding-top: 28px;
+      }
+
+      .top {
+        align-items: flex-start;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .post {
+        grid-template-columns: 1fr;
+        gap: 9px;
+      }
+
+      .actions {
+        margin-top: 6px;
+      }
+
+      .action {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="top">
+      <div>
+        <p class="eyebrow">IZUMI ADMIN</p>
+        <h1>文章管理</h1>
+      </div>
+
+      <a class="back" href="/admin">← 返回后台</a>
+    </header>
+
+    <div class="toolbar">
+      <span class="count" id="count">正在读取文章……</span>
+      <a class="new-button" href="/admin/new">＋ 新建文章</a>
+    </div>
+
+    <div class="status" id="status"></div>
+
+    <section class="list" id="postList"></section>
+  </main>
+
+  <script>
+    const postList = document.querySelector("#postList");
+    const count = document.querySelector("#count");
+    const status = document.querySelector("#status");
+
+    const categoryNames = {
+      daily: "碎碎念",
+      travel: "到处乱跑",
+      subtitles: "听写小作坊",
+      works: "书影音游",
+    };
+
+    function showStatus(message, error = false) {
+      status.textContent = message;
+      status.className = "status show" + (error ? " error" : "");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function loadPosts() {
+      try {
+        const response = await fetch("/api/posts");
+
+        if (!response.ok) {
+          throw new Error("无法读取文章列表");
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.message || "读取失败");
+        }
+
+        const posts = Array.isArray(result.posts) ? result.posts : [];
+
+        count.textContent =
+          posts.length === 0
+            ? "目前还没有文章"
+            : `共 ${posts.length} 篇文章`;
+
+        if (posts.length === 0) {
+          postList.innerHTML = `
+            <div class="empty">
+              这里还空空的。<br />
+              去写第一篇文章吧。
+            </div>
+          `;
+          return;
+        }
+
+        postList.innerHTML = posts
+          .map((post) => {
+            const category =
+              categoryNames[post.category] ||
+              post.categoryName ||
+              post.category ||
+              "";
+
+            const editUrl =
+              "/admin/edit?file=" +
+              encodeURIComponent(post.file);
+
+            const viewUrl =
+              post.url ||
+              `/${post.category}/posts/${post.slug}`;
+
+            return `
+              <article class="post">
+                <div class="date">${escapeHtml(post.date || "")}</div>
+
+                <div>
+                  <h2 class="title">${escapeHtml(post.title || "无标题")}</h2>
+                  <div class="category">${escapeHtml(category)}</div>
+                </div>
+
+                <div class="actions">
+                  <a
+                    class="action"
+                    href="${escapeHtml(viewUrl)}"
+                    target="_blank"
+                  >查看</a>
+
+                  <a
+                    class="action"
+                    href="${escapeHtml(editUrl)}"
+                  >编辑</a>
+
+                  <button
+                    class="action delete"
+                    type="button"
+                    data-category="${escapeHtml(post.category || "")}"
+                    data-slug="${escapeHtml(post.slug || "")}"
+                    data-title="${escapeHtml(post.title || "无标题")}"
+                  >删除</button>
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+      } catch (error) {
+        console.error(error);
+
+        count.textContent = "读取失败";
+        showStatus(error.message || "无法读取文章列表。", true);
+      }
+    }
+
+    postList.addEventListener("click", async (event) => {
+      const button = event.target.closest(".delete");
+
+      if (!button) return;
+
+      const category = button.dataset.category;
+      const slug = button.dataset.slug;
+      const title = button.dataset.title;
+
+      if (!category || !slug) {
+        showStatus("缺少文章信息，无法删除。", true);
+        return;
+      }
+
+      const confirmed = confirm(
+        `确定要删除「${title}」吗？\n\n删除后文章文件也会从博客中移除。`
+      );
+
+      if (!confirmed) return;
+
+      button.disabled = true;
+      button.textContent = "删除中";
+
+      showStatus("正在删除文章并同步 GitHub……");
+
+      try {
+        const response = await fetch("/api/delete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            file: `${category}/posts/${slug}.md`,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || "删除失败");
+        }
+
+        showStatus("删除成功。");
+
+        await loadPosts();
+      } catch (error) {
+        console.error(error);
+
+        button.disabled = false;
+        button.textContent = "删除";
+
+        showStatus(error.message || "删除失败。", true);
+      }
+    });
+
+    loadPosts();
+  </script>
+</body>
+</html>

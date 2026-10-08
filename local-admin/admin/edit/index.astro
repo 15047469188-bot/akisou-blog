@@ -10,7 +10,7 @@ if (!file) {
 
 const filePath = path.resolve(
   process.cwd(),
-  "src/pages/admin/posts",
+  "src/pages",
   file
 );
 
@@ -45,148 +45,266 @@ const category = getValue("category");
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EDIT / AKISOU'S BLOG</title>
+    <title>EDIT / IZUMI'S BLOG</title>
 
     <style>
+      :global(*) {
+        box-sizing: border-box;
+      }
+
       :global(body) {
         margin: 0;
-        background: #F8FCFB;
-        color: #35495E;
-        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
-          Arial, sans-serif;
+        background:
+          radial-gradient(circle at 10% 0%, rgba(134, 197, 255, 0.16), transparent 30%),
+          radial-gradient(circle at 90% 20%, rgba(124, 177, 210, 0.12), transparent 28%),
+          #f8fcfb;
+        color: #35495e;
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
       }
 
       .container {
-        max-width: 900px;
+        width: min(920px, calc(100% - 40px));
         margin: 0 auto;
-        padding: 70px 25px 100px;
+        padding: 42px 0 90px;
       }
 
       header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 100px;
+        margin-bottom: 70px;
       }
 
       .logo {
-        font-family: monospace;
-        font-size: 14px;
-        letter-spacing: 1px;
+        color: #35495e;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 1.8px;
       }
 
       .admin {
-        font-family: monospace;
-        font-size: 12px;
-        color: #667B7F;
+        color: #7c9bad;
+        font-size: 11px;
+        letter-spacing: 1.5px;
       }
 
-      .label {
-        font-family: monospace;
-        font-size: 12px;
-        color: #667B7F;
-        margin-bottom: 15px;
+      .hero {
+        margin-bottom: 42px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+        color: #7caecf;
+        font-size: 11px;
+        letter-spacing: 1.5px;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 24px;
+        height: 1px;
+        background: #86c5ff;
       }
 
       h1 {
-        margin: 0 0 50px;
-        font-size: 42px;
+        margin: 0;
+        color: #35495e;
+        font-size: clamp(30px, 5vw, 44px);
         font-weight: 500;
+        letter-spacing: -1px;
+      }
+
+      .file-name {
+        margin-top: 12px;
+        color: #9aadb5;
+        font-family: monospace;
+        font-size: 11px;
+        word-break: break-all;
+      }
+
+      .panel {
+        padding: 30px;
+        border: 1px solid rgba(207, 227, 239, 0.95);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow:
+          0 18px 50px rgba(124, 177, 210, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
       }
 
       .form {
         display: flex;
         flex-direction: column;
-        gap: 30px;
+        gap: 24px;
       }
 
-      label {
+      .field {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        font-size: 13px;
+        gap: 9px;
+      }
+
+      .field-label {
+        color: #607b8b;
+        font-size: 12px;
+        letter-spacing: 0.5px;
       }
 
       input,
       textarea,
       select {
-        box-sizing: border-box;
         width: 100%;
-        border: 1px solid #FFA62B;
-        background: white;
-        padding: 14px;
-        color: #35495E;
+        border: 1px solid #cfe3ef;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #35495e;
+        padding: 13px 15px;
         font: inherit;
+        font-size: 14px;
         outline: none;
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
       }
 
       input:focus,
       textarea:focus,
       select:focus {
-        border-color: #35495E;
+        border-color: #86c5ff;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(134, 197, 255, 0.12);
       }
 
       textarea {
-        min-height: 280px;
+        min-height: 105px;
         resize: vertical;
         line-height: 1.8;
       }
 
-      .small {
-        min-height: auto;
+      .content-area {
+        min-height: 480px;
+        font-family:
+          "SFMono-Regular",
+          Consolas,
+          "Liberation Mono",
+          monospace;
+        font-size: 13px;
+        line-height: 1.75;
       }
 
-      button {
-        align-self: flex-start;
-        border: 0;
-        background: #35495E;
-        color: white;
-        padding: 14px 24px;
-        font-family: monospace;
-        cursor: pointer;
-      }
-
-      button:hover {
-        background: #F8E6A0;
-      }
-
-      .image-upload {
+      .tools {
         display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 12px;
       }
 
-      .image-button {
+      .upload-label {
         display: inline-flex;
-        flex-direction: row;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
         width: auto;
-        padding: 10px 14px;
-        border: 1px solid #CFE3EF;
-        background: #F8FCFB;
-        color: #35495E;
-        cursor: pointer;
+        padding: 9px 13px;
+        border: 1px solid #cfe3ef;
+        border-radius: 10px;
+        background: #f7fbfd;
+        color: #55778b;
         font-size: 12px;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease,
+          transform 0.2s ease;
       }
 
-      .image-button input {
+      .upload-label:hover {
+        border-color: #86c5ff;
+        background: #eef8ff;
+        transform: translateY(-1px);
+      }
+
+      .upload-label input {
         display: none;
       }
 
-      #imageStatus {
-        color: #667B7F;
+      .status {
+        min-height: 18px;
+        margin-top: 8px;
+        color: #86a0ad;
+        font-size: 11px;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 4px;
+      }
+
+      .save-button {
+        border: 0;
+        border-radius: 12px;
+        background: #7cb1d2;
+        color: white;
+        padding: 13px 22px;
         font-size: 12px;
+        letter-spacing: 0.8px;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(124, 177, 210, 0.2);
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .save-button:hover {
+        background: #6ba6cc;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(124, 177, 210, 0.25);
       }
 
       .back {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
         margin-top: 25px;
-        color: #667B7F;
-        font-family: monospace;
+        color: #7c9bad;
         font-size: 12px;
         text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .back:hover {
+        color: #5e9bc5;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          width: min(100% - 24px, 920px);
+          padding-top: 28px;
+        }
+
+        header {
+          margin-bottom: 48px;
+        }
+
+        .panel {
+          padding: 20px;
+          border-radius: 18px;
+        }
+
+        .content-area {
+          min-height: 400px;
+        }
       }
     </style>
   </head>
@@ -194,71 +312,127 @@ const category = getValue("category");
   <body>
     <main class="container">
       <header>
-        <div class="logo">AKISOU'S BLOG</div>
+        <div class="logo">IZUMI'S BLOG</div>
         <div class="admin">ADMIN / EDIT</div>
       </header>
 
-      <div class="label">EDIT / 01</div>
-      <h1>编辑文章</h1>
+      <section class="hero">
+        <div class="eyebrow">EDIT / ARTICLE</div>
+        <h1>编辑文章</h1>
+        <div class="file-name">{file}</div>
+      </section>
 
-      <form class="form">
-        <label>
-          标题
-          <input name="title" value={title} />
-        </label>
+      <section class="panel">
+        <form class="form">
+          <label class="field">
+            <span class="field-label">标题</span>
+            <input name="title" value="{title}" />
+          </label>
 
-        <label>
-          分类
-          <select name="category">
-            <option value="日常" selected={category === "日常"}>碎碎念</option>
-            <option value="旅行" selected={category === "旅行"}>到处乱跑</option>
-            <option value="字幕" selected={category === "字幕"}>听写小作坊</option>
-            <option value="作品分享" selected={category === "作品分享"}>书影音游</option>
-          </select>
-        </label>
+          <label class="field">
+            <span class="field-label">分类</span>
+            <select name="category" id="categorySelect">
+              <option value="日常" __SELECT_DAILY__>碎碎念</option>
+              <option value="旅行" __SELECT_TRAVEL__>到处乱跑</option>
+              <option value="字幕" __SELECT_SUBTITLES__>听写小作坊</option>
+              <option value="作品分享" __SELECT_WORKS__>书影音游</option>
+            </select>
+          </label>
 
-        <label>
-          日期
-          <input name="date" type="date" value={date.replaceAll(".", "-")} />
-        </label>
+          <label class="field">
+            <span class="field-label">日期</span>
+            <input name="date" type="date" value="{date}" />
+          </label>
 
-        <label>
-          简介
-          <textarea name="description" class="small">{description}</textarea>
-        </label>
+          <label class="field">
+            <span class="field-label">简介</span>
+            <textarea name="description">{description}</textarea>
+          </label>
 
-        <label>
-          正文
+          <div class="field">
+            <span class="field-label">正文</span>
 
-          <div class="image-upload">
-            <label class="image-button">
-              📷 选择图片
-              <input type="file" id="imageFile" accept="image/*" />
-            </label>
-            <span id="imageStatus"></span>
+            <div class="tools">
+              <label class="upload-label">
+                📷 插入图片
+                <input type="file" id="imageFile" accept="image/*" />
+              </label>
+
+              <label class="upload-label">
+                🎬 插入视频
+                <input
+                  type="file"
+                  id="videoFile"
+                  accept="video/mp4,video/webm,video/quicktime"
+                />
+              </label>
+            </div>
+
+            <div class="status">
+              <span id="imageStatus"></span>
+              <span id="videoStatus"></span>
+            </div>
+
+            <textarea name="content" class="content-area">{body}</textarea>
           </div>
 
-          <textarea name="content">{body}</textarea>
-        </label>
+          <div class="actions">
+            <button class="save-button" type="submit">
+              SAVE CHANGES ↗
+            </button>
+          </div>
+        </form>
+      </section>
 
-        <button type="submit">SAVE CHANGES ↗</button>
-      </form>
-
-      <a href="/admin/posts" class="back">← BACK TO POSTS</a>
+      <a href="/admin/posts" class="back">← 返回文章管理</a>
     </main>
 
-    <script define:vars={{ file }}>
+    <script data-file="{file}">
       const form = document.querySelector(".form");
+      const categorySelect = document.querySelector("#categorySelect");
+      const file =
+        document.querySelector("script[data-file]")?.dataset.file || "";
 
       const imageFile = document.querySelector("#imageFile");
       const imageStatus = document.querySelector("#imageStatus");
+
+      const videoFile = document.querySelector("#videoFile");
+      const videoStatus = document.querySelector("#videoStatus");
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const currentCategory = "__CATEGORY__";
+
+        if (categorySelect) {
+          categorySelect.value = currentCategory;
+        }
+      });
+
+      function insertAtCursor(text) {
+        const content = document.querySelector('textarea[name="content"]');
+
+        if (!content) return;
+
+        const start = content.selectionStart;
+        const end = content.selectionEnd;
+
+        content.value =
+          content.value.slice(0, start) +
+          text +
+          content.value.slice(end);
+
+        content.focus();
+
+        const newPosition = start + text.length;
+        content.selectionStart = newPosition;
+        content.selectionEnd = newPosition;
+      }
 
       imageFile?.addEventListener("change", async () => {
         const selectedFile = imageFile.files?.[0];
 
         if (!selectedFile) return;
 
-        imageStatus.textContent = "正在上传……";
+        imageStatus.textContent = "正在上传图片……";
 
         const reader = new FileReader();
 
@@ -278,33 +452,59 @@ const category = getValue("category");
             const result = await response.json();
 
             if (result.success) {
-              const content = document.querySelector('textarea[name="content"]');
+              insertAtCursor(
+                `\n![${result.fileName}](${result.url})\n`
+              );
 
-              if (content) {
-                const markdown = `\n![${result.fileName}](${result.url})\n`;
-
-                const start = content.selectionStart;
-                const end = content.selectionEnd;
-
-                content.value =
-                  content.value.slice(0, start) +
-                  markdown +
-                  content.value.slice(end);
-
-                content.focus();
-
-                const newPosition = start + markdown.length;
-                content.selectionStart = newPosition;
-                content.selectionEnd = newPosition;
-              }
-
-              imageStatus.textContent = "图片上传成功！已插入正文。";
+              imageStatus.textContent = "图片上传成功，已插入正文。";
             } else {
               imageStatus.textContent = result.message;
             }
           } catch (error) {
             console.error(error);
             imageStatus.textContent = "图片上传失败。";
+          }
+        };
+
+        reader.readAsDataURL(selectedFile);
+      });
+
+      videoFile?.addEventListener("change", async () => {
+        const selectedFile = videoFile.files?.[0];
+
+        if (!selectedFile) return;
+
+        videoStatus.textContent = "正在上传视频……";
+
+        const reader = new FileReader();
+
+        reader.onload = async () => {
+          try {
+            const response = await fetch("/api/upload-video", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                fileName: selectedFile.name,
+                fileData: reader.result,
+              }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+              insertAtCursor(
+                `\n<video controls preload="metadata" src="${result.url}"></video>\n`
+              );
+
+              videoStatus.textContent = "视频上传成功，已插入正文。";
+            } else {
+              videoStatus.textContent = result.message;
+            }
+          } catch (error) {
+            console.error(error);
+            videoStatus.textContent = "视频上传失败。";
           }
         };
 
@@ -325,21 +525,26 @@ const category = getValue("category");
           content: formData.get("content"),
         };
 
-        const response = await fetch("/api/edit", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
+        try {
+          const response = await fetch("/api/edit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
 
-        const result = await response.json();
+          const result = await response.json();
 
-        if (result.success) {
-          alert("文章修改成功！");
-          window.location.href = "/admin/posts";
-        } else {
-          alert(result.message);
+          if (result.success) {
+            alert("文章修改成功！");
+            window.location.href = "/admin/posts";
+          } else {
+            alert(result.message);
+          }
+        } catch (error) {
+          console.error(error);
+          alert("保存失败，请检查 Admin 服务是否正常运行。");
         }
       });
     </script>

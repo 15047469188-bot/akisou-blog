@@ -8,46 +8,12 @@ const execFileAsync = promisify(execFile);
 
 const root = process.cwd();
 
-async function renderAstro(filePath, vars = {}) {
+async function renderAstro(filePath) {
   const source = await fs.readFile(filePath, "utf-8");
 
-  // 只删除真正位于行首的 Astro Frontmatter，
-  // 避免误删正文/代码里的 "---"。
-  const withoutFrontmatter = source.replace(
-    /^---\r?\n[\s\S]*?\r?\n---\r?\n/,
-    ""
-  );
-
-  let html = withoutFrontmatter;
-
-  for (const [key, value] of Object.entries(vars)) {
-    const escaped = String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;");
-
-    html = html.replaceAll(`{${key}}`, escaped);
-    html = html.replaceAll(`__${key.toUpperCase()}__`, escaped);
-  }
-
-  if (vars.category === "日常") {
-    html = html.replaceAll("__SELECT_DAILY__", "selected");
-  } else if (vars.category === "旅行") {
-    html = html.replaceAll("__SELECT_TRAVEL__", "selected");
-  } else if (vars.category === "字幕") {
-    html = html.replaceAll("__SELECT_SUBTITLES__", "selected");
-  } else if (vars.category === "作品分享") {
-    html = html.replaceAll("__SELECT_WORKS__", "selected");
-  }
-
-  html = html.replaceAll(
-    /__SELECT_(?:DAILY|TRAVEL|SUBTITLES|WORKS)__/g,
-    ""
-  );
-
-  return html;
+  return source.replace(/^---[\s\S]*?---/, "");
 }
+
 
 async function uploadVideo(data) {
   const fileName = String(data.fileName || "").trim();
@@ -275,80 +241,6 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    if (req.method === "GET" && req.url === "/admin/posts") {
-      const html = await renderAstro(
-        path.join(root, "local-admin/admin/posts/index.astro")
-      );
-
-      res.writeHead(200, {
-        "Content-Type": "text/html; charset=utf-8",
-      });
-
-      res.end(html);
-      return;
-    }
-
-    if (req.method === "GET" && req.url === "/api/posts") {
-      const categories = ["daily", "travel", "subtitles", "works"];
-      const posts = [];
-
-      for (const category of categories) {
-        const dir = path.join(root, "src/pages", category, "posts");
-
-        let files = [];
-
-        try {
-          files = await fs.readdir(dir);
-        } catch {
-          continue;
-        }
-
-        for (const filename of files) {
-          if (!filename.endsWith(".md")) continue;
-
-          const filePath = path.join(dir, filename);
-          const source = await fs.readFile(filePath, "utf-8");
-          const match = source.match(/^---\s*\n([\s\S]*?)\n---/);
-
-          if (!match) continue;
-
-          const frontmatter = match[1];
-
-          const getValue = (key) => {
-            const result = frontmatter.match(
-              new RegExp("^" + key + ":\\s*[\"']?([^\"']*?)[\"']?\\s*$", "m")
-            );
-
-            return result ? result[1].trim() : "";
-          };
-
-          const slug = filename.replace(/\.md$/, "");
-
-          posts.push({
-            file: `${category}/posts/${filename}`,
-            category,
-            slug,
-            title: getValue("title"),
-            date: getValue("date"),
-            description: getValue("description"),
-            url: `/${category}/posts/${slug}`,
-          });
-        }
-      }
-
-      posts.sort((a, b) => b.date.localeCompare(a.date));
-
-      res.writeHead(200, {
-        "Content-Type": "application/json; charset=utf-8",
-      });
-
-      res.end(JSON.stringify({
-        success: true,
-        posts,
-      }));
-      return;
-    }
-
     if (req.method === "GET" && req.url === "/api/about") {
       const filePath = path.join(root, "src", "pages", "about.astro");
       const source = await fs.readFile(filePath, "utf-8");
@@ -415,7 +307,6 @@ const server = http.createServer(async (req, res) => {
         "daily/posts/",
         "travel/posts/",
         "subtitles/posts/",
-        "works/posts/",
       ];
 
       if (
@@ -433,10 +324,7 @@ const server = http.createServer(async (req, res) => {
 
       try {
         const source = await fs.readFile(filePath, "utf-8");
-
-        const match = source.match(
-          /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/
-        );
+        const match = source.match(/^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/);
 
         if (!match) {
           throw new Error("文章格式不正确。");
@@ -447,9 +335,8 @@ const server = http.createServer(async (req, res) => {
 
         const getValue = (key) => {
           const result = frontmatter.match(
-            new RegExp('^' + key + ':\\s*"([\\s\\S]*?)"$', "m")
+            new RegExp('^' + key + ':\\s*"([\s\\S]*?)"$', "m")
           );
-
           return result ? result[1] : "";
         };
 
@@ -458,17 +345,331 @@ const server = http.createServer(async (req, res) => {
         const description = getValue("description");
         const category = getValue("category");
 
-        const html = await renderAstro(
-          path.join(root, "local-admin/admin/edit/index.astro"),
-          {
-            file,
-            title,
-            date: date.replaceAll(".", "-"),
-            description,
-            category,
-            body,
-          }
-        );
+        const esc = (value) =>
+          String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;");
+
+        const html = `<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDIT / AKISOU'S BLOG</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #f7f8f8;
+  color: #172536;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 70px 25px 100px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 100px;
+}
+.logo, .admin, .label, .back {
+  font-family: monospace;
+}
+.logo { font-size: 14px; letter-spacing: 1px; }
+.admin, .label, .back { font-size: 12px; color: #697681; }
+h1 { margin: 0 0 50px; font-size: 42px; font-weight: 500; }
+.form { display: flex; flex-direction: column; gap: 30px; }
+label { display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+input, textarea, select {
+  width: 100%;
+  border: 1px solid #ccd2d6;
+  background: white;
+  padding: 14px;
+  color: #172536;
+  font: inherit;
+  outline: none;
+}
+textarea { min-height: 280px; resize: vertical; line-height: 1.8; }
+
+.image-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.image-button {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding: 10px 14px;
+  border: 1px solid #CFE3EF;
+  background: #F8FCFB;
+  color: #35495E;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.image-button input {
+  display: none;
+}
+
+#imageStatus {
+  color: #697681;
+  font-size: 12px;
+}
+
+.small { min-height: auto; }
+button {
+  align-self: flex-start;
+  border: 0;
+  background: #172536;
+  color: white;
+  padding: 14px 24px;
+  font-family: monospace;
+  cursor: pointer;
+}
+button:hover { background: #e87532; }
+.back {
+  display: inline-block;
+  margin-top: 25px;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<main class="container">
+<header>
+<div class="logo">AKISOU'S BLOG</div>
+<div class="admin">ADMIN / EDIT</div>
+</header>
+
+<div class="label">EDIT / 01</div>
+<h1>编辑文章</h1>
+
+<form class="form">
+<label>
+标题
+<input name="title" value="${esc(title)}">
+</label>
+
+<label>
+分类
+<option value="碎碎念" ${category === "碎碎念" ? "selected" : ""}>碎碎念</option>
+<option value="到处乱跑" ${category === "到处乱跑" ? "selected" : ""}>到处乱跑</option>
+<option value="听写小作坊" ${category === "听写小作坊" ? "selected" : ""}>听写小作坊</option>
+<select name="category">
+<option value="碎碎念" ${category === "碎碎念" ? "selected" : ""}>碎碎念</option>
+<option value="到处乱跑" ${category === "到处乱跑" ? "selected" : ""}>到处乱跑</option>
+<option value="听写小作坊" ${category === "听写小作坊" ? "selected" : ""}>听写小作坊</option>
+<option value="书影音游" ${category === "书影音游" ? "selected" : ""}>书影音游</option>
+</select>
+</label>
+
+<label>
+日期
+<input name="date" type="date" value="${esc(date.replaceAll(".", "-"))}">
+</label>
+
+<label>
+简介
+<textarea name="description" class="small">${esc(description)}</textarea>
+</label>
+
+<label>
+正文
+<textarea name="content">${esc(body)}</textarea>
+</label>
+
+<div class="image-upload">
+  <button type="button" class="image-button" onclick="document.querySelector('#imageStatus').textContent='按钮正常！'; document.querySelector('#imageFile').click()">
+    📷 选择图片
+  </button>
+  <input type="file" id="imageFile" accept="image/*" style="display:none" onchange="uploadImage(this)">
+  <span id="imageStatus"></span>
+</div>
+
+<div class="image-upload">
+  <button type="button" class="image-button" onclick="document.querySelector('#videoFile').click()">
+    🎬 选择视频
+  </button>
+  <input type="file" id="videoFile" accept="video/mp4,video/webm,video/quicktime" style="display:none" onchange="uploadVideo(this)">
+  <span id="videoStatus"></span>
+</div>
+
+<button type="submit">SAVE CHANGES ↗</button>
+</form>
+
+<a href="/admin/posts" class="back">← BACK TO POSTS</a>
+</main>
+
+<script>
+const form = document.querySelector(".form");
+
+const imageStatus = document.querySelector("#imageStatus");
+
+
+window.uploadVideo = async function uploadVideo(videoFile) {
+  const selectedFile = videoFile.files?.[0];
+
+  if (!selectedFile) return;
+
+  const videoStatus = document.querySelector("#videoStatus");
+  videoStatus.textContent = "正在上传视频……";
+
+  const reader = new FileReader();
+
+  reader.onload = async () => {
+    try {
+      const response = await fetch("/api/upload-video", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fileName: selectedFile.name,
+          fileData: reader.result
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const content = document.querySelector('textarea[name="content"]');
+
+        if (content) {
+          const markdown =
+            '\\n<video controls src="' +
+            result.url +
+            '"></video>\\n';
+
+          const start = content.selectionStart;
+          const end = content.selectionEnd;
+
+          content.value =
+            content.value.slice(0, start) +
+            markdown +
+            content.value.slice(end);
+
+          content.focus();
+
+          const newPosition = start + markdown.length;
+          content.selectionStart = newPosition;
+          content.selectionEnd = newPosition;
+        }
+
+        videoStatus.textContent = "视频上传成功！已插入正文。";
+      } else {
+        videoStatus.textContent = result.message;
+      }
+    } catch (error) {
+      console.error(error);
+      videoStatus.textContent = "视频上传失败。";
+    }
+  };
+
+  reader.readAsDataURL(selectedFile);
+};
+
+window.uploadImage = async function uploadImage(imageFile) {
+  const selectedFile = imageFile.files?.[0];
+
+  if (!selectedFile) return;
+
+  imageStatus.textContent = "正在上传……";
+
+  const reader = new FileReader();
+
+  reader.onload = async () => {
+    try {
+      const response = await fetch("/api/upload-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fileName: selectedFile.name,
+          fileData: reader.result
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const content = document.querySelector('textarea[name="content"]');
+
+        if (content) {
+          const markdown = "\\n![" + result.fileName + "](" + result.url + ")\\n";
+
+          const start = content.selectionStart;
+          const end = content.selectionEnd;
+
+          content.value =
+            content.value.slice(0, start) +
+            markdown +
+            content.value.slice(end);
+
+          content.focus();
+
+          const newPosition = start + markdown.length;
+          content.selectionStart = newPosition;
+          content.selectionEnd = newPosition;
+        }
+
+        imageStatus.textContent = "图片上传成功！已插入正文。";
+      } else {
+        imageStatus.textContent = result.message;
+      }
+    } catch (error) {
+      console.error(error);
+      imageStatus.textContent = "图片上传失败。";
+    }
+  };
+
+  reader.readAsDataURL(selectedFile);
+};
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(form);
+
+  const data = {
+    file: ${JSON.stringify(file)},
+    title: formData.get("title"),
+    category: formData.get("category"),
+    date: formData.get("date"),
+    description: formData.get("description"),
+    content: formData.get("content")
+  };
+
+  const response = await fetch("/api/edit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+
+  const result = await response.json();
+
+  if (result.success) {
+    alert("文章修改成功！");
+    window.location.href = "/admin/posts";
+  } else {
+    alert(result.message);
+  }
+});
+</script>
+</body>
+</html>`;
 
         res.writeHead(200, {
           "Content-Type": "text/html; charset=utf-8",
@@ -483,6 +684,235 @@ const server = http.createServer(async (req, res) => {
         res.end("无法读取文章。");
       }
 
+      return;
+    }
+
+    if (req.method === "GET" && req.url === "/admin/posts") {
+      const categories = ["daily", "travel", "subtitles", "works"];
+      const posts = [];
+
+      for (const category of categories) {
+        const dir = path.join(root, "src/pages", category, "posts");
+
+        let files = [];
+        try {
+          files = await fs.readdir(dir);
+        } catch {
+          continue;
+        }
+
+        for (const filename of files) {
+          if (!filename.endsWith(".md")) continue;
+
+          const filePath = path.join(dir, filename);
+          const source = await fs.readFile(filePath, "utf-8");
+          const match = source.match(/^---[\s\S]*?---/);
+
+          if (!match) continue;
+
+          const frontmatter = match[0];
+
+          const getValue = (key) => {
+            const result = frontmatter.match(
+              new RegExp("^" + key + ":\\s*[\\\"]?([^\\\"]*?)[\\\"]?\\s*$", "m")
+            );
+            return result ? result[1].trim() : "";
+          };
+
+          posts.push({
+            file: `${category}/posts/${filename}`,
+            title: getValue("title"),
+            date: getValue("date"),
+            description: getValue("description"),
+            url: `/${category}/posts/${filename.replace(/\\.md$/, "")}`,
+          });
+        }
+      }
+
+      posts.sort((a, b) => b.date.localeCompare(a.date));
+
+      const escapeHtml = (value) =>
+        String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+
+      const postHtml = posts
+        .map(
+          (post) => `
+            <div class="post">
+              <div class="date">${escapeHtml(post.date)}</div>
+              <div class="main">
+                <h2>${escapeHtml(post.title)}</h2>
+                <p>${escapeHtml(post.description)}</p>
+              </div>
+              <div class="actions">
+                <a href="${post.url}" class="view">查看 ↗</a>
+                <a href="/admin/edit?file=${encodeURIComponent(post.file)}" class="view">编辑 ✎</a>
+                <button type="button" class="delete" data-file="${escapeHtml(post.file)}">删除 ×</button>
+              </div>
+            </div>
+          `
+        )
+        .join("");
+
+      const html = `<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POSTS / AKISOU</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #f7f8f6;
+  color: #172536;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", sans-serif;
+}
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 55px 30px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #172536;
+  font-family: monospace;
+  font-size: 13px;
+}
+.logo {
+  color: #172536;
+  text-decoration: none;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+}
+section { padding: 80px 0 120px; }
+.number {
+  color: #e87532;
+  font-family: monospace;
+  font-size: 13px;
+}
+h1 {
+  margin: 25px 0 60px;
+  font-size: clamp(42px, 7vw, 70px);
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+}
+.new-post {
+  display: inline-block;
+  margin-bottom: 40px;
+  color: #172536;
+  font-family: monospace;
+  font-size: 12px;
+  text-decoration: none;
+  border-bottom: 1px solid #172536;
+  padding-bottom: 4px;
+}
+.post {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 25px;
+  align-items: center;
+  padding: 25px 0;
+  border-bottom: 1px solid #ccd2d6;
+}
+.date {
+  font-family: monospace;
+  font-size: 12px;
+  color: #697681;
+}
+.main h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 500;
+}
+.main p {
+  margin: 0;
+  color: #697681;
+  font-size: 13px;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.view, .delete {
+  color: #172536;
+  text-decoration: none;
+  font-family: monospace;
+  font-size: 12px;
+}
+.delete {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+.view:hover, .delete:hover {
+  color: #e87532;
+}
+@media (max-width: 600px) {
+  main { padding: 35px 20px; }
+  .post {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+<a href="/admin" class="logo">AKISOU'S BLOG</a>
+<span>POSTS</span>
+</header>
+<section>
+<p class="number">ADMIN / 03</p>
+<h1>文章管理</h1>
+<a href="/admin/new" class="new-post">NEW POST ↗</a>
+<div class="posts">${postHtml}</div>
+</section>
+</main>
+<script>
+document.querySelectorAll(".delete").forEach((button) => {
+  button.addEventListener("click", async () => {
+    const file = button.dataset.file;
+    if (!file) return;
+
+    if (!confirm("确定要删除这篇文章吗？")) return;
+
+    const response = await fetch("/api/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ file }),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert("文章已删除！");
+      location.reload();
+    } else {
+      alert(result.message);
+    }
+  });
+});
+</script>
+</body>
+</html>`;
+
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+      });
+
+      res.end(html);
       return;
     }
 
@@ -505,19 +935,18 @@ const server = http.createServer(async (req, res) => {
             "works/posts/",
           ];
 
-          const allowed = allowedPrefixes.some((prefix) =>
-            file.startsWith(prefix)
-          );
-
-          if (!allowed || !file.endsWith(".md")) {
-            res.writeHead(400, {
+          if (
+            !file ||
+            !allowedPrefixes.some((prefix) => file.startsWith(prefix))
+          ) {
+            res.writeHead(403, {
               "Content-Type": "application/json; charset=utf-8",
             });
 
             res.end(
               JSON.stringify({
                 success: false,
-                message: "无效的文章文件。",
+                message: "无效的文件路径。",
               })
             );
 
@@ -525,26 +954,7 @@ const server = http.createServer(async (req, res) => {
           }
 
           const filePath = path.resolve(root, "src/pages", file);
-
           await fs.unlink(filePath);
-
-          try {
-            await execFileAsync("git", ["add", "-A"], { cwd: root });
-
-            await execFileAsync(
-              "git",
-              ["commit", "-m", `delete post: ${path.basename(file, ".md")}`],
-              { cwd: root }
-            );
-
-            await execFileAsync(
-              "git",
-              ["push", "origin", "main"],
-              { cwd: root }
-            );
-          } catch (gitError) {
-            console.error("Git 操作失败：", gitError);
-          }
 
           res.writeHead(200, {
             "Content-Type": "application/json; charset=utf-8",
@@ -566,7 +976,7 @@ const server = http.createServer(async (req, res) => {
           res.end(
             JSON.stringify({
               success: false,
-              message: "删除文章失败。",
+              message: "删除失败。",
             })
           );
         }
@@ -574,7 +984,6 @@ const server = http.createServer(async (req, res) => {
 
       return;
     }
-
     if (req.method === "POST" && req.url === "/api/edit") {
       let body = "";
 

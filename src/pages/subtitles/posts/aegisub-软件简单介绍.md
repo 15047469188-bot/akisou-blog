@@ -1,8 +1,8 @@
 ---
 layout: ../../../layouts/BlogPost.astro
 title: "【Aegisub】软件简单介绍"
-date: "2026-10-04"
-description: "简单介绍工作界面及轴处理"
+date: "2026.10.04"
+description: "简单介绍工作界面及轴处理！"
 category: "字幕"
 ---
 

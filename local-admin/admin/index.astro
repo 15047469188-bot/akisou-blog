@@ -1,207 +1,293 @@
----
----
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ADMIN / AKISOU</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IZUMI ADMIN</title>
 
-  <body>
-    <main>
-      <header>
-        <a href="/" class="logo">AKISOU'S BLOG</a>
-        <span>ADMIN</span>
-      </header>
-
-      <section class="hero">
-        <p class="number">ADMIN / 01</p>
-
-        <h1>BLOG<br />MANAGEMENT</h1>
-
-        <p class="description">
-          管理你的日常、旅行和字幕文章。
-        </p>
-      </section>
-
-      <section class="menu">
-        <a href="/admin/new" class="menu-item">
-          <div>
-            <span class="menu-number">01</span>
-            <h2>NEW POST</h2>
-            <p>写一篇新的文章</p>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a href="/admin/posts" class="menu-item">
-          <div>
-            <span class="menu-number">02</span>
-            <h2>MANAGE POSTS</h2>
-            <p>编辑、删除已有文章</p>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-        <a href="/admin/friends" class="menu-item">
-          <div>
-            <span class="menu-number">03</span>
-            <h2>FRIENDS</h2>
-            <p>管理友情链接</p>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a href="/admin/about" class="menu-item">
-          <div>
-            <span class="menu-number">04</span>
-            <h2>ABOUT</h2>
-            <p>编辑 About 页面文案</p>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-      </section>
-
-      <footer>
-        <span>AKISOU'S BLOG</span>
-        <a href="/akisou-blog/" target="_blank">VIEW BLOG ↗</a>
-      </footer>
-    </main>
-  </body>
-</html>
-
-<style>
-  :global(*) {
-    box-sizing: border-box;
-  }
-
-  :global(body) {
-    margin: 0;
-    background: #F8FCFB;
-    color: #35495E;
-    font-family:
-      -apple-system,
-      BlinkMacSystemFont,
-      "Helvetica Neue",
-      "PingFang SC",
-      sans-serif;
-  }
-
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 55px 30px 40px;
-  }
-
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 22px;
-    border-bottom: 1px solid #35495E;
-    font-family: monospace;
-    font-size: 13px;
-  }
-
-  .logo {
-    color: #35495E;
-    text-decoration: none;
-    font-size: 18px;
-    letter-spacing: 0.05em;
-  }
-
-  .hero {
-    padding: 90px 0 70px;
-  }
-
-  .number,
-  .menu-number {
-    color: #7CB1D2;
-    font-family: monospace;
-    font-size: 13px;
-    letter-spacing: 0.08em;
-  }
-
-  h1 {
-    margin: 28px 0 22px;
-    font-size: clamp(52px, 9vw, 88px);
-    line-height: 0.95;
-    font-weight: 500;
-    letter-spacing: -0.06em;
-  }
-
-  .description {
-    color: #667B7F;
-    font-size: 16px;
-  }
-
-  .menu {
-    border-top: 1px solid #FFA62B;
-  }
-
-  .menu-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 32px 8px;
-    border-bottom: 1px solid #FFA62B;
-    color: #35495E;
-    text-decoration: none;
-    transition: 0.2s ease;
-  }
-
-  .menu-item:hover {
-    padding-left: 18px;
-    padding-right: 18px;
-    background: #FFA62B;
-  }
-
-  h2 {
-    margin: 8px 0 6px;
-    font-size: 28px;
-    font-weight: 500;
-    letter-spacing: -0.03em;
-  }
-
-  .menu-item p {
-    margin: 0;
-    color: #849A98;
-    font-size: 14px;
-  }
-
-  .arrow {
-    font-size: 28px;
-    color: #7CB1D2;
-  }
-
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 70px;
-    padding-top: 20px;
-    border-top: 1px solid #FFA62B;
-    color: #849A98;
-    font-family: monospace;
-    font-size: 12px;
-  }
-
-  footer a {
-    color: #7CB1D2;
-    text-decoration: none;
-  }
-
-  @media (max-width: 600px) {
-    main {
-      padding: 30px 20px;
+  <style>
+    * {
+      box-sizing: border-box;
     }
 
-    .hero {
-      padding: 70px 0 50px;
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "PingFang SC",
+        "Hiragino Sans",
+        "Noto Sans JP",
+        sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(124, 177, 210, 0.16), transparent 32%),
+        radial-gradient(circle at 90% 10%, rgba(134, 197, 255, 0.12), transparent 28%),
+        #f8fcfb;
+      color: #35495e;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1100px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 70px 0 80px;
+    }
+
+    .top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 30px;
+      margin-bottom: 45px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      color: #7cb1d2;
+      font-weight: 700;
     }
 
     h1 {
-      font-size: 54px;
+      margin: 0;
+      font-size: clamp(38px, 7vw, 64px);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+      color: #35495e;
     }
-  }
-</style>
+
+    .intro {
+      margin: 17px 0 0;
+      color: #849a98;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .blog-link {
+      flex-shrink: 0;
+      padding: 11px 17px;
+      border: 1px solid #cfe3ef;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.58);
+      color: #6c91aa;
+      font-size: 13px;
+      transition: 0.2s ease;
+    }
+
+    .blog-link:hover {
+      transform: translateY(-2px);
+      border-color: #7cb1d2;
+      background: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      position: relative;
+      min-height: 190px;
+      padding: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(207, 227, 239, 0.95);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.66);
+      box-shadow: 0 12px 35px rgba(124, 177, 210, 0.08);
+      backdrop-filter: blur(12px);
+      transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 130px;
+      height: 130px;
+      right: -45px;
+      bottom: -55px;
+      border-radius: 50%;
+      background: rgba(124, 177, 210, 0.08);
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(124, 177, 210, 0.65);
+      box-shadow: 0 18px 42px rgba(124, 177, 210, 0.13);
+    }
+
+    .icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 22px;
+      border-radius: 13px;
+      background: #edf7fb;
+      color: #6ea7c9;
+      font-size: 19px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      color: #35495e;
+    }
+
+    .card p {
+      margin: 0;
+      max-width: 390px;
+      color: #849a98;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .arrow {
+      position: absolute;
+      right: 25px;
+      top: 25px;
+      color: #9dbdcc;
+      font-size: 18px;
+      transition: 0.2s ease;
+    }
+
+    .card:hover .arrow {
+      transform: translate(3px, -3px);
+      color: #6ea7c9;
+    }
+
+    .wide {
+      grid-column: span 2;
+      min-height: 145px;
+    }
+
+    .wide-inner {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .wide .icon {
+      flex-shrink: 0;
+      margin: 0;
+    }
+
+    .footer {
+      margin-top: 45px;
+      text-align: center;
+      color: #a1b2b0;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+
+    @media (max-width: 700px) {
+      .page {
+        width: min(100% - 28px, 560px);
+        padding-top: 45px;
+      }
+
+      .top {
+        display: block;
+        margin-bottom: 30px;
+      }
+
+      .blog-link {
+        display: inline-block;
+        margin-top: 22px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wide {
+        grid-column: span 1;
+      }
+
+      .card {
+        min-height: 170px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="top">
+      <div>
+        <p class="eyebrow">AKISOU'S LITTLE WORKROOM</p>
+        <h1>IZUMI ADMIN</h1>
+        <p class="intro">
+          写文章、整理博客、更新 About，<br />
+          还有一些乱七八糟的小事情。
+        </p>
+      </div>
+
+      <a class="blog-link" href="/" target="_blank">
+        VIEW BLOG ↗
+      </a>
+    </header>
+
+    <section class="grid">
+      <a class="card" href="/admin/new">
+        <span class="arrow">↗</span>
+        <div class="icon">✎</div>
+        <h2>新建文章</h2>
+        <p>写一篇新的文章，选择分类、日期和简介，然后直接发布。</p>
+      </a>
+
+      <a class="card" href="/admin/posts">
+        <span class="arrow">↗</span>
+        <div class="icon">☷</div>
+        <h2>文章管理</h2>
+        <p>查看已有文章，编辑内容，或者删除不需要的文章。</p>
+      </a>
+
+      <a class="card" href="/admin/about">
+        <span class="arrow">↗</span>
+        <div class="icon">♡</div>
+        <h2>编辑 About</h2>
+        <p>修改个人介绍、博客说明和联系方式等内容。</p>
+      </a>
+
+      <a class="card" href="/admin/friends">
+        <span class="arrow">↗</span>
+        <div class="icon">⌁</div>
+        <h2>友链管理</h2>
+        <p>添加、编辑和删除友情链接。</p>
+      </a>
+
+      <a class="card wide" href="/" target="_blank">
+        <div class="wide-inner">
+          <div class="icon">◇</div>
+          <div>
+            <h2>打开 IZUMI'S BLOG</h2>
+            <p>看看刚刚发布的文章有没有好好出现。</p>
+          </div>
+        </div>
+      </a>
+    </section>
+
+    <footer class="footer">
+      IZUMI · 糖葫芦
+    </footer>
+  </main>
+</body>
+</html>
