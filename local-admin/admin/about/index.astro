@@ -6,68 +6,99 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ABOUT / AKISOU</title>
+    <title>ABOUT / IZUMI ADMIN</title>
   </head>
 
   <body>
     <main>
-      <header>
-        <a href="/admin" class="logo">AKISOU'S BLOG</a>
-        <span>ABOUT</span>
+      <header class="topbar">
+        <a href="/admin" class="logo">IZUMI'S BLOG</a>
+        <span class="admin-label">ADMIN / ABOUT</span>
       </header>
 
       <section class="hero">
-        <p class="number">ABOUT / EDIT</p>
-        <h1>ABOUT<br />EDITOR</h1>
-        <p class="description">编辑你的 About 页面文案。</p>
+        <div class="eyebrow">ABOUT / EDIT</div>
+        <h1>ABOUT</h1>
+        <p>编辑博客的 About 页面内容。</p>
       </section>
 
-      <form>
-        <label>
-          <span>ABOUT TEXT</span>
-          <textarea id="content" placeholder="在这里写 About 页面内容"></textarea>
-        </label>
-
-        <div class="actions">
-          <a href="/admin">← BACK</a>
-          <button type="submit">SAVE ABOUT ↗</button>
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-label">ABOUT TEXT</div>
+            <h2>关于我</h2>
+          </div>
+          <span class="status">EDITOR</span>
         </div>
 
-        <p id="message"></p>
-      </form>
+        <form id="aboutForm">
+          <textarea
+            id="content"
+            placeholder="在这里写 About 页面内容"
+          ></textarea>
+
+          <div class="actions">
+            <a href="/admin">← 返回后台</a>
+
+            <button type="submit" id="saveButton">
+              保存 About
+            </button>
+          </div>
+
+          <p id="message"></p>
+        </form>
+      </section>
     </main>
 
     <script>
-      const form = document.querySelector("form");
+      const form = document.querySelector("#aboutForm");
       const textarea = document.querySelector("#content");
       const message = document.querySelector("#message");
+      const saveButton = document.querySelector("#saveButton");
 
       async function loadAbout() {
-        const response = await fetch("/api/about");
-        const data = await response.json();
+        try {
+          const response = await fetch("/api/about");
+          const data = await response.json();
 
-        if (data.success) {
-          textarea.value = data.content;
+          if (data.success) {
+            textarea.value = data.content;
+          } else {
+            message.textContent = data.message || "读取 About 失败。";
+          }
+        } catch (error) {
+          console.error(error);
+          message.textContent = "读取 About 失败。";
         }
       }
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        message.textContent = "保存中……";
+        saveButton.disabled = true;
+        saveButton.textContent = "保存中……";
+        message.textContent = "";
 
-        const response = await fetch("/api/about", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            content: textarea.value,
-          }),
-        });
+        try {
+          const response = await fetch("/api/about", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              content: textarea.value,
+            }),
+          });
 
-        const data = await response.json();
-        message.textContent = data.message;
+          const data = await response.json();
+          message.textContent = data.message || "保存完成。";
+        } catch (error) {
+          console.error(error);
+          message.textContent = "保存失败，请稍后再试。";
+        } finally {
+          saveButton.disabled = false;
+          saveButton.textContent = "保存 About";
+        }
       });
 
       loadAbout();
@@ -80,10 +111,26 @@
     box-sizing: border-box;
   }
 
+  :global(html) {
+    background: #f8fcfb;
+  }
+
   body {
     margin: 0;
-    background: #F8FCFB;
-    color: #35495E;
+    min-height: 100vh;
+    background:
+      radial-gradient(
+        circle at 15% 10%,
+        rgba(134, 197, 255, 0.18),
+        transparent 30%
+      ),
+      radial-gradient(
+        circle at 90% 85%,
+        rgba(124, 177, 210, 0.14),
+        transparent 32%
+      ),
+      #f8fcfb;
+    color: #35495e;
     font-family:
       -apple-system,
       BlinkMacSystemFont,
@@ -93,113 +140,213 @@
   }
 
   main {
-    max-width: 900px;
+    width: min(960px, calc(100% - 40px));
     margin: 0 auto;
-    padding: 55px 30px 80px;
+    padding: 34px 0 80px;
   }
 
-  header {
+  .topbar {
     display: flex;
     justify-content: space-between;
-    padding-bottom: 22px;
-    border-bottom: 1px solid #35495E;
-    font-family: monospace;
-    font-size: 13px;
+    align-items: center;
+    padding: 0 2px 18px;
+    border-bottom: 1px solid #cfe3ef;
   }
 
   .logo {
-    color: #35495E;
+    color: #35495e;
     text-decoration: none;
-    font-size: 18px;
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .admin-label {
+    color: #7cb1d2;
+    font-family: monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
   }
 
   .hero {
-    padding: 80px 0 60px;
+    padding: 58px 4px 32px;
   }
 
-  .number {
-    color: #7CB1D2;
+  .eyebrow {
+    color: #7cb1d2;
     font-family: monospace;
-    font-size: 13px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
   }
 
   h1 {
-    margin: 25px 0 20px;
-    font-size: clamp(50px, 9vw, 82px);
+    margin: 12px 0 12px;
+    font-size: clamp(52px, 10vw, 88px);
     line-height: 0.95;
-    font-weight: 500;
+    font-weight: 650;
     letter-spacing: -0.06em;
   }
 
-  .description {
-    color: #849A98;
+  .hero p {
+    margin: 0;
+    color: #849a98;
+    font-size: 14px;
   }
 
-  form {
-    border-top: 1px solid #CFE3EF;
-    padding-top: 30px;
+  .panel {
+    padding: 30px;
+    border: 1px solid rgba(207, 227, 239, 0.95);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.68);
+    box-shadow:
+      0 18px 45px rgba(124, 177, 210, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(14px);
   }
 
-  label span {
-    display: block;
-    margin-bottom: 12px;
-    color: #7CB1D2;
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 22px;
+  }
+
+  .panel-label {
+    margin-bottom: 7px;
+    color: #7cb1d2;
     font-family: monospace;
-    font-size: 12px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .status {
+    padding: 6px 10px;
+    border: 1px solid #cfe3ef;
+    border-radius: 999px;
+    color: #7cb1d2;
+    background: rgba(248, 252, 251, 0.75);
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
   }
 
   textarea {
     display: block;
     width: 100%;
-    min-height: 420px;
+    min-height: 480px;
     padding: 20px;
     resize: vertical;
-    border: 1px solid #CFE3EF;
-    border-radius: 10px;
+    border: 1px solid #cfe3ef;
+    border-radius: 14px;
     outline: none;
-    background: #FFFFFF;
-    color: #35495E;
-    font: 15px/1.9 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    background: rgba(248, 252, 251, 0.78);
+    color: #35495e;
+    font: 15px/1.9
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  textarea::placeholder {
+    color: #a5b5b4;
   }
 
   textarea:focus {
-    border-color: #7CB1D2;
+    border-color: #86c5ff;
+    box-shadow: 0 0 0 4px rgba(134, 197, 255, 0.12);
   }
 
   .actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 22px;
+    gap: 20px;
+    margin-top: 20px;
   }
 
   .actions a {
-    color: #849A98;
+    color: #849a98;
     text-decoration: none;
     font-family: monospace;
     font-size: 12px;
+    transition: color 0.2s ease;
+  }
+
+  .actions a:hover {
+    color: #7cb1d2;
   }
 
   button {
-    padding: 12px 18px;
-    border: 1px solid #7CB1D2;
-    border-radius: 8px;
-    background: #7CB1D2;
-    color: #FFFFFF;
+    padding: 11px 18px;
+    border: 1px solid #7cb1d2;
+    border-radius: 999px;
+    background: #7cb1d2;
+    color: #fff;
     cursor: pointer;
     font-family: monospace;
     font-size: 12px;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(124, 177, 210, 0.22);
+  }
+
+  button:disabled {
+    cursor: wait;
+    opacity: 0.65;
   }
 
   #message {
-    margin-top: 18px;
-    color: #7CB1D2;
+    min-height: 20px;
+    margin: 14px 0 0;
+    color: #7cb1d2;
     font-size: 13px;
   }
 
   @media (max-width: 600px) {
     main {
-      padding: 30px 20px 60px;
+      width: min(100% - 28px, 960px);
+      padding-top: 24px;
+    }
+
+    .hero {
+      padding: 42px 2px 26px;
+    }
+
+    .panel {
+      padding: 20px;
+      border-radius: 18px;
+    }
+
+    .panel-head {
+      flex-direction: column;
+    }
+
+    .actions {
+      align-items: flex-start;
+      flex-direction: column-reverse;
+    }
+
+    button {
+      width: 100%;
     }
   }
 </style>

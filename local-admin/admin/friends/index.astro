@@ -6,142 +6,232 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FRIENDS / ADMIN</title>
+    <title>FRIENDS / IZUMI ADMIN</title>
   </head>
 
   <body>
     <main>
-  <p class="eyebrow">FRIENDS / 03</p>
+      <header class="topbar">
+        <a href="/admin" class="logo">IZUMI'S BLOG</a>
+        <span class="admin-label">ADMIN / FRIENDS</span>
+      </header>
 
-  <h1>友情链接</h1>
+      <section class="hero">
+        <div class="eyebrow">FRIENDS / EDIT</div>
+        <h1>FRIENDS</h1>
+        <p>管理博客里的友情链接。</p>
+      </section>
 
-  <section class="form">
-    <input type="text" placeholder="NAME" />
-    <input type="text" placeholder="URL" />
-    <input type="text" placeholder="DESCRIPTION" />
-    <button>ADD FRIEND ↗</button>
-  </section>
-
-  <section class="friends">
-    <h2>当前友链</h2>
-
-    <div id="friends-list">
-      <p>正在加载……</p>
-    </div>
-  </section>
-</main>
-  </body>
-</html>
-<script>
-  const button = document.querySelector("button");
-  const inputs = document.querySelectorAll("input");
-  const list = document.querySelector("#friends-list");
-
-  async function loadFriends() {
-    try {
-      const response = await fetch("/api/friends");
-      const friends = await response.json();
-
-      if (!friends.length) {
-        list.innerHTML = "<p>暂时还没有友链。</p>";
-        return;
-      }
-
-      list.innerHTML = friends.map((friend, index) => `
-        <div class="friend-item">
+      <section class="panel">
+        <div class="panel-head">
           <div>
-            <strong>${friend.name}</strong>
-            <p>${friend.url}</p>
-            <span>${friend.description || ""}</span>
+            <div class="panel-label">ADD FRIEND</div>
+            <h2>添加友链</h2>
           </div>
-          <button class="delete" data-index="${index}">DELETE</button>
+          <span class="status">LINKS</span>
         </div>
-      `).join("");
 
-      document.querySelectorAll(".delete").forEach((deleteButton) => {
-        deleteButton.addEventListener("click", async () => {
-          const index = deleteButton.dataset.index;
+        <div class="form-grid">
+          <label>
+            <span>NAME</span>
+            <input id="friendName" type="text" placeholder="网站名称" />
+          </label>
 
-          if (!confirm("确定要删除这个友链吗？")) {
+          <label>
+            <span>URL</span>
+            <input id="friendUrl" type="text" placeholder="https://example.com" />
+          </label>
+
+          <label class="full">
+            <span>DESCRIPTION</span>
+            <input id="friendDescription" type="text" placeholder="简单介绍一下这个网站" />
+          </label>
+        </div>
+
+        <div class="actions">
+          <a href="/admin">← 返回后台</a>
+          <button id="addButton" type="button">添加友链</button>
+        </div>
+
+        <p id="message"></p>
+      </section>
+
+      <section class="panel friends-panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-label">CURRENT FRIENDS</div>
+            <h2>当前友链</h2>
+          </div>
+          <span class="status">LIST</span>
+        </div>
+
+        <div id="friends-list">
+          <p class="loading">正在加载……</p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const nameInput = document.querySelector("#friendName");
+      const urlInput = document.querySelector("#friendUrl");
+      const descriptionInput = document.querySelector("#friendDescription");
+      const addButton = document.querySelector("#addButton");
+      const message = document.querySelector("#message");
+      const list = document.querySelector("#friends-list");
+
+      async function loadFriends() {
+        try {
+          const response = await fetch("/api/friends");
+          const friends = await response.json();
+
+          if (!friends.length) {
+            list.innerHTML = '<p class="empty">暂时还没有友链。</p>';
             return;
           }
 
-          const response = await fetch("/api/friends/delete", {
+          list.innerHTML = friends.map((friend, index) => `
+            <div class="friend-item">
+              <div class="friend-info">
+                <strong>${friend.name}</strong>
+                <a href="${friend.url}" target="_blank" rel="noopener">
+                  ${friend.url}
+                </a>
+                <span>${friend.description || ""}</span>
+              </div>
+
+              <button
+                class="delete"
+                type="button"
+                data-index="${index}"
+              >
+                删除
+              </button>
+            </div>
+          `).join("");
+
+          document.querySelectorAll(".delete").forEach((deleteButton) => {
+            deleteButton.addEventListener("click", async () => {
+              const index = deleteButton.dataset.index;
+
+              if (!confirm("确定要删除这个友链吗？")) {
+                return;
+              }
+
+              deleteButton.disabled = true;
+              deleteButton.textContent = "删除中……";
+
+              try {
+                const response = await fetch("/api/friends/delete", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ index }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                  alert("友链已删除！");
+                  loadFriends();
+                } else {
+                  alert(result.message || "删除失败。");
+                  deleteButton.disabled = false;
+                  deleteButton.textContent = "删除";
+                }
+              } catch (error) {
+                console.error(error);
+                alert("删除失败，请检查 Admin 服务是否正常运行。");
+                deleteButton.disabled = false;
+                deleteButton.textContent = "删除";
+              }
+            });
+          });
+        } catch (error) {
+          console.error(error);
+          list.innerHTML = '<p class="empty">读取友链失败。</p>';
+        }
+      }
+
+      addButton.addEventListener("click", async () => {
+        const name = nameInput.value.trim();
+        const url = urlInput.value.trim();
+        const description = descriptionInput.value.trim();
+
+        if (!name || !url) {
+          alert("请填写名字和 URL。");
+          return;
+        }
+
+        addButton.disabled = true;
+        addButton.textContent = "添加中……";
+        message.textContent = "";
+
+        try {
+          const response = await fetch("/api/friends", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ index }),
+            body: JSON.stringify({
+              name,
+              url,
+              description,
+            }),
           });
 
           const result = await response.json();
 
           if (result.success) {
-            alert("友链已删除！");
+            alert("友链添加成功！");
+
+            nameInput.value = "";
+            urlInput.value = "";
+            descriptionInput.value = "";
+
             loadFriends();
           } else {
-            alert(result.message || "删除失败。");
+            alert(result.message || "添加失败。");
           }
-        });
-      });
-    } catch (error) {
-      console.error(error);
-      list.innerHTML = "<p>读取友链失败。</p>";
-    }
-  }
-
-  button.addEventListener("click", async () => {
-    const name = inputs[0].value.trim();
-    const url = inputs[1].value.trim();
-    const description = inputs[2].value.trim();
-
-    if (!name || !url) {
-      alert("请填写名字和 URL。");
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/friends", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          url,
-          description,
-        }),
+        } catch (error) {
+          console.error(error);
+          alert("添加失败，请检查 Admin 服务是否正常运行。");
+        } finally {
+          addButton.disabled = false;
+          addButton.textContent = "添加友链";
+        }
       });
 
-      const result = await response.json();
-
-      if (result.success) {
-        alert("友链添加成功！");
-        inputs.forEach((input) => {
-          input.value = "";
-        });
-        loadFriends();
-      } else {
-        alert(result.message || "添加失败。");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("添加失败，请检查 Admin 服务是否正常运行。");
-    }
-  });
-
-  loadFriends();
-</script>
+      loadFriends();
+    </script>
+  </body>
+</html>
 
 <style>
   * {
     box-sizing: border-box;
   }
 
+  :global(html) {
+    background: #f8fcfb;
+  }
+
   body {
     margin: 0;
-    background: #F8FCFB;
-    color: #35495E;
+    min-height: 100vh;
+    background:
+      radial-gradient(
+        circle at 15% 10%,
+        rgba(134, 197, 255, 0.18),
+        transparent 30%
+      ),
+      radial-gradient(
+        circle at 90% 85%,
+        rgba(124, 177, 210, 0.14),
+        transparent 32%
+      ),
+      #f8fcfb;
+    color: #35495e;
     font-family:
       -apple-system,
       BlinkMacSystemFont,
@@ -151,172 +241,310 @@
   }
 
   main {
-    max-width: 900px;
+    width: min(960px, calc(100% - 40px));
     margin: 0 auto;
-    padding: 55px 30px 40px;
+    padding: 34px 0 80px;
   }
 
-  header {
+  .topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 22px;
-    border-bottom: 1px solid #35495E;
-    font-family: monospace;
-    font-size: 13px;
+    padding: 0 2px 18px;
+    border-bottom: 1px solid #cfe3ef;
   }
 
   .logo {
-    color: #35495E;
+    color: #35495e;
     text-decoration: none;
-    font-size: 18px;
-    letter-spacing: 0.05em;
-  }
-
-  .hero {
-    padding: 90px 0 60px;
-  }
-
-  .number {
-    color: #7CB1D2;
     font-family: monospace;
-    font-size: 13px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .admin-label {
+    color: #7cb1d2;
+    font-family: monospace;
+    font-size: 12px;
     letter-spacing: 0.08em;
   }
 
+  .hero {
+    padding: 58px 4px 32px;
+  }
+
+  .eyebrow {
+    color: #7cb1d2;
+    font-family: monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+  }
+
   h1 {
-    margin: 28px 0 22px;
-    font-size: clamp(52px, 9vw, 88px);
+    margin: 12px 0;
+    font-size: clamp(52px, 10vw, 88px);
     line-height: 0.95;
-    font-weight: 500;
+    font-weight: 650;
     letter-spacing: -0.06em;
   }
 
-  .description {
-    color: #667B7F;
-    font-size: 16px;
+  .hero p {
+    margin: 0;
+    color: #849a98;
+    font-size: 14px;
   }
 
-  .form {
-    border-top: 1px solid #FFA62B;
+  .panel {
+    padding: 30px;
+    border: 1px solid rgba(207, 227, 239, 0.95);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.68);
+    box-shadow:
+      0 18px 45px rgba(124, 177, 210, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(14px);
+  }
+
+  .friends-panel {
+    margin-top: 24px;
+  }
+
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .panel-label {
+    margin-bottom: 7px;
+    color: #7cb1d2;
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .status {
+    padding: 6px 10px;
+    border: 1px solid #cfe3ef;
+    border-radius: 999px;
+    color: #7cb1d2;
+    background: rgba(248, 252, 251, 0.75);
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
   }
 
   label {
     display: block;
-    padding: 28px 8px;
-    border-bottom: 1px solid #FFA62B;
+  }
+
+  label.full {
+    grid-column: 1 / -1;
   }
 
   label span {
     display: block;
-    margin-bottom: 12px;
-    color: #7CB1D2;
+    margin-bottom: 8px;
+    color: #7cb1d2;
     font-family: monospace;
-    font-size: 12px;
-    letter-spacing: 0.08em;
+    font-size: 11px;
+    letter-spacing: 0.1em;
   }
 
   input {
     width: 100%;
-    padding: 12px 0;
-    border: 0;
+    padding: 13px 15px;
+    border: 1px solid #cfe3ef;
+    border-radius: 12px;
     outline: none;
-    background: transparent;
-    color: #35495E;
-    font: inherit;
-    font-size: 16px;
+    background: rgba(248, 252, 251, 0.78);
+    color: #35495e;
+    font: 14px
+      -apple-system,
+      BlinkMacSystemFont,
+      "Helvetica Neue",
+      "PingFang SC",
+      sans-serif;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   input::placeholder {
-    color: #A8B8B6;
+    color: #a5b5b4;
   }
 
-  button {
-    margin-top: 35px;
-    padding: 15px 22px;
-    border: 0;
-    background: #FFA62B;
-    color: #35495E;
-    font-family: monospace;
-    font-size: 13px;
-    cursor: pointer;
+  input:focus {
+    border-color: #86c5ff;
+    box-shadow: 0 0 0 4px rgba(134, 197, 255, 0.12);
   }
 
-  button:hover {
-    background: #7CB1D2;
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-top: 22px;
   }
 
-  footer {
-    margin-top: 70px;
-    padding-top: 20px;
-    border-top: 1px solid #FFA62B;
-  }
-
-  footer a {
-    color: #7CB1D2;
+  .actions a {
+    color: #849a98;
     text-decoration: none;
     font-family: monospace;
     font-size: 12px;
   }
 
-  @media (max-width: 600px) {
-    main {
-      padding: 30px 20px;
-    }
-
-    .hero {
-      padding: 70px 0 50px;
-    }
+  .actions a:hover {
+    color: #7cb1d2;
   }
 
-  .friends {
-    margin-top: 60px;
+  button {
+    padding: 11px 18px;
+    border: 1px solid #7cb1d2;
+    border-radius: 999px;
+    background: #7cb1d2;
+    color: #fff;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 12px;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease;
   }
 
-  .friends h2 {
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-weight: 500;
+  button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(124, 177, 210, 0.22);
+  }
+
+  button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+  }
+
+  #message {
+    min-height: 20px;
+    margin: 14px 0 0;
+    color: #7cb1d2;
+    font-size: 13px;
+  }
+
+  .loading,
+  .empty {
+    margin: 0;
+    color: #9aaba9;
+    font-size: 14px;
   }
 
   .friend-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 30px;
-    padding: 20px 0;
-    border-top: 1px solid #D6E8EF;
+    gap: 24px;
+    padding: 18px 0;
+    border-top: 1px solid #dcecf3;
   }
 
-  .friend-item strong {
-    color: #35495E;
-    font-size: 17px;
-    font-weight: 500;
+  .friend-info {
+    min-width: 0;
   }
 
-  .friend-item p {
-    margin: 6px 0 3px;
-    color: #71808C;
-    font-size: 13px;
+  .friend-info strong {
+    display: block;
+    color: #35495e;
+    font-size: 16px;
+    font-weight: 600;
   }
 
-  .friend-item span {
-    color: #9AA8B2;
+  .friend-info a {
+    display: block;
+    margin-top: 5px;
+    color: #7cb1d2;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+    word-break: break-all;
+  }
+
+  .friend-info span {
+    display: block;
+    margin-top: 5px;
+    color: #849a98;
     font-size: 13px;
   }
 
   .friend-item .delete {
     flex-shrink: 0;
     padding: 8px 14px;
-    border: 1px solid #FFA62B;
+    border-color: #cfe3ef;
     background: transparent;
-    color: #FFA62B;
-    cursor: pointer;
+    color: #7cb1d2;
   }
 
-  .friend-item .delete:hover {
-    background: #FFA62B;
-    color: white;
+  .friend-item .delete:hover:not(:disabled) {
+    background: #7cb1d2;
+    color: #fff;
   }
 
+  @media (max-width: 600px) {
+    main {
+      width: min(100% - 28px, 960px);
+      padding-top: 24px;
+    }
+
+    .hero {
+      padding: 42px 2px 26px;
+    }
+
+    .panel {
+      padding: 20px;
+      border-radius: 18px;
+    }
+
+    .panel-head {
+      flex-direction: column;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    label.full {
+      grid-column: auto;
+    }
+
+    .actions {
+      align-items: flex-start;
+      flex-direction: column-reverse;
+    }
+
+    .actions button {
+      width: 100%;
+    }
+
+    .friend-item {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .friend-item .delete {
+      width: 100%;
+    }
+  }
 </style>
