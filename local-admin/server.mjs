@@ -141,6 +141,7 @@ async function publish(data) {
   const category = String(data.category || "").trim();
   const date = String(data.date || "").trim();
   const description = String(data.description || "").trim();
+  const cover = String(data.cover || "").trim();
   const content = String(data.content || "").trim();
 
   if (!title || !category || !date || !content) {
@@ -190,7 +191,7 @@ layout: ../../../layouts/BlogPost.astro
 title: "${title.replace(/"/g, '\\"')}"
 date: "${date}"
 description: "${description.replace(/"/g, '\\"')}"
-category: "${category}"
+category: "${category}"${cover ? `\ncover: "${cover.replace(/"/g, '\\"')}"` : ""}
 ---
 
 ${content}
@@ -621,7 +622,7 @@ layout: ../../../layouts/BlogPost.astro
 title: "${String(data.title || "").replace(/"/g, '\\"')}"
 date: "${String(data.date || "").replace(/-/g, ".")}"
 description: "${String(data.description || "").replace(/"/g, '\\"')}"
-category: "${String(data.category || "")}"
+category: "${String(data.category || "")}"${String(data.cover || "").trim() ? `\ncover: "${String(data.cover || "").trim().replace(/"/g, '\\"')}"` : ""}
 ---
 
 ${String(data.content || "")}

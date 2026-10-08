@@ -372,6 +372,31 @@
             />
           </div>
 
+          <div class="field cover-field">
+            <label for="coverInput">文章封面</label>
+
+            <div class="cover-upload">
+              <input
+                id="coverInput"
+                type="file"
+                accept="image/*"
+              />
+
+              <div id="coverPreview" class="cover-preview">
+                <span>选择一张图片作为文章封面</span>
+              </div>
+            </div>
+
+            <button
+              class="cover-remove"
+              id="removeCoverButton"
+              type="button"
+              hidden
+            >
+              移除封面
+            </button>
+          </div>
+
           <div class="field">
             <label for="content">正文</label>
             <textarea
@@ -432,6 +457,11 @@
     const description = document.querySelector("#description");
     const content = document.querySelector("#content");
 
+    const coverInput = document.querySelector("#coverInput");
+    const coverPreview = document.querySelector("#coverPreview");
+    const removeCoverButton = document.querySelector("#removeCoverButton");
+    let coverUrl = "";
+
     const imageInput = document.querySelector("#imageInput");
     const videoInput = document.querySelector("#videoInput");
     const imageButton = document.querySelector("#imageButton");
@@ -469,6 +499,64 @@
       content.selectionStart = position;
       content.selectionEnd = position;
     }
+
+    async function uploadCover(file) {
+      if (!file) return;
+
+      showStatus("正在上传封面……");
+
+      try {
+        const reader = new FileReader();
+
+        const fileData = await new Promise((resolve, reject) => {
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        const response = await fetch("/api/upload-image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fileName: file.name,
+            fileData,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || "封面上传失败");
+        }
+
+        coverUrl = result.url;
+
+        coverPreview.innerHTML = `
+          <img src="${result.url}" alt="文章封面预览" />
+        `;
+
+        removeCoverButton.hidden = false;
+        showStatus("封面上传成功。", "success");
+      } catch (error) {
+        console.error(error);
+        showStatus(error.message || "封面上传失败。", "error");
+      }
+    }
+
+    coverInput.addEventListener("change", () => {
+      const file = coverInput.files?.[0];
+      uploadCover(file);
+    });
+
+    removeCoverButton.addEventListener("click", () => {
+      coverUrl = "";
+      coverInput.value = "";
+      coverPreview.innerHTML = "<span>选择一张图片作为文章封面</span>";
+      removeCoverButton.hidden = true;
+      showStatus("已移除封面。");
+    });
 
     async function uploadFile(file, type) {
       if (!file) return;
@@ -575,6 +663,7 @@
             category: category.value,
             date: date.value,
             description: description.value.trim(),
+            cover: coverUrl,
             content: content.value,
           }),
         });

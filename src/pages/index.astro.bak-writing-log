@@ -26,53 +26,6 @@ const posts = Object.entries(postModules)
     b.frontmatter.date.localeCompare(a.frontmatter.date)
   );
 
-const writingToday = new Date(
-  new Date().toLocaleString("en-US", {
-    timeZone: "Asia/Shanghai",
-  })
-);
-
-const writingYear = writingToday.getFullYear();
-const writingMonth = writingToday.getMonth() + 1;
-
-const writingDaysInMonth = new Date(
-  writingYear,
-  writingMonth,
-  0
-).getDate();
-
-const writingDaily = {};
-
-posts.forEach((post) => {
-  const rawDate = String(post.frontmatter.date || "").trim();
-  const date = rawDate.replace(/\./g, "-").slice(0, 10);
-
-  if (
-    date.startsWith(
-      `${writingYear}-${String(writingMonth).padStart(2, "0")}-`
-    )
-  ) {
-    writingDaily[date] =
-      (writingDaily[date] || 0) + post.wordCount;
-  }
-});
-
-const writingValues = Object.values(writingDaily);
-
-const writingMaxWords = Math.max(
-  ...writingValues,
-  1
-);
-
-const writingTotalWords = writingValues.reduce(
-  (sum, value) => sum + value,
-  0
-);
-
-const writingDays = writingValues.filter(
-  (value) => value > 0
-).length;
-
 const postsPerPage = 6;
 const currentPage = Number(Astro.url.searchParams.get("page") || "1");
 const totalPages = Math.ceil(posts.length / postsPerPage);
@@ -202,40 +155,27 @@ const categories = [
           <div class="latest-grid">
             {paginatedPosts.map((post) => (
               <a href={`${post.url}`} class="latest-post">
-                {post.frontmatter.cover && (
-                  <div class="latest-cover">
-                    <img
-                      src={post.frontmatter.cover}
-                      alt=""
-                      loading="lazy"
-                    />
-                    <div class="latest-cover-gradient"></div>
-                  </div>
-                )}
+                <div class="latest-card-top">
+                  <span>
+                    {post.frontmatter.date} · {post.wordCount.toLocaleString()} 字
+                  </span>
+                  <span>↗</span>
+                </div>
 
-                <div class="latest-card-content">
-                  <div class="latest-card-top">
-                    <span>
-                      {post.frontmatter.date} · {post.wordCount.toLocaleString()} 字
-                    </span>
-                    <span>↗</span>
-                  </div>
+                <div class="latest-main">
+                  <h2>{post.frontmatter.title}</h2>
+                  <p>{post.frontmatter.description}</p>
+                </div>
 
-                  <div class="latest-main">
-                    <h2>{post.frontmatter.title}</h2>
-                    <p>{post.frontmatter.description}</p>
-                  </div>
-
-                  <div class="latest-card-bottom">
-                    <span>{
-                      ({
-                        "日常": "碎碎念",
-                        "旅行": "到处乱跑",
-                        "字幕": "听写小作坊",
-                        "作品分享": "书影音游",
-                      }[post.frontmatter.category] || post.frontmatter.category || "BLOG")
-                    }</span>
-                  </div>
+                <div class="latest-card-bottom">
+                  <span>{
+                    ({
+                      "日常": "碎碎念",
+                      "旅行": "到处乱跑",
+                      "字幕": "听写小作坊",
+                      "作品分享": "书影音游",
+                    }[post.frontmatter.category] || post.frontmatter.category || "BLOG")
+                  }</span>
                 </div>
               </a>
             ))}
@@ -288,64 +228,6 @@ const categories = [
           <p id="search-empty" class="search-empty" hidden>
             No posts found.
           </p>
-        </section>
-
-        <section class="right-section writing-log-section">
-          <div class="right-title writing-log-title">
-            <span>WRITING LOG</span>
-            <span>{writingYear}.{String(writingMonth).padStart(2, "0")}</span>
-          </div>
-
-          <div class="writing-log-grid">
-            {
-              Array.from(
-                { length: writingDaysInMonth },
-                (_, index) => {
-                  const day = index + 1;
-
-                  const date =
-                    `${writingYear}-${String(writingMonth).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-                  const words =
-                    writingDaily[date] || 0;
-
-                  let level = 0;
-
-                  if (words > 0) {
-                    const ratio =
-                      words / writingMaxWords;
-
-                    if (ratio <= 0.25) level = 1;
-                    else if (ratio <= 0.5) level = 2;
-                    else if (ratio <= 0.75) level = 3;
-                    else level = 4;
-                  }
-
-                  return (
-                    <span
-                      class={`writing-square level-${level}`}
-                      data-date={date.replaceAll("-", ".")}
-                      data-words={`${words} 字`}
-                    ></span>
-                  );
-                }
-              )
-            }
-          </div>
-
-          <div class="writing-log-summary">
-            本月 {writingDays} 天 · {writingTotalWords.toLocaleString()} 字
-          </div>
-
-          <div class="writing-log-legend">
-            <span>少</span>
-            <i class="writing-square level-0"></i>
-            <i class="writing-square level-1"></i>
-            <i class="writing-square level-2"></i>
-            <i class="writing-square level-3"></i>
-            <i class="writing-square level-4"></i>
-            <span>多</span>
-          </div>
         </section>
 
         <section class="right-section">
@@ -665,20 +547,13 @@ const categories = [
     font-size: 18px;
   }
 
-  .section-title {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 0;
-    border: none;
-    font-family: monospace;
-    font-size: 13px;
-  }
-
+  .section-title,
   .right-title {
     display: flex;
     justify-content: space-between;
     padding: 15px 0;
-    border: none;
+    border-top: 1px solid #35495E;
+    border-bottom: 1px solid #CFE3EF;
     font-family: monospace;
     font-size: 13px;
   }
@@ -827,7 +702,7 @@ const categories = [
     position: sticky;
     top: 45px;
     align-self: start;
-    padding-top: 0;
+    padding-top: 95px;
   }
 
   .right-section {
@@ -841,154 +716,19 @@ const categories = [
   .year-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    padding-top: 6px;
+    gap: 10px 18px;
+    padding-top: 18px;
   }
 
   .year-list a {
-    display: inline-block;
-    padding: 5px 9px;
     color: #849A98;
     text-decoration: none;
     font-family: monospace;
     font-size: 13px;
-    border: 1px solid #CFE3EF;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.45);
-    transition: all 0.2s ease;
   }
 
   .year-list a:hover {
     color: #7CB1D2;
-    border-color: #7CB1D2;
-    background: rgba(241, 250, 248, 0.82);
-  }
-
-  .writing-log-section {
-    margin-top: 30px;
-    margin-bottom: 34px;
-  }
-
-  .writing-log-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(207, 227, 239, 0.7);
-  }
-
-  .writing-log-title span:first-child {
-    color: #7CB1D2;
-    font-family: monospace;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-  }
-
-  .writing-log-title span:last-child {
-    color: #9AAEAE;
-    font-family: monospace;
-    font-size: 9px;
-    letter-spacing: 0.03em;
-  }
-
-  .writing-log-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 16px);
-    grid-auto-rows: 16px;
-    gap: 6px;
-    margin-top: 14px;
-  }
-
-  .writing-square {
-    display: block;
-    width: 16px;
-    height: 16px;
-    box-sizing: border-box;
-    border: 1px solid rgba(164, 196, 215, 0.95);
-    border-radius: 3px;
-    background: rgba(255, 255, 255, 0.5);
-    transition:
-      transform 0.16s ease,
-      border-color 0.16s ease,
-      box-shadow 0.16s ease;
-  }
-
-  .writing-square.level-1 {
-    background: rgba(124, 177, 210, 0.18);
-  }
-
-  .writing-square.level-2 {
-    background: rgba(124, 177, 210, 0.34);
-  }
-
-  .writing-square.level-3 {
-    background: rgba(124, 177, 210, 0.52);
-  }
-
-  .writing-square.level-4 {
-    background: rgba(124, 177, 210, 0.72);
-  }
-
-  .writing-square:hover {
-    transform: scale(1.2);
-    border-color: #7CB1D2;
-    box-shadow: 0 2px 8px rgba(124, 177, 210, 0.18);
-  }
-
-  .writing-square[data-date] {
-    position: relative;
-    cursor: default;
-  }
-
-  .writing-square[data-date]::after {
-    content: attr(data-date) " · " attr(data-words);
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 8px);
-    transform: translateX(-50%) translateY(3px);
-    padding: 5px 8px;
-    white-space: nowrap;
-    color: #35495E;
-    background: rgba(255, 255, 255, 0.96);
-    border: 1px solid #CFE3EF;
-    border-radius: 7px;
-    box-shadow: 0 5px 16px rgba(124, 177, 210, 0.14);
-    font-family: monospace;
-    font-size: 9px;
-    letter-spacing: 0.01em;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease, transform 0.15s ease;
-    z-index: 20;
-  }
-
-  .writing-square[data-date]:hover::after {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .writing-log-summary {
-    margin-top: 11px;
-    color: #849A98;
-    font-family: monospace;
-    font-size: 11px;
-    letter-spacing: 0.02em;
-  }
-
-  .writing-log-legend {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 9px;
-    color: #849A98;
-    font-family: monospace;
-    font-size: 10px;
-  }
-
-  .writing-log-legend .writing-square {
-    width: 13px;
-    height: 13px;
-    border-radius: 3px;
   }
 
   .right-categories {
