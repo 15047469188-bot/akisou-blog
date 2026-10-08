@@ -8,6 +8,68 @@
     const imageFile = document.querySelector("#imageFile");
     const imageStatus = document.querySelector("#imageStatus");
 
+    const videoFile = document.querySelector("#videoFile");
+    const videoStatus = document.querySelector("#videoStatus");
+
+    videoFile?.addEventListener("change", async () => {
+      const file = videoFile.files?.[0];
+
+      if (!file) return;
+
+      videoStatus.textContent = "正在上传视频……";
+
+      const reader = new FileReader();
+
+      reader.onload = async () => {
+        try {
+          const response = await fetch("/api/upload-video", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              fileName: file.name,
+              fileData: reader.result,
+            }),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            const content = document.querySelector('textarea[name="content"]');
+
+            if (content) {
+              const video = `\n<video controls src="${result.url}"></video>\n`;
+
+              const start = content.selectionStart;
+              const end = content.selectionEnd;
+
+              content.value =
+                content.value.slice(0, start) +
+                video +
+                content.value.slice(end);
+
+              content.focus();
+
+              const newPosition = start + video.length;
+              content.selectionStart = newPosition;
+              content.selectionEnd = newPosition;
+            }
+
+            videoStatus.textContent = "视频上传成功！已插入正文。";
+          } else {
+            videoStatus.textContent = result.message;
+          }
+        } catch (error) {
+          console.error("视频上传错误：", error);
+          videoStatus.textContent =
+            "视频上传失败：" + (error?.message || "未知错误");
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+
     imageFile?.addEventListener("change", async () => {
       const file = imageFile.files?.[0];
 
@@ -166,6 +228,18 @@ imageStatus.textContent = "图片上传成功！已插入正文。";
               <input type="file" id="imageFile" accept="image/*" />
             </label>
             <span id="imageStatus"></span>
+          </div>
+
+          <div class="image-upload">
+            <label class="image-button">
+              🎬 选择视频
+              <input
+                type="file"
+                id="videoFile"
+                accept="video/mp4,video/webm,video/quicktime"
+              />
+            </label>
+            <span id="videoStatus"></span>
           </div>
 
           <button type="submit">PUBLISH ↗</button>

@@ -15,6 +15,50 @@ async function renderAstro(filePath) {
 }
 
 
+async function uploadVideo(data) {
+  const fileName = String(data.fileName || "").trim();
+  const fileData = String(data.fileData || "").trim();
+
+  if (!fileName || !fileData) {
+    return {
+      success: false,
+      message: "没有收到视频。",
+    };
+  }
+
+  const ext = path.extname(fileName).toLowerCase();
+  const allowedExt = [".mp4", ".webm", ".mov"];
+
+  if (!allowedExt.includes(ext)) {
+    return {
+      success: false,
+      message: "只支持 MP4、WEBM、MOV 视频。",
+    };
+  }
+
+  const safeName = `${Date.now()}-${path
+    .basename(fileName, ext)
+    .replace(/[^\w\u4e00-\u9fff-]+/g, "-")}${ext}`;
+
+  const videoDir = path.join(root, "public", "videos");
+
+  await fs.mkdir(videoDir, { recursive: true });
+
+  const base64 = fileData.replace(/^data:video\/[^;]+;base64,/, "");
+  const buffer = Buffer.from(base64, "base64");
+
+  const videoPath = path.join(videoDir, safeName);
+
+  await fs.writeFile(videoPath, buffer);
+
+  return {
+    success: true,
+    fileName: safeName,
+    url: `/akisou-blog/videos/${encodeURIComponent(safeName)}`,
+  };
+}
+
+
 async function uploadImage(data) {
   const fileName = String(data.fileName || "").trim();
   const fileData = String(data.fileData || "").trim();
@@ -452,6 +496,14 @@ button:hover { background: #e87532; }
   <span id="imageStatus"></span>
 </div>
 
+<div class="image-upload">
+  <button type="button" class="image-button" onclick="document.querySelector('#videoFile').click()">
+    🎬 选择视频
+  </button>
+  <input type="file" id="videoFile" accept="video/mp4,video/webm,video/quicktime" style="display:none" onchange="uploadVideo(this)">
+  <span id="videoStatus"></span>
+</div>
+
 <button type="submit">SAVE CHANGES ↗</button>
 </form>
 
@@ -462,6 +514,69 @@ button:hover { background: #e87532; }
 const form = document.querySelector(".form");
 
 const imageStatus = document.querySelector("#imageStatus");
+
+
+window.uploadVideo = async function uploadVideo(videoFile) {
+  const selectedFile = videoFile.files?.[0];
+
+  if (!selectedFile) return;
+
+  const videoStatus = document.querySelector("#videoStatus");
+  videoStatus.textContent = "正在上传视频……";
+
+  const reader = new FileReader();
+
+  reader.onload = async () => {
+    try {
+      const response = await fetch("/api/upload-video", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fileName: selectedFile.name,
+          fileData: reader.result
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const content = document.querySelector('textarea[name="content"]');
+
+        if (content) {
+          const markdown =
+            '\n<video controls src="' +
+            result.url +
+            '"></video>\n';
+
+          const start = content.selectionStart;
+          const end = content.selectionEnd;
+
+          content.value =
+            content.value.slice(0, start) +
+            markdown +
+            content.value.slice(end);
+
+          content.focus();
+
+          const newPosition = start + markdown.length;
+          content.selectionStart = newPosition;
+          content.selectionEnd = newPosition;
+        }
+
+        videoStatus.textContent = "视频上传成功！已插入正文。";
+      } else {
+        videoStatus.textContent = result.message;
+      }
+    } catch (error) {
+      console.error(error);
+      videoStatus.textContent = "视频上传失败。";
+    }
+  };
+
+  reader.readAsDataURL(selectedFile);
+};
 
 window.uploadImage = async function uploadImage(imageFile) {
   const selectedFile = imageFile.files?.[0];
@@ -979,6 +1094,42 @@ ${String(data.content || "")}
             JSON.stringify({
               success: false,
               message: "图片上传失败，请检查终端。",
+            })
+          );
+        }
+      });
+
+      return;
+    }
+
+    if (req.method === "POST" && req.url === "/api/upload-video") {
+      let body = "";
+
+      req.on("data", (chunk) => {
+        body += chunk;
+      });
+
+      req.on("end", async () => {
+        try {
+          const data = JSON.parse(body);
+          const result = await uploadVideo(data);
+
+          res.writeHead(result.success ? 200 : 400, {
+            "Content-Type": "application/json; charset=utf-8",
+          });
+
+          res.end(JSON.stringify(result));
+        } catch (error) {
+          console.error("视频上传失败：", error);
+
+          res.writeHead(500, {
+            "Content-Type": "application/json; charset=utf-8",
+          });
+
+          res.end(
+            JSON.stringify({
+              success: false,
+              message: "视频上传失败，请检查终端。",
             })
           );
         }
