@@ -382,12 +382,18 @@ const category =
 
   .content :global(video) {
     display: block;
-    width: 100%;
-    max-width: 100%;
+    width: min(100%, 860px);
     height: auto;
-    margin: 40px 0;
-    border-radius: 14px;
-    background: #000;
+    max-height: 620px;
+    margin: 42px auto;
+    border-radius: 18px;
+    background: #eef7f7;
+    border: 1px solid #cfe3ef;
+    box-shadow:
+      0 10px 30px rgba(126, 177, 210, 0.12),
+      0 2px 8px rgba(53, 73, 94, 0.05);
+    object-fit: contain;
+    overflow: hidden;
   }
 
   .content :global(figure) {
