@@ -182,7 +182,17 @@ const category =
       </div>
 
     </main>
-  </body>
+    <script>
+    document.querySelectorAll(".content img").forEach((img) => {
+      img.loading = "lazy";
+      img.decoding = "async";
+    });
+
+    document.querySelectorAll(".content video").forEach((video) => {
+      video.preload = "metadata";
+    });
+  </script>
+</body>
 </html>
 
 <script is:inline>
