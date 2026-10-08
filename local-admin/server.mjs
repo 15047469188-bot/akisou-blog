@@ -546,9 +546,9 @@ window.uploadVideo = async function uploadVideo(videoFile) {
 
         if (content) {
           const markdown =
-            '\n<video controls src="' +
+            '\\n<video controls src="' +
             result.url +
-            '"></video>\n';
+            '"></video>\\n';
 
           const start = content.selectionStart;
           const end = content.selectionEnd;
@@ -606,7 +606,7 @@ window.uploadImage = async function uploadImage(imageFile) {
         const content = document.querySelector('textarea[name="content"]');
 
         if (content) {
-          const markdown = "\n![" + result.fileName + "](" + result.url + ")\n";
+          const markdown = "\\n![" + result.fileName + "](" + result.url + ")\\n";
 
           const start = content.selectionStart;
           const end = content.selectionEnd;
@@ -634,7 +634,7 @@ window.uploadImage = async function uploadImage(imageFile) {
   };
 
   reader.readAsDataURL(selectedFile);
-});
+};
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
