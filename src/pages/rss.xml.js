@@ -59,7 +59,7 @@ export async function GET(context) {
   posts.sort((a, b) => b.pubDate - a.pubDate);
 
   return rss({
-    title: "AKISOU'S BLOG",
+    title: "IZUMI'S BLOG",
     description: "日々 / 旅 / ことば / 好きなもの",
     site: context.site,
     items: posts,

@@ -67,11 +67,11 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
 
 const category =
-  path.startsWith("/akisou-blog/travel/")
+  path.startsWith("/travel/")
     ? "到处乱跑"
-    : path.startsWith("/akisou-blog/subtitles/")
+    : path.startsWith("/subtitles/")
       ? "听写小作坊"
-      : path.startsWith("/akisou-blog/works/")
+      : path.startsWith("/works/")
         ? "书影音游"
         : "碎碎念";
 ---
@@ -81,8 +81,8 @@ const category =
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/akisou-blog/images/favicon.png" />
-    <title>{title} / AKISOU</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    <title>{title} / IZUMI</title>
   </head>
 
   <body>
@@ -113,7 +113,7 @@ const category =
         <section class="comments" aria-label="评论区">
           <script
             src="https://giscus.app/client.js"
-            data-repo="akisou-blog/akisou-blog"
+            data-repo="akisou-blog/izumi-blog"
             data-repo-id="R_kgDOU5pq2A"
             data-category="Announcements"
             data-category-id="DIC_kwDOU5pq2M4DHGGA"
@@ -155,12 +155,12 @@ const category =
       <a
         href={
           category === "到处乱跑"
-            ? "/akisou-blog/travel/"
+            ? "/travel/"
             : category === "听写小作坊"
-              ? "/akisou-blog/subtitles/"
+              ? "/subtitles/"
               : category === "书影音游"
-                ? "/akisou-blog/works/"
-                : "/akisou-blog/daily/"
+                ? "/works/"
+                : "/daily/"
         }
         class="back"
       >
@@ -177,7 +177,7 @@ const category =
 
         <footer class="site-footer">
         <p>This blog is live for <span id="blog-live-time">0 days, 0 hours, 0 mins</span> and counting.</p>
-        <p>Copyright © 2026 AKISOU · 糖葫芦</p>
+        <p>Copyright © 2026 IZUMI · 糖葫芦</p>
       </footer>
       </div>
 
@@ -256,7 +256,7 @@ const category =
     bottom: 35px;
     width: 180px;
     height: 180px;
-    background: url("/akisou-blog/images/akisou-tanghulu.png") center / contain no-repeat;
+    background: url("/images/akisou-tanghulu.png") center / contain no-repeat;
     opacity: 0.08;
     pointer-events: none;
     z-index: 0;
