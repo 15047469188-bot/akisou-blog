@@ -86,25 +86,25 @@ const categories = [
     name: "碎碎念",
     english: "DAILY LIFE",
     description: "没什么大事，胡思乱想先放这里。",
-    url: `${import.meta.env.BASE_URL}/daily/`,
+    url: `${import.meta.env.BASE_URL}daily/`,
   },
   {
     name: "到处乱跑",
     english: "TRAVEL",
     description: "先出门再说。",
-    url: `${import.meta.env.BASE_URL}/travel/`,
+    url: `${import.meta.env.BASE_URL}travel/`,
   },
   {
     name: "听写小作坊",
     english: "SUBTITLES",
     description: "偶尔也怀疑自己的耳朵。",
-    url: `${import.meta.env.BASE_URL}/subtitles/`,
+    url: `${import.meta.env.BASE_URL}subtitles/`,
   },
   {
     name: "书影音游",
     english: "WORKS",
     description: "喜欢什么就往这里丢。",
-    url: `${import.meta.env.BASE_URL}/works/`,
+    url: `${import.meta.env.BASE_URL}works/`,
   },
 ];
 ---
@@ -174,9 +174,9 @@ const categories = [
 
         <nav class="side-nav">
           <a href={import.meta.env.BASE_URL}>HOME｜首页</a>
-          <a href={`${import.meta.env.BASE_URL}/about`}>ABOUT｜关于</a>
-          <a href={`${import.meta.env.BASE_URL}/archive`}>ARCHIVE｜归档</a>
-          <a href={`${import.meta.env.BASE_URL}/friends`}>FRIENDS｜友链</a>
+          <a href={`${import.meta.env.BASE_URL}about/`}>ABOUT｜关于</a>
+          <a href={`${import.meta.env.BASE_URL}archive/`}>ARCHIVE｜归档</a>
+          <a href={`${import.meta.env.BASE_URL}friends/`}>FRIENDS｜友链</a>
         </nav>
 
       </aside>
@@ -202,6 +202,32 @@ const categories = [
           <div class="latest-grid">
             {paginatedPosts.map((post) => (
               <a href={`${post.url}`} class="latest-post">
+                <div class="latest-card-content">
+                  <div class="latest-card-top">
+                    <span>ARTICLE</span>
+                    <span>↗</span>
+                  </div>
+
+                  <div class="latest-main">
+                    <h2>{post.frontmatter.title}</h2>
+                    <p>{post.frontmatter.description}</p>
+                  </div>
+
+                  <div class="latest-card-bottom">
+                    <span class="latest-category">{
+                      ({
+                        "日常": "碎碎念",
+                        "旅行": "到处乱跑",
+                        "字幕": "听写小作坊",
+                        "作品分享": "书影音游",
+                      }[post.frontmatter.category] || post.frontmatter.category || "BLOG")
+                    }</span>
+                    <span class="latest-post-meta">
+                      {post.frontmatter.date} · {post.wordCount.toLocaleString()} 字
+                    </span>
+                  </div>
+                </div>
+
                 {post.frontmatter.cover && (
                   <div class="latest-cover">
                     <img
@@ -212,31 +238,6 @@ const categories = [
                     <div class="latest-cover-gradient"></div>
                   </div>
                 )}
-
-                <div class="latest-card-content">
-                  <div class="latest-card-top">
-                    <span>
-                      {post.frontmatter.date} · {post.wordCount.toLocaleString()} 字
-                    </span>
-                    <span>↗</span>
-                  </div>
-
-                  <div class="latest-main">
-                    <h2>{post.frontmatter.title}</h2>
-                    <p>{post.frontmatter.description}</p>
-                  </div>
-
-                  <div class="latest-card-bottom">
-                    <span>{
-                      ({
-                        "日常": "碎碎念",
-                        "旅行": "到处乱跑",
-                        "字幕": "听写小作坊",
-                        "作品分享": "书影音游",
-                      }[post.frontmatter.category] || post.frontmatter.category || "BLOG")
-                    }</span>
-                  </div>
-                </div>
               </a>
             ))}
           </div>
@@ -244,12 +245,12 @@ const categories = [
           {totalPages > 1 && (
             <nav class="pagination" aria-label="文章分页">
               {currentPage > 1 && (
-                <a href={currentPage - 1 === 1 ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/page/${currentPage - 1}/`} class="page-arrow">‹</a>
+                <a href={currentPage - 1 === 1 ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}page/${currentPage - 1}/`} class="page-arrow">‹</a>
               )}
 
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <a
-                  href={page === 1 ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/page/${page}/`}
+                  href={page === 1 ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}page/${page}/`}
                   class:list={["page-number", { active: page === currentPage }]}
                 >
                   {page}
@@ -257,7 +258,7 @@ const categories = [
               ))}
 
               {currentPage < totalPages && (
-                <a href={`${import.meta.env.BASE_URL}/page/${currentPage + 1}/`} class="page-arrow">›</a>
+                <a href={`${import.meta.env.BASE_URL}page/${currentPage + 1}/`} class="page-arrow">›</a>
               )}
             </nav>
           )}
@@ -279,7 +280,7 @@ const categories = [
 
           <div class="year-list">
             {years.map((year) => (
-              <a href={`${import.meta.env.BASE_URL}/archive/`}>
+              <a href={`${import.meta.env.BASE_URL}archive/`}>
                 {year}
               </a>
             ))}
@@ -1207,3 +1208,119 @@ const categories = [
   updateHomeClock();
   setInterval(updateHomeClock, 1000);
 </script>
+
+<style>
+.latest-post {
+  overflow: hidden;
+}
+
+.latest-cover {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  background: #F7FBFD;
+}
+
+.latest-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.latest-cover-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(248, 252, 251, 0.95) 0%,
+    rgba(248, 252, 251, 0.65) 18%,
+    rgba(124, 177, 210, 0.08) 42%,
+    rgba(248, 252, 251, 0) 65%
+  );
+  pointer-events: none;
+}
+
+.latest-post:hover .latest-cover img {
+  transform: scale(1.04);
+}
+
+.latest-card-content {
+  position: relative;
+  margin-top: 10px;
+}
+</style>
+
+<style>
+.latest-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+}
+
+.latest-post-meta {
+  margin-left: auto;
+  text-align: right;
+  white-space: nowrap;
+}
+</style>
+
+
+<style>
+/* 日系杂志风：真正的瀑布流 */
+@media (min-width: 701px) {
+  .latest-grid {
+    display: block;
+    column-count: 2;
+    column-gap: 16px;
+    margin-top: 16px;
+  }
+
+  .latest-post {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    margin: 0 0 16px;
+    vertical-align: top;
+  }
+
+  .latest-post:nth-child(4n + 1) .latest-cover {
+    height: 175px;
+  }
+
+  .latest-post:nth-child(4n + 2) .latest-cover {
+    height: 125px;
+  }
+
+  .latest-post:nth-child(4n + 3) .latest-cover {
+    height: 150px;
+  }
+
+  .latest-post:nth-child(4n) .latest-cover {
+    height: 190px;
+  }
+}
+
+@media (max-width: 700px) {
+  .latest-grid {
+    display: block;
+    column-count: 1;
+    column-gap: 0;
+  }
+
+  .latest-post {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 16px;
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+  }
+}
+</style>
