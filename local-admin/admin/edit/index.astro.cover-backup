@@ -37,14 +37,7 @@ const getValue = (key: string) => {
 const title = getValue("title");
 const date = getValue("date");
 const description = getValue("description");
-const rawCategory = getValue("category");
-const category = ({
-  "碎碎念": "日常",
-  "到处乱跑": "旅行",
-  "听写小作坊": "字幕",
-  "书影音游": "作品分享",
-}[rawCategory] || rawCategory);
-const cover = getValue("cover");
+const category = getValue("category");
 ---
 
 <!doctype html>
@@ -196,65 +189,6 @@ const cover = getValue("cover");
         min-height: 105px;
         resize: vertical;
         line-height: 1.8;
-      }
-
-      .edit-cover {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .cover-preview {
-        width: 100%;
-        height: 180px;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #849a98;
-        background: #f8fcfb;
-        border: 1px dashed #cfe3ef;
-        border-radius: 12px;
-        font-size: 13px;
-      }
-
-      .cover-preview img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .cover-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .cover-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 13px;
-        color: #55778b;
-        background: #f7fbfd;
-        border: 1px solid #cfe3ef;
-        border-radius: 10px;
-        font-size: 12px;
-        cursor: pointer;
-      }
-
-      .cover-button:hover {
-        border-color: #86c5ff;
-        background: #eef8ff;
-      }
-
-      .cover-button input {
-        display: none;
-      }
-
-      .cover-button.remove {
-        background: transparent;
       }
 
       .content-area {
@@ -416,46 +350,6 @@ const cover = getValue("cover");
           </label>
 
           <div class="field">
-            <span class="field-label">文章封面</span>
-
-            <div class="edit-cover">
-              <div id="coverPreview" class="cover-preview">
-                {cover ? (
-                  <img src={cover} alt="当前文章封面" />
-                ) : (
-                  <span>还没有设置封面</span>
-                )}
-              </div>
-
-              <div class="cover-actions">
-                <label class="cover-button">
-                  更换封面
-                  <input
-                    id="coverInput"
-                    type="file"
-                    accept="image/*"
-                  />
-                </label>
-
-                <button
-                  id="removeCoverButton"
-                  type="button"
-                  class="cover-button remove"
-                >
-                  删除封面
-                </button>
-              </div>
-
-              <input
-                id="cover"
-                name="cover"
-                type="hidden"
-                value={cover}
-              />
-            </div>
-          </div>
-
-          <div class="field">
             <span class="field-label">正文</span>
 
             <div class="tools">
@@ -504,76 +398,6 @@ const cover = getValue("cover");
 
       const videoFile = document.querySelector("#videoFile");
       const videoStatus = document.querySelector("#videoStatus");
-
-      const coverInput = document.querySelector("#coverInput");
-      const coverPreview = document.querySelector("#coverPreview");
-      const coverField = document.querySelector("#cover");
-      const removeCoverButton = document.querySelector("#removeCoverButton");
-
-      coverInput?.addEventListener("change", async () => {
-        const file = coverInput.files?.[0];
-        if (!file) return;
-
-        if (!file.type.startsWith("image/")) {
-          alert("请选择图片文件。");
-          coverInput.value = "";
-          return;
-        }
-
-        removeCoverButton.disabled = true;
-        removeCoverButton.textContent = "上传中……";
-
-        try {
-          const reader = new FileReader();
-
-          const fileData = await new Promise((resolve, reject) => {
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error("读取图片失败。"));
-            reader.readAsDataURL(file);
-          });
-
-          const response = await fetch("/api/upload-image", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              fileName: file.name,
-              fileData,
-            }),
-          });
-
-          const result = await response.json();
-
-          if (!response.ok || !result.success) {
-            throw new Error(result.message || "封面上传失败。");
-          }
-
-          coverField.value = result.url;
-          coverPreview.innerHTML = "";
-
-          const previewImage = document.createElement("img");
-          previewImage.src = result.url;
-          previewImage.alt = "文章封面预览";
-          coverPreview.appendChild(previewImage);
-
-          alert("封面上传成功！记得点击 SAVE CHANGES 保存文章。");
-        } catch (error) {
-          console.error(error);
-          alert(error.message || "封面上传失败，请检查 Admin 服务。");
-        } finally {
-          removeCoverButton.disabled = false;
-          removeCoverButton.textContent = "删除封面";
-        }
-      });
-
-      removeCoverButton?.addEventListener("click", () => {
-        coverField.value = "";
-        coverInput.value = "";
-        coverPreview.innerHTML = "<span>还没有设置封面</span>";
-        alert("已移除封面，请点击 SAVE CHANGES 保存修改。");
-      });
-
 
       window.addEventListener("DOMContentLoaded", () => {
         const currentCategory = "__CATEGORY__";

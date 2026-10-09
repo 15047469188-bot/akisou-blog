@@ -6,6 +6,37 @@ import FloatingTanghulu from "../../components/FloatingTanghulu.astro";
 const posts = Object.values(
   import.meta.glob("./posts/*.md", { eager: true })
 );
+
+
+function getExcerpt(post) {
+  let content = "";
+
+  try {
+    content = typeof post.rawContent === "function"
+      ? post.rawContent()
+      : "";
+  } catch {}
+
+  content = content
+    .replace(/^---[\s\S]*?---\s*/, "")
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/<[^>]+>/g, "")
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+    .replace(/^\s*[-*+]\s+/gm, "")
+    .replace(/^\s*>\s?/gm, "")
+    .replace(/[*_~]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return content.length > 100
+    ? content.slice(0, 100).trim() + "…"
+    : content;
+}
+
+
 ---
 
 <!doctype html>
@@ -37,24 +68,77 @@ const posts = Object.values(
         </p>
       </section>
 
-      <section class="posts">
+      <div class="daily-content-layout">
+        <section class="posts">
+          {posts.map((post) => (
+            <a href={post.url} class="post" id={`post-${post.frontmatter.date}-${post.frontmatter.title}`}>
+              {post.frontmatter.cover && (
+                <div class="post-cover">
+                  <img src={post.frontmatter.cover} alt="" loading="lazy" />
+                  <div class="post-cover-gradient"></div>
+                </div>
+              )}
+              <div class="post-info">
+                <div class="post-date">{post.frontmatter.date}</div>
+                <div class="post-main">
+                  <h2>{post.frontmatter.title}</h2>
+                  <p>{post.frontmatter.description}</p>
+                  <p class="post-excerpt">{getExcerpt(post)}</p>
+                </div>
+                <div class="post-card-bottom">继续阅读 <span>↗</span></div>
+              </div>
+            </a>
+          ))}
+        </section>
 
-        {posts.map((post) => (
-          <a href={post.url} class="post">
-            <div class="post-date">
-              {post.frontmatter.date}
+        <aside class="post-timeline">
+          <p class="timeline-label">TIMELINE / 时间轴</p>
+          {Object.entries(
+            posts.reduce((groups, post) => {
+              const year = String(post.frontmatter.date || "").slice(0, 4) || "其他";
+              (groups[year] ||= []).push(post);
+              return groups;
+            }, {})
+          ).sort(([a], [b]) => b.localeCompare(a)).map(([year, yearPosts]) => (
+            <div class="timeline-year">
+              <h3>{year}</h3>
+              {yearPosts.sort((a, b) =>
+                String(b.frontmatter.date || "").localeCompare(String(a.frontmatter.date || ""))
+              ).map((post) => (
+                <a href={`${post.url}`} class="timeline-item">
+                  <span class="timeline-dot"></span>
+                  <span class="timeline-date">{post.frontmatter.date}</span>
+                  <span class="timeline-title">{post.frontmatter.title}</span>
+                </a>
+              ))}
             </div>
+          ))}
+        </aside>
 
-            <div class="post-main">
-              <h2>{post.frontmatter.title}</h2>
-              <p>{post.frontmatter.description}</p>
-            </div>
-
-            <div class="post-arrow">↗</div>
+        <nav class="side-categories" aria-label="文章分类">
+          <p class="side-categories-label">CATEGORIES / 分类</p>
+          <a href={`${import.meta.env.BASE_URL}daily/`} class="side-category">
+            <span class="side-category-en">01 / DAILY LIFE</span>
+            <span class="side-category-name">碎碎念</span>
+            <span class="side-category-desc">没什么大事，胡思乱想先放这里。</span>
           </a>
-        ))}
-
-      </section>
+          <a href={`${import.meta.env.BASE_URL}travel/`} class="side-category">
+            <span class="side-category-en">02 / TRAVEL</span>
+            <span class="side-category-name">到处乱跑</span>
+            <span class="side-category-desc">先出门再说。</span>
+          </a>
+          <a href={`${import.meta.env.BASE_URL}subtitles/`} class="side-category">
+            <span class="side-category-en">03 / SUBTITLES</span>
+            <span class="side-category-name">听写小作坊</span>
+            <span class="side-category-desc">偶尔也怀疑自己的耳朵。</span>
+          </a>
+          <a href={`${import.meta.env.BASE_URL}works/`} class="side-category">
+            <span class="side-category-en">04 / WORKS</span>
+            <span class="side-category-name">书影音游</span>
+            <span class="side-category-desc">喜欢什么就往这里丢。</span>
+          </a>
+        </nav>
+      </div>
 
       <footer class="site-footer">
         <p>This blog is live for <span id="blog-live-time">0 days, 0 hours, 0 mins</span> and counting.</p>
@@ -128,6 +212,14 @@ const posts = Object.values(
 
   .intro {
     padding: 45px 0 55px;
+  }
+
+  .intro h1 {
+    margin-bottom: 8px;
+  }
+
+  .intro .description {
+    margin-top: 0;
   }
 
   .intro > p:first-child {
@@ -263,6 +355,460 @@ const posts = Object.values(
     footer {
       display: block;
       line-height: 2;
+    }
+  }
+</style>
+
+<style>
+/* 分类页封面样式 */
+  .post {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
+    overflow: hidden;
+  }
+
+  .post-cover {
+    position: relative;
+    flex: 0 0 190px;
+    height: 125px;
+    overflow: hidden;
+    border-radius: 7px;
+    background: #F7FBFD;
+  }
+
+  .post-cover img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .post-cover-gradient {
+    z-index: 2;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+      135deg,
+      rgba(207, 227, 239, 0.48) 0%,
+      rgba(124, 177, 210, 0.18) 45%,
+      rgba(53, 73, 94, 0.32) 100%
+    );
+    pointer-events: none;
+  }
+
+  .post:hover .post-cover img {
+    transform: scale(1.05);
+  }
+
+  .post-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .post-date {
+    color: #849A98;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  .post-main h2 {
+    margin: 0 0 9px;
+    font-size: 23px;
+    font-weight: 500;
+  }
+
+  .post-main p {
+    margin: 0;
+    color: #849A98;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .post-arrow {
+    align-self: center;
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 700px) {
+    .post {
+      gap: 13px;
+      padding: 14px;
+    }
+
+    .post-cover {
+      flex-basis: 110px;
+      height: 95px;
+    }
+
+    .post-main h2 {
+      font-size: 18px;
+    }
+
+    .post-main p {
+      font-size: 12px;
+    }
+
+    .post-info {
+      gap: 8px;
+    }
+  }
+</style>
+
+<style>
+  .post-excerpt {
+    margin: 9px 0 0;
+    color: #667B7F;
+    font-size: 13px;
+    line-height: 1.8;
+    opacity: 0.9;
+    overflow-wrap: anywhere;
+  }
+</style>
+
+<style>
+  .daily-content-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 34px;
+    align-items: start;
+  }
+
+  .posts {
+    columns: 2;
+    column-gap: 22px;
+    min-width: 0;
+  }
+
+  .posts .post {
+    break-inside: avoid;
+    margin: 0 0 22px;
+    width: 100%;
+  }
+
+  .post {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+    background: rgba(255,255,255,.78);
+    border: 1px solid #DCEAF0;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(75,110,130,.045);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+
+  .post:hover {
+    transform: translateY(-4px);
+    border-color: #B7D5E5;
+    box-shadow: 0 12px 28px rgba(75,110,130,.12);
+  }
+
+  .post-cover {
+    position: relative;
+    display: block;
+    flex: 0 0 190px;
+    width: 100%;
+    height: 190px;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: #EAF4F8;
+  }
+
+  .post-cover img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+  }
+
+  .post:hover .post-cover img {
+    transform: scale(1.04);
+  }
+
+  .post-info {
+    position: relative;
+    display: flex;
+    flex: 1 0 auto;
+    z-index: 1;
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    padding: 17px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    box-sizing: border-box;
+  }
+
+  .post-date {
+    color: #849A98;
+    font-family: monospace;
+    font-size: 12px;
+    letter-spacing: .04em;
+  }
+
+  .post-main {
+    display: block;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .post-main h2 {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    position: relative;
+    margin: 0 0 9px;
+    color: #35495E;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .post-main p {
+    margin: 0;
+    color: #849A98;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .post-main .post-excerpt {
+    display: -webkit-box;
+    margin-top: 8px;
+    overflow: hidden;
+    color: #667B7F;
+    font-size: 12px;
+    line-height: 1.8;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .post-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 12px;
+    color: #7CB1D2;
+    font-size: 12px;
+    border-top: 1px solid #EAF2F5;
+  }
+
+  .post-card-bottom span {
+    font-size: 15px;
+  }
+
+  .post-timeline {
+    position: fixed;
+    top: 40px;
+    right: 28px;
+    width: 192px;
+    max-height: calc(100vh - 16px);
+    z-index: 20;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #CFE3EF transparent;
+    border-left: 1px solid #CFE3EF;
+    padding-left: 18px;
+    min-width: 0;
+  }
+
+  .timeline-label {
+    margin: 0 0 22px;
+    color: #7CB1D2;
+    font-size: 10px;
+    letter-spacing: .13em;
+  }
+
+  .side-categories {
+    margin-top: 30px;
+    padding-top: 18px;
+    border-top: 1px solid #CFE3EF;
+  }
+
+  .side-categories-label {
+    margin: 0 0 14px;
+    color: #7CB1D2;
+    font-size: 10px;
+    letter-spacing: .13em;
+  }
+
+  .side-category {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+    padding: 10px 11px;
+    border: 1px solid #E1EDF2;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .65);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+
+  .side-category:hover {
+    border-color: #7CB1D2;
+    background: #F1F8FB;
+    transform: translateX(-3px);
+  }
+
+  .side-category-en {
+    color: #91A6AA;
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: .04em;
+  }
+
+  .side-category-name {
+    color: #35495E;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .side-category-desc {
+    color: #7C929A;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .timeline-year {
+    margin-bottom: 22px;
+  }
+
+  .timeline-year h3 {
+    margin: 0 0 12px;
+    color: #35495E;
+    font-size: 19px;
+    font-weight: 500;
+  }
+
+  .timeline-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0 0 15px 4px;
+    padding-left: 16px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .timeline-item::before {
+    position: absolute;
+    top: 4px;
+    bottom: -16px;
+    left: 3px;
+    width: 1px;
+    background: #DCEAF0;
+    content: "";
+  }
+
+  .timeline-dot {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    z-index: 1;
+    width: 7px;
+    height: 7px;
+    border: 1px solid #7CB1D2;
+    border-radius: 50%;
+    background: #F8FCFB;
+  }
+
+  .timeline-item:hover .timeline-dot {
+    background: #7CB1D2;
+  }
+
+  .timeline-date {
+    color: #91A6AA;
+    font-family: monospace;
+    font-size: 10px;
+  }
+
+  .timeline-title {
+    color: #526B7D;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 1050px) {
+    .daily-content-layout {
+      grid-template-columns: minmax(0, 1fr) 170px;
+      gap: 18px;
+    }
+
+    .posts {
+      column-gap: 14px;
+    }
+
+    .post-cover {
+      height: 155px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .daily-content-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .posts {
+      columns: 2;
+      column-gap: 12px;
+    }
+
+    .posts .post {
+      margin-bottom: 12px;
+    }
+
+    .post-cover {
+      height: 145px;
+    }
+
+    .post-info {
+      padding: 12px;
+      gap: 9px;
+    }
+
+    .post-main h2 {
+      font-size: 16px;
+    }
+
+    .post-main p {
+      font-size: 12px;
+    }
+
+    .post-timeline {
+      position: static;
+      border-left: 0;
+      border-top: 1px solid #CFE3EF;
+      margin-top: 22px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .posts {
+      columns: 1;
+    }
+
+    .post-cover {
+      height: 200px;
     }
   }
 </style>
