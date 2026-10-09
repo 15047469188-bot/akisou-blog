@@ -3,7 +3,7 @@ layout: ../../../layouts/BlogPost.astro
 title: "这个Blog怎么来的"
 date: "2026.10.03"
 description: "从零开始搭建属于自己的blog"
-category: "碎碎念"
+category: ""
 ---
 
 第一篇blog不知道写什么好，就写一下搭建这个博客的过程（？）吧
@@ -236,3 +236,5 @@ Local Admin只负责本地内容管理，而GitHub Pages负责最终的网站展
 算是走了很多弯路，但在不断修改和调试的过程中，也逐渐理解了Astro、Git、SSG等技术在实际项目中的作用。
 
 感谢互联网愿意分享经验的各位大神和Github以及Chat GPT老师。
+
+自动发布测试
