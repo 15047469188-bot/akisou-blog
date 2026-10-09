@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import remarkBlur from './scripts/remark-blur.mjs';
 
 export default defineConfig({
   output: 'static',
@@ -6,6 +7,7 @@ export default defineConfig({
   base: '/',
 
   markdown: {
+    remarkPlugins: [remarkBlur],
     shikiConfig: {
       theme: 'github-light',
     },

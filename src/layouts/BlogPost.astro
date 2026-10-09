@@ -86,6 +86,17 @@ const category =
   </head>
 
   <body>
+  <script>
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const blur = target.closest(".blur-text");
+      if (!blur) return;
+      blur.classList.toggle("revealed");
+    });
+  </script>
+
+
     <PageLoader />
     <FloatingTanghulu />
     <main class="page">
@@ -443,6 +454,24 @@ const category =
     font-family: monospace !important;
     font-size: 12px !important;
     line-height: 1.6 !important;
+  }
+
+  .content :global(.blur-text) {
+    display: inline;
+    color: #849A98;
+    background: rgba(207, 227, 239, 0.35);
+    border-radius: 4px;
+    filter: blur(5px);
+    cursor: pointer;
+    transition: filter 0.25s ease, background 0.25s ease;
+  }
+
+  .content :global(.blur-text:hover),
+  .content :global(.blur-text:focus),
+  .content :global(.blur-text.revealed) {
+    filter: blur(0);
+    background: rgba(207, 227, 239, 0.2);
+    outline: none;
   }
 
   .content :global(strong) {
