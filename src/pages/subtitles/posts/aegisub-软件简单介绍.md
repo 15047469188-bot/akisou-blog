@@ -56,9 +56,9 @@ cover: "{cover}"
 
 如下所示：
 
-# 对照视频处理翻译文档
+### 对照视频处理翻译文档
 <video controls preload="metadata" src="/videos/1791542532024-copy_503E2B61-1BB6-418B-BA5E-6E167B201503-MOV.mov"></video>
-# 翻译稿导入aeg打轴
+### 翻译稿导入aeg打轴
 <video controls preload="metadata" src="/videos/1791543201843-copy_82099425-CFA4-4CAA-B44F-1D02AD290AC2-MOV.mov"></video>
 
 值得一提的是为了避免闪轴（如下图所示两条字幕轴距离过近）
