@@ -1,4 +1,6 @@
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
+import remarkDirective from 'remark-directive';
 import remarkBlur from './scripts/remark-blur.mjs';
 
 export default defineConfig({
@@ -7,7 +9,9 @@ export default defineConfig({
   base: '/',
 
   markdown: {
-    remarkPlugins: [remarkBlur],
+    processor: unified({
+      remarkPlugins: [remarkDirective, remarkBlur],
+    }),
     shikiConfig: {
       theme: 'github-light',
     },
