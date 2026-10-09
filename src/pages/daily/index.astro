@@ -57,7 +57,7 @@ function getExcerpt(post) {
 
       <div class="daily-main">
       <section class="intro">
-        <p>01 / DAILY LIFE</p>
+        <p>01</p>
 
         <h1>
           碎碎念
@@ -119,22 +119,22 @@ function getExcerpt(post) {
         <nav class="side-categories" aria-label="文章分类">
           <p class="side-categories-label">CATEGORIES / 分类</p>
           <a href={`${import.meta.env.BASE_URL}daily/`} class="side-category">
-            <span class="side-category-en">01 / DAILY LIFE</span>
+            <span class="side-category-en">01</span>
             <span class="side-category-name">碎碎念</span>
             <span class="side-category-desc">没什么大事，胡思乱想先放这里。</span>
           </a>
           <a href={`${import.meta.env.BASE_URL}travel/`} class="side-category">
-            <span class="side-category-en">02 / TRAVEL</span>
+            <span class="side-category-en">02</span>
             <span class="side-category-name">到处乱跑</span>
             <span class="side-category-desc">先出门再说。</span>
           </a>
           <a href={`${import.meta.env.BASE_URL}subtitles/`} class="side-category">
-            <span class="side-category-en">03 / SUBTITLES</span>
+            <span class="side-category-en">03</span>
             <span class="side-category-name">听写小作坊</span>
             <span class="side-category-desc">偶尔也怀疑自己的耳朵。</span>
           </a>
           <a href={`${import.meta.env.BASE_URL}works/`} class="side-category">
-            <span class="side-category-en">04 / WORKS</span>
+            <span class="side-category-en">04</span>
             <span class="side-category-name">书影音游</span>
             <span class="side-category-desc">喜欢什么就往这里丢。</span>
           </a>
@@ -359,6 +359,39 @@ function getExcerpt(post) {
       line-height: 2;
     }
   }
+
+  .post-timeline .side-categories {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .post-timeline .side-categories-label {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .post-timeline a.side-category {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    writing-mode: horizontal-tb !important;
+  }
+
+  .post-timeline .side-category-name,
+  .post-timeline .side-category-en {
+    display: inline-block !important;
+    writing-mode: horizontal-tb !important;
+  }
+
 </style>
 
 
@@ -532,55 +565,89 @@ function getExcerpt(post) {
   }
 
   .side-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     margin-top: 30px;
     padding-top: 18px;
     border-top: 1px solid #CFE3EF;
   }
 
   .side-categories-label {
-    margin: 0 0 14px;
+    margin: 0 0 5px;
     color: #7CB1D2;
     font-size: 10px;
     letter-spacing: .13em;
   }
 
   .side-category {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-bottom: 10px;
-    padding: 10px 11px;
-    border: 1px solid #E1EDF2;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .65);
-    color: inherit;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 15px 16px;
+    color: #35495E;
     text-decoration: none;
-    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    white-space: nowrap;
+    writing-mode: horizontal-tb;
+    background: #FFFFFF;
+    border: 1px solid #CDE3EF;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(124, 177, 210, 0.08);
+    font-size: 15px;
+    transition: all 0.2s ease;
   }
 
   .side-category:hover {
-    border-color: #7CB1D2;
-    background: #F1F8FB;
-    transform: translateX(-3px);
+    color: #7CB1D2;
+    background: rgba(241, 250, 248, 0.82);
+    border-color: #79C9C3;
+    transform: translateY(-2px);
   }
 
   .side-category-en {
-    color: #91A6AA;
+    flex-shrink: 0;
+    color: #7CB1D2;
     font-family: monospace;
-    font-size: 9px;
-    letter-spacing: .04em;
+    font-size: 10px;
+    writing-mode: horizontal-tb;
   }
 
   .side-category-name {
-    color: #35495E;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 15px;
+    writing-mode: horizontal-tb;
   }
 
   .side-category-desc {
-    color: #7C929A;
-    font-size: 10px;
-    line-height: 1.6;
+    display: none;
+  }
+
+  .side-category::after {
+    content: "";
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    bottom: 7px;
+    width: 4px;
+    border-radius: 4px;
+    background: #7CB1D2;
+  }
+
+  .side-category:nth-of-type(2)::after {
+    background: #86C5FF;
+  }
+
+  .side-category:nth-of-type(3)::after {
+    background: #FFA62B;
+  }
+
+  .side-category:nth-of-type(4)::after {
+    background: #F8E6A0;
   }
 
   .timeline-year {
@@ -707,5 +774,38 @@ function getExcerpt(post) {
       height: 200px;
     }
   }
+
+  .post-timeline .side-categories {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .post-timeline .side-categories-label {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .post-timeline a.side-category {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    writing-mode: horizontal-tb !important;
+  }
+
+  .post-timeline .side-category-name,
+  .post-timeline .side-category-en {
+    display: inline-block !important;
+    writing-mode: horizontal-tb !important;
+  }
+
 </style>
 
